@@ -19,7 +19,8 @@ export const exampleRouter = createTRPCRouter({
     return ctx.prisma.item.findMany();
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  getSecretMessage: protectedProcedure.query(({ ctx }) => {
+    if (!ctx.session.user.name) throw new Error();
+    return `Logged in as ${ctx.session.user.name} - you can now see this secret message!`;
   }),
 });
