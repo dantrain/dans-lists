@@ -25,20 +25,16 @@ const Home: NextPage = () => {
 export default Home;
 
 const Lists = () => {
-  const gte = new Date();
-  const lte = new Date();
+  const timezoneOffset = new Date().getTimezoneOffset();
 
-  gte.setHours(0, 0, 0, 0);
-  lte.setHours(23, 59, 59, 999);
-
-  const [lists] = api.example.getLists.useSuspenseQuery({ gte, lte });
+  const [lists] = api.example.getLists.useSuspenseQuery({ timezoneOffset });
 
   const utils = api.useContext();
 
   const upsertEvent = api.example.upsertEvent.useMutation({
     onMutate: async (input) => {
       await utils.example.getLists.cancel();
-      const prevData = utils.example.getLists.getData({ gte, lte });
+      const prevData = utils.example.getLists.getData({ timezoneOffset });
       const optimisticData = cloneDeep(prevData);
 
       let itemIndex;
@@ -60,13 +56,13 @@ const Lists = () => {
         );
       }
 
-      utils.example.getLists.setData({ gte, lte }, optimisticData);
+      utils.example.getLists.setData({ timezoneOffset }, optimisticData);
 
       return { prevData };
     },
     onError: (_err, _input, ctx) => {
       // Roll back
-      utils.example.getLists.setData({ gte, lte }, ctx?.prevData);
+      utils.example.getLists.setData({ timezoneOffset }, ctx?.prevData);
     },
   });
 
@@ -86,8 +82,7 @@ const Lists = () => {
                   <button
                     onClick={() =>
                       upsertEvent.mutate({
-                        gte,
-                        lte,
+                        timezoneOffset,
                         itemId: id,
                         statusName:
                           first(events)?.status.name === "COMPLETE"

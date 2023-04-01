@@ -1,12 +1,27 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
+const getDayDateRange = (timezoneOffset: number) => {
+  const gte = new Date();
+  const lte = new Date();
+
+  gte.setUTCHours(0, 0, 0, 0);
+  lte.setUTCHours(23, 59, 59, 999);
+
+  gte.setMinutes(gte.getMinutes() + timezoneOffset);
+  lte.setMinutes(lte.getMinutes() + timezoneOffset);
+
+  return {
+    gte: gte.toISOString(),
+    lte: lte.toISOString(),
+  };
+};
+
 export const exampleRouter = createTRPCRouter({
   getLists: protectedProcedure
     .input(
       z.object({
-        gte: z.date(),
-        lte: z.date(),
+        timezoneOffset: z.number(),
       })
     )
     .query(({ ctx, input }) => {
@@ -21,10 +36,7 @@ export const exampleRouter = createTRPCRouter({
               title: true,
               events: {
                 where: {
-                  createdAt: {
-                    gte: input.gte.toISOString(),
-                    lte: input.lte.toISOString(),
-                  },
+                  createdAt: getDayDateRange(input.timezoneOffset),
                 },
                 take: 1,
                 select: { status: { select: { name: true } } },
@@ -39,9 +51,8 @@ export const exampleRouter = createTRPCRouter({
     .input(
       z.object({
         itemId: z.string(),
-        gte: z.date(),
-        lte: z.date(),
         statusName: z.string(),
+        timezoneOffset: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -50,10 +61,7 @@ export const exampleRouter = createTRPCRouter({
         select: {
           events: {
             where: {
-              createdAt: {
-                gte: input.gte.toISOString(),
-                lte: input.lte.toISOString(),
-              },
+              createdAt: getDayDateRange(input.timezoneOffset),
             },
             take: 1,
           },
