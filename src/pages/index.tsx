@@ -1,3 +1,4 @@
+import { first } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
 import { Suspense } from "react";
@@ -13,7 +14,7 @@ const Home: NextPage = () => {
         </h1>
         <div className="flex flex-col items-center gap-2">
           <Suspense fallback={<></>}>
-            <AuthShowcase />
+            <Lists />
           </Suspense>
         </div>
       </div>
@@ -23,8 +24,22 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const AuthShowcase = () => {
-  const [lists] = api.example.getLists.useSuspenseQuery();
+const Lists = () => {
+  const gte = new Date();
+  const lte = new Date();
+
+  gte.setHours(0, 0, 0, 0);
+  lte.setHours(23, 59, 59, 999);
+
+  const [lists] = api.example.getLists.useSuspenseQuery({ gte, lte });
+
+  const utils = api.useContext();
+
+  const upsertEvent = api.example.upsertEvent.useMutation({
+    onSettled() {
+      void utils.example.getLists.invalidate();
+    },
+  });
 
   return (
     <div className="flex flex-col items-center justify-center gap-8">
@@ -33,8 +48,25 @@ const AuthShowcase = () => {
           <li key={id} className="mb-4">
             <div className="mb-1">{title}</div>
             <ul className="ml-6 list-disc">
-              {items.map(({ id, title }) => (
-                <li key={id}>{title}</li>
+              {items.map(({ id, title, events }) => (
+                <li key={id}>
+                  <button
+                    onClick={() =>
+                      upsertEvent.mutate({
+                        gte,
+                        lte,
+                        itemId: id,
+                        statusName:
+                          first(events)?.status.name === "COMPLETE"
+                            ? "PENDING"
+                            : "COMPLETE",
+                      })
+                    }
+                  >
+                    {first(events)?.status.name ?? "NULL"}
+                  </button>{" "}
+                  {title}
+                </li>
               ))}
             </ul>
           </li>
