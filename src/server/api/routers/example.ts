@@ -27,7 +27,7 @@ export const exampleRouter = createTRPCRouter({
                   },
                 },
                 take: 1,
-                select: { id: true, status: { select: { name: true } } },
+                select: { status: { select: { name: true } } },
               },
             },
           },
@@ -76,4 +76,8 @@ export const exampleRouter = createTRPCRouter({
         });
       }
     }),
+
+  deleteEvents: protectedProcedure.mutation(({ ctx }) =>
+    ctx.prisma.event.deleteMany()
+  ),
 });

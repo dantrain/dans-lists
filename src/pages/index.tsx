@@ -1,4 +1,4 @@
-import { first } from "lodash";
+import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
 import { Suspense } from "react";
@@ -36,9 +36,42 @@ const Lists = () => {
   const utils = api.useContext();
 
   const upsertEvent = api.example.upsertEvent.useMutation({
-    onSettled() {
-      void utils.example.getLists.invalidate();
+    onMutate: async (input) => {
+      await utils.example.getLists.cancel();
+      const prevData = utils.example.getLists.getData({ gte, lte });
+      const optimisticData = cloneDeep(prevData);
+
+      let itemIndex;
+      const listIndex = optimisticData?.findIndex((list) => {
+        itemIndex = list.items.findIndex((item) => item.id === input.itemId);
+        return itemIndex >= 0;
+      });
+
+      if (
+        !isNil(optimisticData) &&
+        !isNil(listIndex) &&
+        !isNil(itemIndex) &&
+        itemIndex >= 0
+      ) {
+        set(
+          optimisticData,
+          [listIndex, "items", itemIndex, "events", "0", "status", "name"],
+          input.statusName
+        );
+      }
+
+      utils.example.getLists.setData({ gte, lte }, optimisticData);
+
+      return { prevData };
     },
+    onError: (_err, _input, ctx) => {
+      // Roll back
+      utils.example.getLists.setData({ gte, lte }, ctx?.prevData);
+    },
+  });
+
+  const deleteEvents = api.example.deleteEvents.useMutation({
+    onSettled: () => void utils.example.getLists.invalidate(),
   });
 
   return (
@@ -72,6 +105,12 @@ const Lists = () => {
           </li>
         ))}
       </ul>
+      <button
+        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        onClick={() => deleteEvents.mutate()}
+      >
+        Delete events
+      </button>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={() => void signOut()}
