@@ -57,6 +57,14 @@ export const api = createTRPCNext<AppRouter, never, "ExperimentalSuspense">({
           },
         }),
       ],
+
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+          },
+        },
+      },
     };
   },
   /**
