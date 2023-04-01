@@ -14,11 +14,48 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model List {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title String
+
+    owner   User   @relation(fields: [ownerId], references: [id])
+    ownerId String
+
+    items Item[]
+}
+
 model Item {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    title     String
+
+    title String
+
+    list   List   @relation(fields: [listId], references: [id])
+    listId String
+
+    events Event[]
+}
+
+model Event {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    item     Item   @relation(fields: [itemId], references: [id])
+    itemId   String
+    status   Status @relation(fields: [statusId], references: [id])
+    statusId String
+}
+
+model Status {
+    id   String @id @default(cuid())
+    name String @unique
+
+    events Event[]
 }
 
 // Necessary for Next auth
@@ -56,6 +93,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    lists         List[]
 }
 
 model VerificationToken {

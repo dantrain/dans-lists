@@ -15,12 +15,14 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.item.findMany();
-  }),
-
-  getSecretMessage: protectedProcedure.query(({ ctx }) => {
-    if (!ctx.session.user.name) throw new Error();
-    return `Logged in as ${ctx.session.user.name} - you can now see this secret message!`;
+  getLists: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.list.findMany({
+      where: { ownerId: ctx.session.user.id },
+      select: {
+        id: true,
+        title: true,
+        items: { select: { id: true, title: true } },
+      },
+    });
   }),
 });
