@@ -1,27 +1,22 @@
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-const getDayDateRange = (timezoneOffset: number) => {
-  const gte = new Date();
-  const lte = new Date();
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-  gte.setUTCHours(0, 0, 0, 0);
-  lte.setUTCHours(23, 59, 59, 999);
-
-  gte.setMinutes(gte.getMinutes() + timezoneOffset);
-  lte.setMinutes(lte.getMinutes() + timezoneOffset);
-
-  return {
-    gte: gte.toISOString(),
-    lte: lte.toISOString(),
-  };
-};
+const getDayDateRange = (timezone: string) => ({
+  gte: dayjs().tz(timezone).startOf("day").toISOString(),
+  lte: dayjs().tz(timezone).endOf("day").toISOString(),
+});
 
 export const exampleRouter = createTRPCRouter({
   getLists: protectedProcedure
     .input(
       z.object({
-        timezoneOffset: z.number(),
+        timezone: z.string(),
       })
     )
     .query(({ ctx, input }) => {
@@ -36,7 +31,7 @@ export const exampleRouter = createTRPCRouter({
               title: true,
               events: {
                 where: {
-                  createdAt: getDayDateRange(input.timezoneOffset),
+                  createdAt: getDayDateRange(input.timezone),
                 },
                 take: 1,
                 select: { status: { select: { name: true } } },
@@ -52,7 +47,7 @@ export const exampleRouter = createTRPCRouter({
       z.object({
         itemId: z.string(),
         statusName: z.string(),
-        timezoneOffset: z.number(),
+        timezone: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -61,7 +56,7 @@ export const exampleRouter = createTRPCRouter({
         select: {
           events: {
             where: {
-              createdAt: getDayDateRange(input.timezoneOffset),
+              createdAt: getDayDateRange(input.timezone),
             },
             take: 1,
           },

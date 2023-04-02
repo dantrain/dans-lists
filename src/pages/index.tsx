@@ -12,11 +12,15 @@ const Home: NextPage = () => {
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Dan&apos;s Lists
         </h1>
-        <div className="flex flex-col items-center gap-2">
-          <Suspense fallback={<></>}>
-            <Lists />
-          </Suspense>
-        </div>
+        <Suspense fallback={<></>}>
+          <Lists />
+        </Suspense>
+        <button
+          className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={() => void signOut()}
+        >
+          Sign out
+        </button>
       </div>
     </main>
   );
@@ -25,16 +29,16 @@ const Home: NextPage = () => {
 export default Home;
 
 const Lists = () => {
-  const timezoneOffset = new Date().getTimezoneOffset();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const [lists] = api.example.getLists.useSuspenseQuery({ timezoneOffset });
+  const [lists] = api.example.getLists.useSuspenseQuery({ timezone });
 
   const utils = api.useContext();
 
   const upsertEvent = api.example.upsertEvent.useMutation({
     onMutate: async (input) => {
       await utils.example.getLists.cancel();
-      const prevData = utils.example.getLists.getData({ timezoneOffset });
+      const prevData = utils.example.getLists.getData({ timezone });
       const optimisticData = cloneDeep(prevData);
 
       let itemIndex;
@@ -56,13 +60,13 @@ const Lists = () => {
         );
       }
 
-      utils.example.getLists.setData({ timezoneOffset }, optimisticData);
+      utils.example.getLists.setData({ timezone }, optimisticData);
 
       return { prevData };
     },
     onError: (_err, _input, ctx) => {
       // Roll back
-      utils.example.getLists.setData({ timezoneOffset }, ctx?.prevData);
+      utils.example.getLists.setData({ timezone }, ctx?.prevData);
     },
   });
 
@@ -71,7 +75,7 @@ const Lists = () => {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8">
+    <>
       <ul className="list-disc text-white">
         {lists.map(({ id, title, items }) => (
           <li key={id} className="mb-4">
@@ -82,7 +86,7 @@ const Lists = () => {
                   <button
                     onClick={() =>
                       upsertEvent.mutate({
-                        timezoneOffset,
+                        timezone,
                         itemId: id,
                         statusName:
                           first(events)?.status.name === "COMPLETE"
@@ -106,12 +110,6 @@ const Lists = () => {
       >
         Delete events
       </button>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={() => void signOut()}
-      >
-        Sign out
-      </button>
-    </div>
+    </>
   );
 };
