@@ -20,7 +20,11 @@ const getBaseUrl = () => {
 
 const cacheConfig = {
   onError: (error: unknown) => {
-    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+    if (
+      typeof window !== "undefined" &&
+      error instanceof Error &&
+      error.message === "UNAUTHORIZED"
+    ) {
       window.location.href = "/signin";
     }
   },
