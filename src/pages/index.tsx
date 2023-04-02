@@ -14,12 +14,9 @@ export type Item =
 
 const Home: NextPage = () => {
   return (
-    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-20">
+    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-10">
       <Progress />
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Dan&apos;s Lists
-        </h1>
         <Suspense fallback={<></>}>
           <Lists />
         </Suspense>
@@ -96,11 +93,13 @@ const Lists = () => {
 
   return (
     <>
-      <ul className="list-disc text-white">
+      <ul className="w-full max-w-sm text-white">
         {lists.map(({ id, title, items }) => (
           <li key={id} className="mb-5">
-            <div className="mb-2">{title}</div>
-            <ul className="ml-4">
+            <div className="mb-2 select-none border-b border-gray-500 pb-1 font-bold">
+              {title}
+            </div>
+            <ul>
               {items.map((item) => (
                 <ListItem
                   key={item.id}

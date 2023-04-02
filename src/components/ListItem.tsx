@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { first } from "lodash";
 import { type Item } from "~/pages";
 import Checkbox from "./Checkbox";
@@ -18,7 +19,10 @@ const ListItem = ({ item, onCheckedChange }: ListItemProps) => {
         checked={checked}
         onCheckedChange={() => onCheckedChange(item)}
       />
-      <label className="pl-1" htmlFor={id}>
+      <label
+        className={clsx("select-none pl-2", { "text-gray-400": checked })}
+        htmlFor={id}
+      >
         {title}
       </label>
     </li>
