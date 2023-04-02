@@ -1,14 +1,14 @@
 import clsx from "clsx";
 import { first } from "lodash";
-import { type Item } from "~/pages";
+import { type ItemData } from "~/pages";
 import Checkbox from "./Checkbox";
 
 type ListItemProps = {
-  item: Item;
-  onCheckedChange: (item: Item) => void;
+  item: ItemData;
+  onCheckedChange: (item: ItemData) => void;
 };
 
-const ListItem = ({ item, onCheckedChange }: ListItemProps) => {
+const Item = ({ item, onCheckedChange }: ListItemProps) => {
   const { id, title, events } = item;
   const checked = first(events)?.status.name === "COMPLETE";
 
@@ -29,4 +29,4 @@ const ListItem = ({ item, onCheckedChange }: ListItemProps) => {
   );
 };
 
-export default ListItem;
+export default Item;

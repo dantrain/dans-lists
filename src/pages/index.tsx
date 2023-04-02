@@ -2,16 +2,17 @@ import { type inferRouterOutputs } from "@trpc/server";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
-import { FormEvent, Suspense, useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import AddList from "~/components/AddList";
-import ListItem from "~/components/ListItem";
+import Item from "~/components/Item";
+import List from "~/components/List";
 import Progress from "~/components/Progress";
 import { type AppRouter } from "~/server/api/root";
 
 import { api } from "~/utils/api";
 
-export type Item =
-  inferRouterOutputs<AppRouter>["example"]["getLists"][0]["items"][0];
+export type ListData = inferRouterOutputs<AppRouter>["example"]["getLists"][0];
+export type ItemData = ListData["items"][0];
 
 const Home: NextPage = () => {
   const utils = api.useContext();
@@ -89,7 +90,7 @@ const Lists = () => {
   });
 
   const handleCheckedChanged = useCallback(
-    ({ id, events }: Item) => {
+    ({ id, events }: ItemData) => {
       upsertEvent.mutate({
         timezone,
         itemId: id,
@@ -104,21 +105,16 @@ const Lists = () => {
     <div className="mb-10 w-full max-w-sm text-white">
       <AddList />
       <ul className="px-2">
-        {lists.map(({ id, title, items }) => (
-          <li key={id} className="mb-5">
-            <div className="mb-2 select-none border-b border-gray-500 pb-1 font-bold">
-              {title}
-            </div>
-            <ul>
-              {items.map((item) => (
-                <ListItem
-                  key={item.id}
-                  item={item}
-                  onCheckedChange={handleCheckedChanged}
-                />
-              ))}
-            </ul>
-          </li>
+        {lists.map((list) => (
+          <List key={list.id} list={list}>
+            {list.items.map((item) => (
+              <Item
+                key={item.id}
+                item={item}
+                onCheckedChange={handleCheckedChanged}
+              />
+            ))}
+          </List>
         ))}
       </ul>
     </div>

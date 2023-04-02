@@ -94,4 +94,12 @@ export const exampleRouter = createTRPCRouter({
         },
       })
     ),
+
+  deleteList: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.list.delete({
+        where: { id: input.id },
+      })
+    ),
 });
