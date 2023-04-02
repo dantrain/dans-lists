@@ -1,12 +1,12 @@
 import { type inferRouterOutputs } from "@trpc/server";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
-import { signOut } from "next-auth/react";
 import { Suspense, useCallback } from "react";
 import AddList from "~/components/AddList";
 import Item from "~/components/Item";
 import List from "~/components/List";
 import Progress from "~/components/Progress";
+import SettingsMenu from "~/components/SettingsMenu";
 import { type AppRouter } from "~/server/api/root";
 
 import { api } from "~/utils/api";
@@ -18,17 +18,10 @@ const Home: NextPage = () => {
   return (
     <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-20">
       <Progress />
+      <SettingsMenu />
       <Suspense fallback={<></>}>
         <Lists />
       </Suspense>
-      <div className="flex gap-4">
-        <button
-          className="rounded-lg bg-white/10 px-5 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
-          onClick={() => void signOut()}
-        >
-          Sign out
-        </button>
-      </div>
     </main>
   );
 };
