@@ -34,7 +34,7 @@ model Item {
 
     title String
 
-    list   List   @relation(fields: [listId], references: [id])
+    list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
     listId String
 
     events Event[]
@@ -45,7 +45,7 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    item     Item   @relation(fields: [itemId], references: [id])
+    item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
     itemId   String
     status   Status @relation(fields: [statusId], references: [id])
     statusId String

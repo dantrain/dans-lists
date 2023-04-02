@@ -102,4 +102,15 @@ export const exampleRouter = createTRPCRouter({
         where: { id: input.id },
       })
     ),
+
+  createItem: protectedProcedure
+    .input(z.object({ listId: z.string(), title: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.item.create({
+        data: {
+          title: input.title,
+          list: { connect: { id: input.listId } },
+        },
+      })
+    ),
 });

@@ -1,6 +1,6 @@
 # Dan's Lists
 
-- [ ] Create/delete lists
+- [x] Create/delete lists
 - [ ] Create/delete items
 - [ ] Try Planetscale
 - [ ] Deploy to Vercel

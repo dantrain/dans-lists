@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { type ListData } from "~/pages";
 import { api } from "~/utils/api";
+import AddItem from "./AddItem";
 
 const DeleteIcon = () => (
   <svg
@@ -29,7 +30,7 @@ const List = ({ list: { title, id }, children }: ListProps) => {
 
   return (
     <li className="mb-5">
-      <div className="group mb-2 flex justify-between border-b border-gray-500 pb-1">
+      <div className="group mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
         <span className="select-none font-bold">{title}</span>
         <button
           className="invisible px-2 text-gray-400 hover:text-white group-hover:visible"
@@ -39,7 +40,8 @@ const List = ({ list: { title, id }, children }: ListProps) => {
           <DeleteIcon />
         </button>
       </div>
-      <ul>{children}</ul>
+      <AddItem listId={id} />
+      <ul className="mx-2">{children}</ul>
     </li>
   );
 };

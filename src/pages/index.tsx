@@ -104,7 +104,7 @@ const Lists = () => {
   return (
     <div className="mb-10 w-full max-w-sm text-white">
       <AddList />
-      <ul className="px-2">
+      <ul>
         {lists.map((list) => (
           <List key={list.id} list={list}>
             {list.items.map((item) => (
