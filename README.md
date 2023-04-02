@@ -2,9 +2,10 @@
 
 - [x] Create/delete lists
 - [x] Create/delete items
-- [ ] Settings menu
+- [x] Settings menu
 - [ ] Try Planetscale
 - [ ] Deploy to Vercel
+- [ ] Edit lists/items
 - [ ] Collapsing lists
 - [ ] Reordering
 - [ ] List frequency
