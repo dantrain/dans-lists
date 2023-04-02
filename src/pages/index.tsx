@@ -2,7 +2,8 @@ import { type inferRouterOutputs } from "@trpc/server";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
-import { Suspense, useCallback } from "react";
+import { FormEvent, Suspense, useCallback } from "react";
+import AddList from "~/components/AddList";
 import ListItem from "~/components/ListItem";
 import Progress from "~/components/Progress";
 import { type AppRouter } from "~/server/api/root";
@@ -13,15 +14,27 @@ export type Item =
   inferRouterOutputs<AppRouter>["example"]["getLists"][0]["items"][0];
 
 const Home: NextPage = () => {
+  const utils = api.useContext();
+
+  const deleteEvents = api.example.deleteEvents.useMutation({
+    onSettled: () => void utils.example.getLists.invalidate(),
+  });
+
   return (
-    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-10">
+    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-20">
       <Progress />
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <Suspense fallback={<></>}>
-          <Lists />
-        </Suspense>
+      <Suspense fallback={<></>}>
+        <Lists />
+      </Suspense>
+      <div className="flex gap-4">
         <button
-          className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          className="rounded-lg bg-white/10 px-5 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
+          onClick={() => deleteEvents.mutate()}
+        >
+          Delete events
+        </button>
+        <button
+          className="rounded-lg bg-white/10 px-5 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
           onClick={() => void signOut()}
         >
           Sign out
@@ -87,13 +100,10 @@ const Lists = () => {
     [timezone, upsertEvent]
   );
 
-  const deleteEvents = api.example.deleteEvents.useMutation({
-    onSettled: () => void utils.example.getLists.invalidate(),
-  });
-
   return (
-    <>
-      <ul className="w-full max-w-sm text-white">
+    <div className="mb-10 w-full max-w-sm text-white">
+      <AddList />
+      <ul className="px-2">
         {lists.map(({ id, title, items }) => (
           <li key={id} className="mb-5">
             <div className="mb-2 select-none border-b border-gray-500 pb-1 font-bold">
@@ -111,12 +121,6 @@ const Lists = () => {
           </li>
         ))}
       </ul>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={() => deleteEvents.mutate()}
-      >
-        Delete events
-      </button>
-    </>
+    </div>
   );
 };

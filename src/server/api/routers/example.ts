@@ -83,4 +83,15 @@ export const exampleRouter = createTRPCRouter({
   deleteEvents: protectedProcedure.mutation(({ ctx }) =>
     ctx.prisma.event.deleteMany()
   ),
+
+  createList: protectedProcedure
+    .input(z.object({ title: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.list.create({
+        data: {
+          title: input.title,
+          owner: { connect: { id: ctx.session.user.id } },
+        },
+      })
+    ),
 });
