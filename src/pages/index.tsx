@@ -1,10 +1,15 @@
-import { cloneDeep, isNil, set } from "lodash";
+import { type inferRouterOutputs } from "@trpc/server";
+import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
 import { Suspense, useCallback } from "react";
-import Item from "~/components/Item";
+import ListItem from "~/components/ListItem";
+import { type AppRouter } from "~/server/api/root";
 
 import { api } from "~/utils/api";
+
+export type Item =
+  inferRouterOutputs<AppRouter>["example"]["getLists"][0]["items"][0];
 
 const Home: NextPage = () => {
   return (
@@ -72,11 +77,12 @@ const Lists = () => {
   });
 
   const handleCheckedChanged = useCallback(
-    (id: string, statusName?: string) => {
+    ({ id, events }: Item) => {
       upsertEvent.mutate({
         timezone,
         itemId: id,
-        statusName: statusName === "COMPLETE" ? "PENDING" : "COMPLETE",
+        statusName:
+          first(events)?.status.name === "COMPLETE" ? "PENDING" : "COMPLETE",
       });
     },
     [timezone, upsertEvent]
@@ -94,7 +100,7 @@ const Lists = () => {
             <div className="mb-2">{title}</div>
             <ul className="ml-4">
               {items.map((item) => (
-                <Item
+                <ListItem
                   key={item.id}
                   item={item}
                   onCheckedChange={handleCheckedChanged}
