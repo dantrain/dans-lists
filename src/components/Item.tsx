@@ -1,6 +1,7 @@
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
 import { first } from "lodash";
-import { type ItemData } from "~/pages";
+import { editModeAtom, type ItemData } from "~/pages";
 import { api } from "~/utils/api";
 import Checkbox from "./Checkbox";
 import { DeleteIcon } from "./Icons";
@@ -20,8 +21,10 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
     onSettled: () => void utils.example.getLists.invalidate(),
   });
 
+  const editMode = useAtomValue(editModeAtom);
+
   return (
-    <li className="group mb-2 flex items-center">
+    <li className="mb-2 flex items-center">
       <Checkbox
         id={id}
         checked={checked}
@@ -35,13 +38,15 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
       >
         {title}
       </label>
-      <button
-        className="invisible px-2 text-gray-400 hover:text-white group-hover:visible"
-        title="Delete"
-        onClick={() => deleteItem.mutate({ id })}
-      >
-        <DeleteIcon />
-      </button>
+      {editMode && (
+        <button
+          className="px-2 text-gray-400 hover:text-white"
+          title="Delete"
+          onClick={() => deleteItem.mutate({ id })}
+        >
+          <DeleteIcon />
+        </button>
+      )}
     </li>
   );
 };

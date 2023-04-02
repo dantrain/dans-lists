@@ -1,4 +1,5 @@
 import { type inferRouterOutputs } from "@trpc/server";
+import { atom, useAtomValue } from "jotai";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { Suspense, useCallback } from "react";
@@ -13,6 +14,8 @@ import { api } from "~/utils/api";
 
 export type ListData = inferRouterOutputs<AppRouter>["example"]["getLists"][0];
 export type ItemData = ListData["items"][0];
+
+export const editModeAtom = atom(false);
 
 const Home: NextPage = () => {
   return (
@@ -82,9 +85,11 @@ const Lists = () => {
     [timezone, upsertEvent]
   );
 
+  const editMode = useAtomValue(editModeAtom);
+
   return (
     <div className="mb-10 w-full max-w-sm text-white">
-      <AddList />
+      {editMode && <AddList />}
       <ul>
         {lists.map((list) => (
           <List key={list.id} list={list}>

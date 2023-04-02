@@ -1,7 +1,9 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useAtom } from "jotai";
 import { signOut } from "next-auth/react";
 import { type ReactNode } from "react";
-import { LogoutIcon, SettingsIcon } from "./Icons";
+import { editModeAtom } from "~/pages";
+import { CheckIcon, EditIcon, LogoutIcon, SettingsIcon } from "./Icons";
 
 const MenuItem = ({ children }: { children: ReactNode }) => (
   <div className="relative flex min-w-[200px] items-center justify-between rounded-sm p-3 pl-8 group-hover:bg-[rgba(255,255,255,0.1)] group-focus-visible:bg-[rgba(255,255,255,0.1)]">
@@ -10,6 +12,8 @@ const MenuItem = ({ children }: { children: ReactNode }) => (
 );
 
 const SettingsMenu = () => {
+  const [editMode, setEditMode] = useAtom(editModeAtom);
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -30,14 +34,17 @@ const SettingsMenu = () => {
         >
           <DropdownMenu.CheckboxItem
             className="group px-1 pt-1 focus:outline-none"
-            checked={false}
-            onCheckedChange={(checked) => undefined}
+            checked={editMode}
+            onCheckedChange={(checked) => {
+              setEditMode(checked);
+            }}
           >
             <MenuItem>
-              <DropdownMenu.ItemIndicator className="absolute left-3 top-[14px]">
-                Checked
+              <DropdownMenu.ItemIndicator className="absolute left-2">
+                <CheckIcon />
               </DropdownMenu.ItemIndicator>
               Edit items
+              <EditIcon width="18" height="18" />
             </MenuItem>
           </DropdownMenu.CheckboxItem>
           <DropdownMenu.Item

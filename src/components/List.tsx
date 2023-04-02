@@ -1,5 +1,6 @@
+import { useAtomValue } from "jotai";
 import { type ReactNode } from "react";
-import { type ListData } from "~/pages";
+import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
 import { DeleteIcon } from "./Icons";
@@ -16,19 +17,23 @@ const List = ({ list: { title, id }, children }: ListProps) => {
     onSettled: () => void utils.example.getLists.invalidate(),
   });
 
+  const editMode = useAtomValue(editModeAtom);
+
   return (
     <li className="mb-5">
-      <div className="group mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
+      <div className="mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
         <span className="select-none font-bold">{title}</span>
-        <button
-          className="invisible px-2 text-gray-400 hover:text-white group-hover:visible"
-          title="Delete"
-          onClick={() => deleteList.mutate({ id })}
-        >
-          <DeleteIcon />
-        </button>
+        {editMode && (
+          <button
+            className="px-2 text-gray-400 hover:text-white"
+            title="Delete"
+            onClick={() => deleteList.mutate({ id })}
+          >
+            <DeleteIcon />
+          </button>
+        )}
       </div>
-      <AddItem listId={id} />
+      {editMode && <AddItem listId={id} />}
       <ul className="mx-2">{children}</ul>
     </li>
   );
