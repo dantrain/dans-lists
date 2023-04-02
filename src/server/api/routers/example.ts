@@ -80,10 +80,6 @@ export const exampleRouter = createTRPCRouter({
       }
     }),
 
-  deleteEvents: protectedProcedure.mutation(({ ctx }) =>
-    ctx.prisma.event.deleteMany()
-  ),
-
   createList: protectedProcedure
     .input(z.object({ title: z.string() }))
     .mutation(({ ctx, input }) =>

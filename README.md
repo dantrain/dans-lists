@@ -1,7 +1,8 @@
 # Dan's Lists
 
 - [x] Create/delete lists
-- [ ] Create/delete items
+- [x] Create/delete items
+- [ ] Settings menu
 - [ ] Try Planetscale
 - [ ] Deploy to Vercel
 - [ ] Collapsing lists

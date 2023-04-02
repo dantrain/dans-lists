@@ -15,12 +15,6 @@ export type ListData = inferRouterOutputs<AppRouter>["example"]["getLists"][0];
 export type ItemData = ListData["items"][0];
 
 const Home: NextPage = () => {
-  const utils = api.useContext();
-
-  const deleteEvents = api.example.deleteEvents.useMutation({
-    onSettled: () => void utils.example.getLists.invalidate(),
-  });
-
   return (
     <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-20">
       <Progress />
@@ -28,12 +22,6 @@ const Home: NextPage = () => {
         <Lists />
       </Suspense>
       <div className="flex gap-4">
-        <button
-          className="rounded-lg bg-white/10 px-5 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
-          onClick={() => deleteEvents.mutate()}
-        >
-          Delete events
-        </button>
         <button
           className="rounded-lg bg-white/10 px-5 py-2 font-semibold text-white no-underline transition hover:bg-white/20"
           onClick={() => void signOut()}
