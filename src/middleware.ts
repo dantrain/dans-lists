@@ -3,7 +3,10 @@ import withAuth from "next-auth/middleware";
 export default withAuth({
   callbacks: {
     authorized: ({ req }) => {
-      const token = req.cookies.get("next-auth.session-token");
+      const token =
+        req.cookies.get("__Secure-next-auth.session-token") ||
+        req.cookies.get("next-auth.session-token");
+
       return !!token;
     },
   },
