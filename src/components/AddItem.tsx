@@ -24,7 +24,7 @@ const AddItem = ({ listId }: { listId: string }) => {
       }}
     >
       <input
-        id={`addItemInput${listId}`}
+        id={`addItemInput-${listId}`}
         ref={ref}
         className="mb-2 mt-2 w-full rounded-md bg-white/10 px-2 py-1 placeholder:text-gray-400"
         type="text"
