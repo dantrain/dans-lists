@@ -1,8 +1,8 @@
 import { type inferRouterOutputs } from "@trpc/server";
-import { atom, useAtomValue } from "jotai";
+import { atom, useAtom } from "jotai";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
-import { Suspense, useCallback } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import AddList from "~/components/AddList";
 import Item from "~/components/Item";
 import List from "~/components/List";
@@ -85,7 +85,13 @@ const Lists = () => {
     [timezone, upsertEvent]
   );
 
-  const editMode = useAtomValue(editModeAtom);
+  const [editMode, setEditMode] = useAtom(editModeAtom);
+
+  useEffect(() => {
+    if (lists && lists.length === 0 && !editMode) {
+      setEditMode(true);
+    }
+  }, [editMode, lists, setEditMode]);
 
   return (
     <div className="mb-10 w-full max-w-sm text-white">
