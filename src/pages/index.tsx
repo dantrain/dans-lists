@@ -1,8 +1,8 @@
-import * as Checkbox from "@radix-ui/react-checkbox";
-import { cloneDeep, first, isNil, set } from "lodash";
+import { cloneDeep, isNil, set } from "lodash";
 import { type NextPage } from "next";
 import { signOut } from "next-auth/react";
-import { Suspense } from "react";
+import { Suspense, useCallback } from "react";
+import Item from "~/components/Item";
 
 import { api } from "~/utils/api";
 
@@ -71,6 +71,17 @@ const Lists = () => {
     },
   });
 
+  const handleCheckedChanged = useCallback(
+    (id: string, statusName?: string) => {
+      upsertEvent.mutate({
+        timezone,
+        itemId: id,
+        statusName: statusName === "COMPLETE" ? "PENDING" : "COMPLETE",
+      });
+    },
+    [timezone, upsertEvent]
+  );
+
   const deleteEvents = api.example.deleteEvents.useMutation({
     onSettled: () => void utils.example.getLists.invalidate(),
   });
@@ -82,59 +93,13 @@ const Lists = () => {
           <li key={id} className="mb-5">
             <div className="mb-2">{title}</div>
             <ul className="ml-4">
-              {items.map(({ id, title, events }) => {
-                const checked = first(events)?.status.name === "COMPLETE";
-
-                return (
-                  <li key={id} className="mb-2 flex items-center">
-                    <Checkbox.Root
-                      className="cursor-default text-gray-200"
-                      id={id}
-                      checked={checked}
-                      onCheckedChange={() =>
-                        upsertEvent.mutate({
-                          timezone,
-                          itemId: id,
-                          statusName:
-                            first(events)?.status.name === "COMPLETE"
-                              ? "PENDING"
-                              : "COMPLETE",
-                        })
-                      }
-                    >
-                      <Checkbox.Indicator>
-                        <svg
-                          focusable="false"
-                          aria-hidden="true"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          height="24"
-                          fill="currentColor"
-                        >
-                          <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                        </svg>
-                      </Checkbox.Indicator>
-                      {!checked && (
-                        <span className="pointer-events-none">
-                          <svg
-                            focusable="false"
-                            aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            height="24"
-                            fill="currentColor"
-                          >
-                            <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
-                          </svg>
-                        </span>
-                      )}
-                    </Checkbox.Root>
-                    <label className="pl-1" htmlFor={id}>
-                      {title}
-                    </label>
-                  </li>
-                );
-              })}
+              {items.map((item) => (
+                <Item
+                  key={item.id}
+                  item={item}
+                  onCheckedChange={handleCheckedChanged}
+                />
+              ))}
             </ul>
           </li>
         ))}
