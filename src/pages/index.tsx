@@ -32,7 +32,9 @@ const Home: NextPage = () => {
 export default Home;
 
 const Lists = () => {
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const timezone = "Europe/London";
 
   const [lists] = api.example.getLists.useSuspenseQuery({ timezone });
 
