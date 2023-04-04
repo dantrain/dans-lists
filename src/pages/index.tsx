@@ -19,7 +19,7 @@ export const editModeAtom = atom(false);
 
 const Home: NextPage = () => {
   return (
-    <main className="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-20">
+    <main className="relative px-4 pt-10 sm:pt-20">
       <Progress />
       <SettingsMenu />
       <Suspense fallback={<></>}>
@@ -33,7 +33,6 @@ export default Home;
 
 const Lists = () => {
   // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const timezone = "Europe/London";
 
   const [lists] = api.example.getLists.useSuspenseQuery({ timezone });
@@ -96,7 +95,7 @@ const Lists = () => {
   }, [editMode, lists, setEditMode]);
 
   return (
-    <div className="mb-10 w-full max-w-sm text-white">
+    <div className="mx-auto mb-10 w-full max-w-sm text-white">
       {editMode && <AddList />}
       <ul>
         {lists.map((list) => (

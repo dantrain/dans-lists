@@ -3,13 +3,18 @@
 - [x] Create/delete lists
 - [x] Create/delete items
 - [x] Settings menu
-- [ ] Try Planetscale
-- [ ] Deploy to Vercel
+- [x] Try Planetscale
+- [x] Deploy to Vercel
+- [ ] Phone layout
+- [ ] PWA
+- [ ] Refactor TRPC router
 - [ ] Edit lists/items
 - [ ] Collapsing lists
 - [ ] Reordering
+- [ ] Fix timezones
 - [ ] List frequency
+- [ ] Skipping
 - [ ] Styling
-- [ ] PWA
 - [ ] Try Upstash for session storage
 - [ ] Try prisma-kysely
+- [ ] Try Edge runtime
