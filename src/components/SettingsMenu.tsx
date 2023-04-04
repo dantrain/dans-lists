@@ -18,7 +18,7 @@ const SettingsMenu = () => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="fixed right-3 top-3 text-gray-200"
+          className="fixed right-0 top-0 p-3 text-gray-200"
           aria-label="Settings"
         >
           <SettingsIcon width="20" height="20" />
@@ -28,7 +28,7 @@ const SettingsMenu = () => {
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           className="cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl"
-          sideOffset={6}
+          sideOffset={-6}
           collisionPadding={8}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >

@@ -24,14 +24,14 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
   const editMode = useAtomValue(editModeAtom);
 
   return (
-    <li className="mb-2 flex items-center">
+    <li className="my-2 flex items-center">
       <Checkbox
         id={id}
         checked={checked}
         onCheckedChange={() => onCheckedChange(item)}
       />
       <label
-        className={clsx("flex-grow select-none pl-2", {
+        className={clsx("flex-grow select-none py-1 pl-1 sm:py-0", {
           "text-gray-400": checked,
         })}
         htmlFor={id}

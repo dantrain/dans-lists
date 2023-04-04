@@ -34,7 +34,7 @@ const List = ({ list: { title, id }, children }: ListProps) => {
         )}
       </div>
       {editMode && <AddItem listId={id} />}
-      <ul className="mx-2">{children}</ul>
+      <ul className="mx-1">{children}</ul>
     </li>
   );
 };
