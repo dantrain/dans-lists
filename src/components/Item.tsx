@@ -17,8 +17,8 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
 
   const utils = api.useContext();
 
-  const deleteItem = api.example.deleteItem.useMutation({
-    onSettled: () => void utils.example.getLists.invalidate(),
+  const deleteItem = api.item.delete.useMutation({
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const editMode = useAtomValue(editModeAtom);

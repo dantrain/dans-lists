@@ -4,8 +4,8 @@ import { api } from "~/utils/api";
 const AddItem = ({ listId }: { listId: string }) => {
   const utils = api.useContext();
 
-  const createItem = api.example.createItem.useMutation({
-    onSettled: () => void utils.example.getLists.invalidate(),
+  const createItem = api.item.create.useMutation({
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const ref = useRef<HTMLInputElement>(null);

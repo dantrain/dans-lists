@@ -1,4 +1,3 @@
-import { type inferRouterOutputs } from "@trpc/server";
 import { atom, useAtom } from "jotai";
 import { cloneDeep, first, isNil, set } from "lodash";
 import { type NextPage } from "next";
@@ -8,11 +7,10 @@ import Item from "~/components/Item";
 import List from "~/components/List";
 import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
-import { type AppRouter } from "~/server/api/root";
 
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 
-export type ListData = inferRouterOutputs<AppRouter>["example"]["getLists"][0];
+export type ListData = RouterOutputs["list"]["getAll"][0];
 export type ItemData = ListData["items"][0];
 
 export const editModeAtom = atom(false);
@@ -35,14 +33,14 @@ const Lists = () => {
   // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const timezone = "Europe/London";
 
-  const [lists] = api.example.getLists.useSuspenseQuery({ timezone });
+  const [lists] = api.list.getAll.useSuspenseQuery({ timezone });
 
   const utils = api.useContext();
 
-  const upsertEvent = api.example.upsertEvent.useMutation({
+  const upsertEvent = api.event.upsert.useMutation({
     onMutate: async (input) => {
-      await utils.example.getLists.cancel();
-      const prevData = utils.example.getLists.getData({ timezone });
+      await utils.list.getAll.cancel();
+      const prevData = utils.list.getAll.getData({ timezone });
       const optimisticData = cloneDeep(prevData);
 
       let itemIndex;
@@ -64,13 +62,13 @@ const Lists = () => {
         );
       }
 
-      utils.example.getLists.setData({ timezone }, optimisticData);
+      utils.list.getAll.setData({ timezone }, optimisticData);
 
       return { prevData };
     },
     onError: (_err, _input, ctx) => {
       // Roll back
-      utils.example.getLists.setData({ timezone }, ctx?.prevData);
+      utils.list.getAll.setData({ timezone }, ctx?.prevData);
     },
   });
 

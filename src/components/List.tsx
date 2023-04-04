@@ -13,8 +13,8 @@ type ListProps = {
 const List = ({ list: { title, id }, children }: ListProps) => {
   const utils = api.useContext();
 
-  const deleteList = api.example.deleteList.useMutation({
-    onSettled: () => void utils.example.getLists.invalidate(),
+  const deleteList = api.list.delete.useMutation({
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const editMode = useAtomValue(editModeAtom);

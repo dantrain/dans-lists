@@ -6,7 +6,7 @@
 - [x] Try Planetscale
 - [x] Deploy to Vercel
 - [x] Phone layout
-- [ ] Refactor TRPC router
+- [x] Refactor TRPC router
 - [ ] PWA
 - [ ] Edit lists/items
 - [ ] Collapsing lists
