@@ -9,7 +9,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "start:db": "pscale connect dans-lists main --port 3309"
+    "start:db": "pscale connect dans-lists main --port 3309",
+    "pwa-assets": "pwa-asset-generator logo.svg public/ -b \"#2e026d\" -t png"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.5",
@@ -50,6 +51,7 @@
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
     "prisma": "^4.11.0",
+    "pwa-asset-generator": "^6.2.1",
     "tailwindcss": "^3.3.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
