@@ -8,7 +8,7 @@ import List from "~/components/List";
 import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
 
-import { type RouterOutputs, api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 export type ListData = RouterOutputs["list"]["getAll"][0];
 export type ItemData = ListData["items"][0];
@@ -33,7 +33,13 @@ const Lists = () => {
   // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const timezone = "Europe/London";
 
-  const [lists] = api.list.getAll.useSuspenseQuery({ timezone });
+  const [lists] = api.list.getAll.useSuspenseQuery(
+    { timezone },
+    {
+      refetchInterval:
+        process.env.NODE_ENV === "development" ? false : 60 * 1000,
+    }
+  );
 
   const utils = api.useContext();
 

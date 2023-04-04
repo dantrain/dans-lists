@@ -76,7 +76,7 @@ export const api = createTRPCNext<AppRouter, never, "ExperimentalSuspense">({
         mutationCache: new MutationCache(cacheConfig),
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
+            staleTime: process.env.NODE_ENV === "development" ? 60 * 1000 : 0,
           },
         },
       },

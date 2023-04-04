@@ -11,7 +11,7 @@ const SignIn = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <main className="pt-20">
-      <div className="container flex flex-col items-center justify-center gap-20 px-4">
+      <div className="container mx-auto flex flex-col items-center justify-center gap-20 px-4">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Dan&apos;s Lists
         </h1>
