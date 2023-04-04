@@ -5,9 +5,9 @@
 - [x] Settings menu
 - [x] Try Planetscale
 - [x] Deploy to Vercel
-- [ ] Phone layout
-- [ ] PWA
+- [x] Phone layout
 - [ ] Refactor TRPC router
+- [ ] PWA
 - [ ] Edit lists/items
 - [ ] Collapsing lists
 - [ ] Reordering

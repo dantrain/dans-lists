@@ -24,7 +24,7 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
   const editMode = useAtomValue(editModeAtom);
 
   return (
-    <li className="my-2 flex items-center">
+    <li className="my-2 flex items-center pr-1">
       <Checkbox
         id={id}
         checked={checked}
