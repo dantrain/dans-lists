@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
+import EditList from "./EditList";
 import { DeleteIcon } from "./Icons";
 
 type ListProps = {
@@ -10,7 +11,7 @@ type ListProps = {
   children: ReactNode;
 };
 
-const List = ({ list: { title, id }, children }: ListProps) => {
+const List = ({ list, children }: ListProps) => {
   const utils = api.useContext();
 
   const deleteList = api.list.delete.useMutation({
@@ -22,18 +23,22 @@ const List = ({ list: { title, id }, children }: ListProps) => {
   return (
     <li className="mb-5">
       <div className="mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
-        <span className="select-none font-bold">{title}</span>
-        {editMode && (
-          <button
-            className="px-2 text-gray-400 hover:text-white"
-            title="Delete"
-            onClick={() => deleteList.mutate({ id })}
-          >
-            <DeleteIcon />
-          </button>
+        {editMode ? (
+          <>
+            <EditList list={list} />
+            <button
+              className="px-2 text-gray-400 hover:text-white"
+              title="Delete"
+              onClick={() => deleteList.mutate({ id: list.id })}
+            >
+              <DeleteIcon />
+            </button>
+          </>
+        ) : (
+          <span className="select-none font-bold">{list.title}</span>
         )}
       </div>
-      {editMode && <AddItem listId={id} />}
+      {editMode && <AddItem listId={list.id} />}
       <ul className="mx-1">{children}</ul>
     </li>
   );

@@ -12,8 +12,8 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { events } = await ctx.prisma.item.findUniqueOrThrow({
-        where: { id: input.itemId },
+      const { events } = await ctx.prisma.item.findFirstOrThrow({
+        where: { id: input.itemId, list: { ownerId: ctx.session.user.id } },
         select: {
           events: {
             where: {

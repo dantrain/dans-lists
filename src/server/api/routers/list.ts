@@ -43,11 +43,20 @@ export const listRouter = createTRPCRouter({
       })
     ),
 
+  edit: protectedProcedure
+    .input(z.object({ id: z.string(), title: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.list.updateMany({
+        where: { id: input.id, ownerId: ctx.session.user.id },
+        data: { title: input.title },
+      })
+    ),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) =>
-      ctx.prisma.list.delete({
-        where: { id: input.id },
+      ctx.prisma.list.deleteMany({
+        where: { id: input.id, ownerId: ctx.session.user.id },
       })
     ),
 });

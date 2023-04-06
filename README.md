@@ -8,7 +8,7 @@
 - [x] Phone layout
 - [x] Refactor TRPC router
 - [x] PWA
-- [ ] Edit lists/items
+- [x] Edit lists/items
 - [ ] Collapsing lists
 - [ ] Reordering
 - [ ] Fix timezones
