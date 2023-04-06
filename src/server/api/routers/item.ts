@@ -13,6 +13,15 @@ export const itemRouter = createTRPCRouter({
       })
     ),
 
+  edit: protectedProcedure
+    .input(z.object({ id: z.string(), title: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.item.update({
+        where: { id: input.id },
+        data: { title: input.title },
+      })
+    ),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) =>

@@ -4,7 +4,10 @@ import { Fragment } from "react";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html
+      lang="en"
+      className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]"
+    >
       <Head>
         <meta name="description" content="Track daily and other checklists" />
         <meta name="theme-color" content="#2e026d" />
@@ -51,7 +54,7 @@ export default function Document() {
           );
         })}
       </Head>
-      <body className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      <body>
         <Main />
         <NextScript />
       </body>

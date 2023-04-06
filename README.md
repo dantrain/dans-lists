@@ -7,7 +7,7 @@
 - [x] Deploy to Vercel
 - [x] Phone layout
 - [x] Refactor TRPC router
-- [ ] PWA
+- [x] PWA
 - [ ] Edit lists/items
 - [ ] Collapsing lists
 - [ ] Reordering
