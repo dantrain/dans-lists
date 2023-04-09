@@ -1,17 +1,16 @@
 import { useAtomValue } from "jotai";
-import { type ReactNode } from "react";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
 import { DeleteIcon } from "./Icons";
+import Item from "./Item";
 
 type ListProps = {
   list: ListData;
-  children: ReactNode;
 };
 
-const List = ({ list, children }: ListProps) => {
+const List = ({ list }: ListProps) => {
   const utils = api.useContext();
 
   const deleteList = api.list.delete.useMutation({
@@ -39,7 +38,11 @@ const List = ({ list, children }: ListProps) => {
         )}
       </div>
       {editMode && <AddItem listId={list.id} />}
-      <ul className="mx-1">{children}</ul>
+      <ul className="mx-1">
+        {list.items.map((item) => (
+          <Item key={item.id} item={item} />
+        ))}
+      </ul>
     </li>
   );
 };

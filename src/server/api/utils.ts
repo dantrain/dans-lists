@@ -5,7 +5,7 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDayDateRange = (timezone: string) => ({
-  gte: dayjs().tz(timezone).startOf("day").toISOString(),
-  lte: dayjs().tz(timezone).endOf("day").toISOString(),
+export const getDayDateRange = () => ({
+  gte: dayjs().tz("Europe/London").startOf("day").toISOString(),
+  lte: dayjs().tz("Europe/London").endOf("day").toISOString(),
 });

@@ -8,7 +8,6 @@ export const eventRouter = createTRPCRouter({
       z.object({
         itemId: z.string(),
         statusName: z.string(),
-        timezone: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -17,7 +16,7 @@ export const eventRouter = createTRPCRouter({
         select: {
           events: {
             where: {
-              createdAt: getDayDateRange(input.timezone),
+              createdAt: getDayDateRange(),
             },
             take: 1,
           },

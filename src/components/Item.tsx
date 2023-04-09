@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { first } from "lodash";
+import { cloneDeep, first, isNil, set } from "lodash";
 import { editModeAtom, type ItemData } from "~/pages";
 import { api } from "~/utils/api";
 import Checkbox from "./Checkbox";
@@ -9,14 +9,55 @@ import { DeleteIcon, DragIndicatorIcon } from "./Icons";
 
 type ListItemProps = {
   item: ItemData;
-  onCheckedChange: (item: ItemData) => void;
 };
 
-const Item = ({ item, onCheckedChange }: ListItemProps) => {
+const Item = ({ item }: ListItemProps) => {
   const { id, title, events } = item;
   const checked = first(events)?.status.name === "COMPLETE";
 
   const utils = api.useContext();
+
+  const upsertEvent = api.event.upsert.useMutation({
+    onMutate: async (input) => {
+      await utils.list.getAll.cancel();
+      const prevData = utils.list.getAll.getData();
+      const optimisticData = cloneDeep(prevData);
+
+      let itemIndex;
+      const listIndex = optimisticData?.findIndex((list) => {
+        itemIndex = list.items.findIndex((item) => item.id === input.itemId);
+        return itemIndex >= 0;
+      });
+
+      if (
+        !isNil(optimisticData) &&
+        !isNil(listIndex) &&
+        !isNil(itemIndex) &&
+        itemIndex >= 0
+      ) {
+        set(
+          optimisticData,
+          [listIndex, "items", itemIndex, "events", "0", "status", "name"],
+          input.statusName
+        );
+      }
+
+      utils.list.getAll.setData(undefined, optimisticData);
+
+      return { prevData };
+    },
+    onError: (_err, _input, ctx) => {
+      // Roll back
+      utils.list.getAll.setData(undefined, ctx?.prevData);
+    },
+  });
+
+  const handleCheckedChanged = () =>
+    upsertEvent.mutate({
+      itemId: id,
+      statusName:
+        first(item.events)?.status.name === "COMPLETE" ? "PENDING" : "COMPLETE",
+    });
 
   const deleteItem = api.item.delete.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),
@@ -43,7 +84,7 @@ const Item = ({ item, onCheckedChange }: ListItemProps) => {
           <Checkbox
             id={id}
             checked={checked}
-            onCheckedChange={() => onCheckedChange(item)}
+            onCheckedChange={handleCheckedChanged}
           />
           <label
             className={clsx("flex-grow select-none py-1 pl-1 sm:py-0", {

@@ -3,34 +3,28 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { getDayDateRange } from "../utils";
 
 export const listRouter = createTRPCRouter({
-  getAll: protectedProcedure
-    .input(
-      z.object({
-        timezone: z.string(),
-      })
-    )
-    .query(({ ctx, input }) => {
-      return ctx.prisma.list.findMany({
-        where: { ownerId: ctx.session.user.id },
-        select: {
-          id: true,
-          title: true,
-          items: {
-            select: {
-              id: true,
-              title: true,
-              events: {
-                where: {
-                  createdAt: getDayDateRange(input.timezone),
-                },
-                take: 1,
-                select: { status: { select: { name: true } } },
+  getAll: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.list.findMany({
+      where: { ownerId: ctx.session.user.id },
+      select: {
+        id: true,
+        title: true,
+        items: {
+          select: {
+            id: true,
+            title: true,
+            events: {
+              where: {
+                createdAt: getDayDateRange(),
               },
+              take: 1,
+              select: { status: { select: { name: true } } },
             },
           },
         },
-      });
-    }),
+      },
+    });
+  }),
 
   create: protectedProcedure
     .input(z.object({ title: z.string() }))
