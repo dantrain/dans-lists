@@ -21,6 +21,7 @@ model List {
     updatedAt DateTime @updatedAt
 
     title String @db.Text
+    rank  String
 
     owner   User   @relation(fields: [ownerId], references: [id])
     ownerId String
@@ -28,6 +29,7 @@ model List {
     items Item[]
 
     @@index([ownerId])
+    @@index([rank])
 }
 
 model Item {
@@ -36,6 +38,7 @@ model Item {
     updatedAt DateTime @updatedAt
 
     title String @db.Text
+    rank  String
 
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
     listId String
@@ -43,6 +46,7 @@ model Item {
     events Event[]
 
     @@index([listId])
+    @@index([rank])
 }
 
 model Event {

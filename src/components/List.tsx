@@ -25,6 +25,14 @@ const List = ({ list }: ListProps) => {
     setItems(list.items);
   }, [list.items]);
 
+  const utils = api.useContext();
+
+  const deleteList = api.list.delete.useMutation({
+    onSettled: () => void utils.list.getAll.invalidate(),
+  });
+
+  const rankItem = api.item.rank.useMutation();
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -33,16 +41,25 @@ const List = ({ list }: ListProps) => {
         const oldIndex = findIndex(items, { id: active.id as string });
         const newIndex = findIndex(items, { id: over.id as string });
 
-        return arrayMove(items, oldIndex, newIndex);
+        const newItems = arrayMove(items, oldIndex, newIndex);
+
+        rankItem.mutate(
+          {
+            id: active.id as string,
+            beforeId: newItems[newIndex - 1]?.id,
+            afterId: newItems[newIndex + 1]?.id,
+          },
+          {
+            onError: () => {
+              setItems(list.items);
+            },
+          }
+        );
+
+        return newItems;
       });
     }
   };
-
-  const utils = api.useContext();
-
-  const deleteList = api.list.delete.useMutation({
-    onSettled: () => void utils.list.getAll.invalidate(),
-  });
 
   const editMode = useAtomValue(editModeAtom);
 

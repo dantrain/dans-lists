@@ -1,3 +1,4 @@
+import { LexoRank } from "lexorank";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { getDayDateRange } from "../utils";
@@ -22,23 +23,33 @@ export const listRouter = createTRPCRouter({
               orderBy: { createdAt: "asc" },
             },
           },
-          orderBy: { id: "asc" },
+          orderBy: { rank: "asc" },
         },
       },
-      orderBy: { id: "asc" },
+      orderBy: { rank: "asc" },
     });
   }),
 
   create: protectedProcedure
     .input(z.object({ title: z.string() }))
-    .mutation(({ ctx, input }) =>
-      ctx.prisma.list.create({
+    .mutation(async ({ ctx, input }) => {
+      const [prev] = await ctx.prisma.list.findMany({
+        where: { ownerId: ctx.session.user.id },
+        select: { rank: true },
+        take: 1,
+        orderBy: { rank: "desc" },
+      });
+
+      return ctx.prisma.list.create({
         data: {
           title: input.title,
           owner: { connect: { id: ctx.session.user.id } },
+          rank: prev
+            ? LexoRank.parse(prev.rank).genNext().toString()
+            : LexoRank.middle().toString(),
         },
-      })
-    ),
+      });
+    }),
 
   edit: protectedProcedure
     .input(z.object({ id: z.string(), title: z.string() }))
