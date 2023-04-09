@@ -1,3 +1,8 @@
+import { closestCenter, DndContext } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { useAtomValue } from "jotai";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
@@ -39,9 +44,16 @@ const List = ({ list }: ListProps) => {
       </div>
       {editMode && <AddItem listId={list.id} />}
       <ul className="mx-1">
-        {list.items.map((item) => (
-          <Item key={item.id} item={item} />
-        ))}
+        <DndContext id={list.id} collisionDetection={closestCenter}>
+          <SortableContext
+            items={list.items}
+            strategy={verticalListSortingStrategy}
+          >
+            {list.items.map((item) => (
+              <Item key={item.id} item={item} />
+            ))}
+          </SortableContext>
+        </DndContext>
       </ul>
     </li>
   );

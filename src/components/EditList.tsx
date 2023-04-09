@@ -29,7 +29,7 @@ const EditList = ({ list }: { list: ListData }) => {
       <input
         id={`editListInput-${list.id}`}
         ref={ref}
-        className="w-full rounded-md border border-[hsl(264,56%,40%)] bg-white/10 px-2 py-1 placeholder:text-gray-400"
+        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
         type="text"
         autoComplete="off"
         value={title}

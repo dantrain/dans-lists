@@ -1,3 +1,5 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { cloneDeep, first, isNil, set } from "lodash";
@@ -65,11 +67,36 @@ const Item = ({ item }: ListItemProps) => {
 
   const editMode = useAtomValue(editModeAtom);
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
   return (
-    <li className="my-2 flex items-center pr-1">
+    <li
+      className="relative my-2 flex items-center pr-1"
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 100 : undefined,
+      }}
+      {...attributes}
+    >
       {editMode ? (
         <>
-          <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
+          <button
+            className={isDragging ? "cursor-grabbing" : "cursor-grab"}
+            ref={setActivatorNodeRef}
+            {...listeners}
+          >
+            <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
+          </button>
           <EditItem item={item} />
           <button
             className="px-2 text-gray-400 hover:text-white"
