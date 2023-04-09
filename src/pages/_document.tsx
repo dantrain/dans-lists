@@ -51,7 +51,8 @@ export default function Document() {
           );
         })}
       </Head>
-      <body className="min-h-screen bg-[#2e026d] bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      <body className="bg-[#2e026d]">
+        <div className="fixed h-screen w-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]" />
         <Main />
         <NextScript />
       </body>
