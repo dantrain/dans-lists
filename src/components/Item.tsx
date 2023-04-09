@@ -91,7 +91,9 @@ const Item = ({ item }: ListItemProps) => {
       {editMode ? (
         <>
           <button
-            className={isDragging ? "cursor-grabbing" : "cursor-grab"}
+            className={`touch-none ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
             ref={setActivatorNodeRef}
             {...listeners}
           >
