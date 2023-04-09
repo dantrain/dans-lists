@@ -1,6 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { LexoRank } from "lexorank";
 
 const prisma = new PrismaClient();
+
+let rank = LexoRank.middle();
+
+const getNextRank = () => {
+  rank = rank.genNext();
+  return rank.toString();
+};
 
 async function main() {
   await prisma.status.create({ data: { name: "PENDING" } });
@@ -10,11 +18,12 @@ async function main() {
     data: {
       title: "Morning",
       owner: { connect: { email: "dantrain@gmail.com" } },
+      rank: getNextRank(),
       items: {
         create: [
-          { title: "Exercise" },
-          { title: "Shower" },
-          { title: "Breakfast" },
+          { title: "Exercise", rank: getNextRank() },
+          { title: "Shower", rank: getNextRank() },
+          { title: "Breakfast", rank: getNextRank() },
         ],
       },
     },
@@ -24,8 +33,12 @@ async function main() {
     data: {
       title: "Work",
       owner: { connect: { email: "dantrain@gmail.com" } },
+      rank: getNextRank(),
       items: {
-        create: [{ title: "Check calendar" }, { title: "Check email" }],
+        create: [
+          { title: "Check calendar", rank: getNextRank() },
+          { title: "Check email", rank: getNextRank() },
+        ],
       },
     },
   });
