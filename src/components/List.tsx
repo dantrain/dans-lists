@@ -1,9 +1,12 @@
-import { closestCenter, DndContext } from "@dnd-kit/core";
+import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
+  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useAtomValue } from "jotai";
+import { findIndex, sortBy } from "lodash";
+import { useEffect, useState } from "react";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
@@ -16,6 +19,25 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
+  const [items, setItems] = useState(() => sortBy(list.items, "id"));
+
+  useEffect(() => {
+    setItems(sortBy(list.items, "id"));
+  }, [list.items]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = findIndex(items, { id: active.id as string });
+        const newIndex = findIndex(items, { id: over.id as string });
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const utils = api.useContext();
 
   const deleteList = api.list.delete.useMutation({
@@ -44,12 +66,13 @@ const List = ({ list }: ListProps) => {
       </div>
       {editMode && <AddItem listId={list.id} />}
       <ul className="mx-1">
-        <DndContext id={list.id} collisionDetection={closestCenter}>
-          <SortableContext
-            items={list.items}
-            strategy={verticalListSortingStrategy}
-          >
-            {list.items.map((item) => (
+        <DndContext
+          id={list.id}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={items} strategy={verticalListSortingStrategy}>
+            {items.map((item) => (
               <Item key={item.id} item={item} />
             ))}
           </SortableContext>
