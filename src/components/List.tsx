@@ -5,7 +5,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useAtomValue } from "jotai";
-import { findIndex, sortBy } from "lodash";
+import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
@@ -19,10 +19,10 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
-  const [items, setItems] = useState(() => sortBy(list.items, "id"));
+  const [items, setItems] = useState(() => list.items);
 
   useEffect(() => {
-    setItems(sortBy(list.items, "id"));
+    setItems(list.items);
   }, [list.items]);
 
   const handleDragEnd = (event: DragEndEvent) => {

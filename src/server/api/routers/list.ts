@@ -19,10 +19,13 @@ export const listRouter = createTRPCRouter({
               },
               take: 1,
               select: { status: { select: { name: true } } },
+              orderBy: { createdAt: "asc" },
             },
           },
+          orderBy: { id: "asc" },
         },
       },
+      orderBy: { id: "asc" },
     });
   }),
 
