@@ -60,6 +60,48 @@ export const listRouter = createTRPCRouter({
       })
     ),
 
+  rank: protectedProcedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          beforeId: z.optional(z.string()),
+          afterId: z.optional(z.string()),
+        })
+        .refine((_) => _.beforeId || _.afterId)
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [beforeItem, afterItem] = await ctx.prisma.$transaction([
+        ctx.prisma.list.findFirst({
+          where: { id: input.beforeId ?? "%other" },
+          select: { rank: true },
+        }),
+        ctx.prisma.list.findFirst({
+          where: { id: input.afterId ?? "%other" },
+          select: { rank: true },
+        }),
+      ]);
+
+      let newRank: LexoRank;
+
+      if (!beforeItem && afterItem) {
+        newRank = LexoRank.parse(afterItem.rank).genPrev();
+      } else if (beforeItem && !afterItem) {
+        newRank = LexoRank.parse(beforeItem.rank).genNext();
+      } else if (beforeItem && afterItem) {
+        newRank = LexoRank.parse(beforeItem.rank).between(
+          LexoRank.parse(afterItem.rank)
+        );
+      } else {
+        throw new Error();
+      }
+
+      return ctx.prisma.list.update({
+        where: { id: input.id },
+        data: { rank: newRank.toString() },
+      });
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) =>

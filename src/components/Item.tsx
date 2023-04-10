@@ -82,7 +82,7 @@ const Item = ({ item }: ListItemProps) => {
       className="relative my-2 flex items-center pr-1"
       ref={setNodeRef}
       style={{
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         transition,
         zIndex: isDragging ? 100 : undefined,
       }}
