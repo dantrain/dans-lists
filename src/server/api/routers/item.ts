@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { LexoRank } from "lexorank";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { getRank } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
@@ -67,23 +68,9 @@ export const itemRouter = createTRPCRouter({
         }),
       ]);
 
-      let newRank: LexoRank;
-
-      if (!beforeItem && afterItem) {
-        newRank = LexoRank.parse(afterItem.rank).genPrev();
-      } else if (beforeItem && !afterItem) {
-        newRank = LexoRank.parse(beforeItem.rank).genNext();
-      } else if (beforeItem && afterItem) {
-        newRank = LexoRank.parse(beforeItem.rank).between(
-          LexoRank.parse(afterItem.rank)
-        );
-      } else {
-        throw new Error();
-      }
-
       return ctx.prisma.item.update({
         where: { id: input.id },
-        data: { rank: newRank.toString() },
+        data: { rank: getRank(beforeItem, afterItem) },
       });
     }),
 

@@ -9,7 +9,7 @@
 - [x] Refactor TRPC router
 - [x] PWA
 - [x] Edit lists/items
-- [ ] Reordering
+- [x] Reordering
 - [ ] Collapsing lists
 - [ ] Fix timezones
 - [ ] List frequency
