@@ -1,14 +1,11 @@
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
+import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useAtomValue } from "jotai";
-import { findIndex } from "lodash";
-import { useEffect, useState } from "react";
 import useRank from "~/hooks/useRank";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";

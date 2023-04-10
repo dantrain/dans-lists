@@ -1,13 +1,11 @@
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
+import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { atom, useAtom } from "jotai";
-import { findIndex } from "lodash";
 import { type NextPage } from "next";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import AddList from "~/components/AddList";
 import List from "~/components/List";
 import Progress from "~/components/Progress";

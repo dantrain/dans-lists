@@ -1,8 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { LexoRank } from "lexorank";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { getRank } from "../utils";
+import { getNextRank, getRankBetween } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
@@ -24,15 +23,13 @@ export const itemRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const prev = list.items[0];
+      const beforeItem = list.items[0];
 
       return ctx.prisma.item.create({
         data: {
           title: input.title,
           list: { connect: { id: input.listId } },
-          rank: prev
-            ? LexoRank.parse(prev.rank).genNext().toString()
-            : LexoRank.middle().toString(),
+          rank: getNextRank(beforeItem),
         },
       });
     }),
@@ -70,7 +67,7 @@ export const itemRouter = createTRPCRouter({
 
       return ctx.prisma.item.update({
         where: { id: input.id },
-        data: { rank: getRank(beforeItem, afterItem) },
+        data: { rank: getRankBetween(beforeItem, afterItem) },
       });
     }),
 

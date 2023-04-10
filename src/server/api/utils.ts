@@ -13,7 +13,12 @@ export const getDayDateRange = () => ({
 
 type RankItem = { rank: string } | null;
 
-export const getRank = (beforeItem: RankItem, afterItem: RankItem) => {
+export const getNextRank = (beforeItem?: RankItem) =>
+  beforeItem
+    ? LexoRank.parse(beforeItem.rank).genNext().toString()
+    : LexoRank.middle().toString();
+
+export const getRankBetween = (beforeItem: RankItem, afterItem: RankItem) => {
   let rank: LexoRank;
 
   if (!beforeItem && afterItem) {

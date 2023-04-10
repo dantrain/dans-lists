@@ -11,9 +11,9 @@
 - [x] Edit lists/items
 - [x] Reordering
 - [ ] Collapsing lists
-- [ ] Fix timezones
 - [ ] List frequency
 - [ ] Skipping
+- [ ] Fix timezones
 - [ ] Styling
 - [ ] Try Upstash for session storage
 - [ ] Try prisma-kysely
