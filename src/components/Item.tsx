@@ -86,7 +86,6 @@ const Item = ({ item }: ListItemProps) => {
         transition,
         zIndex: isDragging ? 100 : undefined,
       }}
-      {...attributes}
     >
       {editMode ? (
         <>
@@ -96,6 +95,7 @@ const Item = ({ item }: ListItemProps) => {
             }`}
             ref={setActivatorNodeRef}
             {...listeners}
+            {...attributes}
           >
             <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
           </button>

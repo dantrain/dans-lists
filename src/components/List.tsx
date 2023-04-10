@@ -50,7 +50,6 @@ const List = ({ list }: ListProps) => {
         transition,
         zIndex: isDragging ? 100 : undefined,
       }}
-      {...attributes}
     >
       <div className="mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
         {editMode ? (
@@ -61,6 +60,7 @@ const List = ({ list }: ListProps) => {
               }`}
               ref={setActivatorNodeRef}
               {...listeners}
+              {...attributes}
             >
               <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
             </button>
