@@ -10,9 +10,9 @@
 - [x] PWA
 - [x] Edit lists/items
 - [x] Reordering
-- [ ] Collapsing lists
 - [ ] List frequency
 - [ ] Skipping
+- [ ] Collapsing lists
 - [ ] Fix timezones
 - [ ] Styling
 - [ ] Try Upstash for session storage

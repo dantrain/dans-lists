@@ -5,7 +5,7 @@ import {
 } from "@dnd-kit/sortable";
 import { atom, useAtom } from "jotai";
 import { type NextPage } from "next";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import AddList from "~/components/AddList";
 import List from "~/components/List";
 import Progress from "~/components/Progress";
@@ -33,16 +33,41 @@ const Home: NextPage = () => {
 
 export default Home;
 
+export const daysOfWeek = [
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
+  "Sun",
+] as const;
+
+export type Weekday = (typeof daysOfWeek)[number];
+
+const theDayToday = Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  timeZone: "Europe/London",
+}).format(new Date()) as Weekday;
+
 const Lists = () => {
+  const [editMode, setEditMode] = useAtom(editModeAtom);
+
   const [data] = api.list.getAll.useSuspenseQuery(undefined, {
     refetchInterval: process.env.NODE_ENV === "development" ? false : 60 * 1000,
   });
 
   const rankList = api.list.rank.useMutation();
 
-  const [lists, handleDragEnd] = useRank(data, rankList.mutate);
+  const filteredData = useMemo(
+    () => data.filter((list) => list[`repeats${theDayToday}`]),
+    [data]
+  );
 
-  const [editMode, setEditMode] = useAtom(editModeAtom);
+  const [lists, handleDragEnd] = useRank(
+    editMode ? data : filteredData,
+    rankList.mutate
+  );
 
   useEffect(() => {
     if (lists.length === 0 && !editMode) {

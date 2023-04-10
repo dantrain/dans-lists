@@ -23,6 +23,14 @@ model List {
     title String @db.Text
     rank  String
 
+    repeatsMon Boolean @default(true)
+    repeatsTue Boolean @default(true)
+    repeatsWed Boolean @default(true)
+    repeatsThu Boolean @default(true)
+    repeatsFri Boolean @default(true)
+    repeatsSat Boolean @default(true)
+    repeatsSun Boolean @default(true)
+
     owner   User   @relation(fields: [ownerId], references: [id])
     ownerId String
 

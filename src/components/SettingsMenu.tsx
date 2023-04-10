@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { signOut } from "next-auth/react";
 import { type ReactNode } from "react";
 import { editModeAtom } from "~/pages";
+import { api } from "~/utils/api";
 import { CheckIcon, EditIcon, LogoutIcon, SettingsIcon } from "./Icons";
 
 const MenuItem = ({ children }: { children: ReactNode }) => (
@@ -13,6 +14,7 @@ const MenuItem = ({ children }: { children: ReactNode }) => (
 
 const SettingsMenu = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);
+  const utils = api.useContext();
 
   return (
     <DropdownMenu.Root>
@@ -36,6 +38,7 @@ const SettingsMenu = () => {
             className="group px-1 pt-1 focus:outline-none"
             checked={editMode}
             onCheckedChange={(checked) => {
+              if (!checked) void utils.list.invalidate();
               setEditMode(checked);
             }}
           >
