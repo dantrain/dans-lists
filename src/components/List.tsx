@@ -9,6 +9,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useAtomValue } from "jotai";
 import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
+import useRank from "~/hooks/useRank";
 import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
@@ -21,12 +22,6 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
-  const [items, setItems] = useState(list.items);
-
-  useEffect(() => {
-    setItems(list.items);
-  }, [list.items]);
-
   const utils = api.useContext();
 
   const deleteList = api.list.delete.useMutation({
@@ -35,33 +30,7 @@ const List = ({ list }: ListProps) => {
 
   const rankItem = api.item.rank.useMutation();
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = findIndex(items, { id: active.id as string });
-        const newIndex = findIndex(items, { id: over.id as string });
-
-        const newItems = arrayMove(items, oldIndex, newIndex);
-
-        rankItem.mutate(
-          {
-            id: active.id as string,
-            beforeId: newItems[newIndex - 1]?.id,
-            afterId: newItems[newIndex + 1]?.id,
-          },
-          {
-            onError: () => {
-              setItems(list.items);
-            },
-          }
-        );
-
-        return newItems;
-      });
-    }
-  };
+  const [items, handleDragEnd] = useRank(list.items, rankItem.mutate);
 
   const editMode = useAtomValue(editModeAtom);
 

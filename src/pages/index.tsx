@@ -12,6 +12,7 @@ import AddList from "~/components/AddList";
 import List from "~/components/List";
 import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
+import useRank from "~/hooks/useRank";
 
 import { api, type RouterOutputs } from "~/utils/api";
 
@@ -39,41 +40,9 @@ const Lists = () => {
     refetchInterval: process.env.NODE_ENV === "development" ? false : 60 * 1000,
   });
 
-  const [lists, setLists] = useState(data);
-
-  useEffect(() => {
-    setLists(data);
-  }, [data]);
-
   const rankList = api.list.rank.useMutation();
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setLists((lists) => {
-        const oldIndex = findIndex(lists, { id: active.id as string });
-        const newIndex = findIndex(lists, { id: over.id as string });
-
-        const newItems = arrayMove(lists, oldIndex, newIndex);
-
-        rankList.mutate(
-          {
-            id: active.id as string,
-            beforeId: newItems[newIndex - 1]?.id,
-            afterId: newItems[newIndex + 1]?.id,
-          },
-          {
-            onError: () => {
-              setLists(data);
-            },
-          }
-        );
-
-        return newItems;
-      });
-    }
-  };
+  const [lists, handleDragEnd] = useRank(data, rankList.mutate);
 
   const [editMode, setEditMode] = useAtom(editModeAtom);
 
