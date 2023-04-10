@@ -11,6 +11,7 @@ import { editModeAtom, type ListData } from "~/pages";
 import { api } from "~/utils/api";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
+import EditListRepeat from "./EditListRepeat";
 import { DeleteIcon, DragIndicatorIcon } from "./Icons";
 import Item from "./Item";
 
@@ -77,7 +78,12 @@ const List = ({ list }: ListProps) => {
           <span className="select-none font-bold">{list.title}</span>
         )}
       </div>
-      {editMode && <AddItem listId={list.id} />}
+      {editMode && (
+        <>
+          <EditListRepeat list={list} />
+          <AddItem listId={list.id} />
+        </>
+      )}
       <ul className="mx-1">
         <DndContext
           id={list.id}
