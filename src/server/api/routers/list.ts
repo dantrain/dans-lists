@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { daysOfWeek } from "~/utils/date";
 import { getDayDateRange, getNextRank, getRankBetween } from "../utils";
 
 export const listRouter = createTRPCRouter({
@@ -61,6 +62,23 @@ export const listRouter = createTRPCRouter({
       ctx.prisma.list.updateMany({
         where: { id: input.id, ownerId: ctx.session.user.id },
         data: { title: input.title },
+      })
+    ),
+
+  editRepeat: protectedProcedure
+    .input(
+      z.object({ id: z.string(), repeatDays: z.array(z.enum(daysOfWeek)) })
+    )
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.list.updateMany({
+        where: { id: input.id, ownerId: ctx.session.user.id },
+        data: daysOfWeek.reduce(
+          (data, day) => ({
+            ...data,
+            [`repeats${day}`]: input.repeatDays.includes(day),
+          }),
+          {}
+        ),
       })
     ),
 

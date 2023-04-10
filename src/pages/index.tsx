@@ -13,6 +13,7 @@ import SettingsMenu from "~/components/SettingsMenu";
 import useRank from "~/hooks/useRank";
 
 import { api, type RouterOutputs } from "~/utils/api";
+import { theDayToday } from "~/utils/date";
 
 export type ListData = RouterOutputs["list"]["getAll"][0];
 export type ItemData = ListData["items"][0];
@@ -32,23 +33,6 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-export const daysOfWeek = [
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thu",
-  "Fri",
-  "Sat",
-  "Sun",
-] as const;
-
-export type Weekday = (typeof daysOfWeek)[number];
-
-const theDayToday = Intl.DateTimeFormat("en-US", {
-  weekday: "short",
-  timeZone: "Europe/London",
-}).format(new Date()) as Weekday;
 
 const Lists = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);

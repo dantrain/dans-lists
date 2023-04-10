@@ -15,7 +15,7 @@ const EditList = ({ list }: { list: ListData }) => {
 
   return (
     <form
-      className="w-full"
+      className="mb-1 w-full"
       onSubmit={(e) => {
         e.preventDefault();
         ref.current?.blur();
