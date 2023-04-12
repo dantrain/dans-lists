@@ -1,8 +1,8 @@
 import { type SVGProps } from "react";
 
-type IconProps = SVGProps<SVGSVGElement>;
+export type IconProps = SVGProps<SVGSVGElement>;
 
-const SVGIcon = (props: IconProps) => (
+export const SVGIcon = (props: IconProps) => (
   <svg
     focusable="false"
     aria-hidden="true"

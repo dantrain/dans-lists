@@ -5,11 +5,13 @@ import {
 } from "@dnd-kit/sortable";
 import { atom, useAtom } from "jotai";
 import { type NextPage } from "next";
-import { Suspense, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import AddList from "~/components/AddList";
 import List from "~/components/List";
 import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
+import Spinner from "~/components/Spinner";
+import Suspense from "~/components/Suspense";
 import useRank from "~/hooks/useRank";
 
 import { api, type RouterOutputs } from "~/utils/api";
@@ -25,7 +27,13 @@ const Home: NextPage = () => {
     <main className="relative px-4 pt-11 sm:pt-20">
       <Progress />
       <SettingsMenu />
-      <Suspense fallback={<></>}>
+      <Suspense
+        fallback={
+          <div className="flex animate-fade justify-center pt-10 text-white">
+            <Spinner />
+          </div>
+        }
+      >
         <Lists />
       </Suspense>
     </main>
