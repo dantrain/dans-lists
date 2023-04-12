@@ -1,10 +1,18 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useAtom } from "jotai";
 import { signOut } from "next-auth/react";
-import { type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { editModeAtom } from "~/pages";
 import { api } from "~/utils/api";
-import { CheckIcon, EditIcon, LogoutIcon, SettingsIcon } from "./Icons";
+import {
+  CheckIcon,
+  EditIcon,
+  InstallDesktopIcon,
+  InstallMobileIcon,
+  LogoutIcon,
+  RefreshIcon,
+  SettingsIcon,
+} from "./Icons";
 
 const MenuItem = ({ children }: { children: ReactNode }) => (
   <div className="relative flex min-w-[200px] items-center justify-between rounded-sm p-3 pl-8 group-hover:bg-[rgba(255,255,255,0.1)] group-focus-visible:bg-[rgba(255,255,255,0.1)]">
@@ -15,6 +23,34 @@ const MenuItem = ({ children }: { children: ReactNode }) => (
 const SettingsMenu = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);
   const utils = api.useContext();
+
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  const [installPrompt, setInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        setInstallPrompt(e as BeforeInstallPromptEvent);
+      });
+
+      window.addEventListener("appinstalled", () => {
+        setInstallPrompt(null);
+      });
+
+      setIsStandalone(
+        window.matchMedia(
+          "(display-mode: standalone), (display-mode: fullscreen)"
+        ).matches
+      );
+    }
+  }, []);
+
+  const handleInstall = useCallback(() => {
+    void installPrompt?.prompt();
+  }, [installPrompt]);
 
   return (
     <DropdownMenu.Root>
@@ -50,6 +86,37 @@ const SettingsMenu = () => {
               <EditIcon width="18" height="18" />
             </MenuItem>
           </DropdownMenu.CheckboxItem>
+          {!!installPrompt && (
+            <DropdownMenu.Item
+              className="group px-1 pb-1 focus:outline-none"
+              onClick={handleInstall}
+            >
+              <MenuItem>
+                Install app
+                <InstallMobileIcon
+                  className="mr-[1px] sm:hidden"
+                  width="18"
+                  height="18"
+                />
+                <InstallDesktopIcon
+                  className="mr-[1px] hidden sm:block"
+                  width="18"
+                  height="18"
+                />
+              </MenuItem>
+            </DropdownMenu.Item>
+          )}
+          {isStandalone && (
+            <DropdownMenu.Item
+              className="group px-1 pb-1 focus:outline-none"
+              onClick={() => location.reload()}
+            >
+              <MenuItem>
+                Reload
+                <RefreshIcon width="20" height="20" />
+              </MenuItem>
+            </DropdownMenu.Item>
+          )}
           <DropdownMenu.Item
             className="group px-1 pb-1 focus:outline-none"
             onClick={() => void signOut()}
