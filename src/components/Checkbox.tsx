@@ -1,6 +1,10 @@
 import * as RadixCheckbox from "@radix-ui/react-checkbox";
 import { type ComponentProps } from "react";
-import { CheckboxIcon, CheckboxOutlineBlankIcon } from "./Icons";
+import {
+  CheckboxIcon,
+  CheckboxOutlineBlankIcon,
+  IndeterminateCheckboxIcon,
+} from "./Icons";
 
 const Checkbox = ({
   checked,
@@ -13,7 +17,8 @@ const Checkbox = ({
       {...rest}
     >
       <RadixCheckbox.Indicator>
-        <CheckboxIcon />
+        {checked === "indeterminate" && <IndeterminateCheckboxIcon />}
+        {checked === true && <CheckboxIcon />}
       </RadixCheckbox.Indicator>
       {!checked && (
         <span className="pointer-events-none">

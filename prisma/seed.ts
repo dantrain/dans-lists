@@ -13,6 +13,7 @@ const getNextRank = () => {
 async function main() {
   await prisma.status.create({ data: { name: "PENDING" } });
   await prisma.status.create({ data: { name: "COMPLETE" } });
+  await prisma.status.create({ data: { name: "SKIPPED" } });
 
   await prisma.list.create({
     data: {

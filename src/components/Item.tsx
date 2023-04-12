@@ -16,7 +16,14 @@ type ListItemProps = {
 
 const Item = ({ item }: ListItemProps) => {
   const { id, title, events } = item;
-  const checked = first(events)?.status.name === "COMPLETE";
+  const status = first(events)?.status.name;
+
+  const checked =
+    status === "SKIPPED"
+      ? "indeterminate"
+      : status === "COMPLETE"
+      ? true
+      : false;
 
   const utils = api.useContext();
 
@@ -58,8 +65,13 @@ const Item = ({ item }: ListItemProps) => {
   const handleCheckedChanged = () =>
     upsertEvent.mutate({
       itemId: id,
-      statusName:
-        first(item.events)?.status.name === "COMPLETE" ? "PENDING" : "COMPLETE",
+      statusName: status === "COMPLETE" ? "PENDING" : "COMPLETE",
+    });
+
+  const handleToggleSkip = () =>
+    upsertEvent.mutate({
+      itemId: id,
+      statusName: status === "SKIPPED" ? "PENDING" : "SKIPPED",
     });
 
   const deleteItem = api.item.delete.useMutation({
@@ -110,7 +122,10 @@ const Item = ({ item }: ListItemProps) => {
           </button>
         </>
       ) : (
-        <ItemMenu>
+        <ItemMenu
+          skipped={status === "SKIPPED"}
+          onToggleSkip={handleToggleSkip}
+        >
           <Checkbox
             id={id}
             checked={checked}
@@ -119,6 +134,7 @@ const Item = ({ item }: ListItemProps) => {
           <label
             className={clsx("flex-grow select-none py-1 pl-1 sm:py-0", {
               "text-gray-400": checked,
+              "line-through": checked === "indeterminate",
             })}
             htmlFor={id}
           >
