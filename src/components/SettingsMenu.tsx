@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useAtom } from "jotai";
 import { signOut } from "next-auth/react";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { editModeAtom } from "~/pages";
 import { api } from "~/utils/api";
 import {
@@ -13,12 +13,7 @@ import {
   RefreshIcon,
   SettingsIcon,
 } from "./Icons";
-
-const MenuItem = ({ children }: { children: ReactNode }) => (
-  <div className="relative flex min-w-[200px] items-center justify-between rounded-sm p-3 pl-8 group-hover:bg-[rgba(255,255,255,0.1)] group-focus-visible:bg-[rgba(255,255,255,0.1)]">
-    {children}
-  </div>
-);
+import MenuItem from "./MenuItem";
 
 const SettingsMenu = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);
@@ -65,7 +60,7 @@ const SettingsMenu = () => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl"
+          className="min-w-[200px] cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl"
           sideOffset={-6}
           collisionPadding={8}
           onCloseAutoFocus={(e) => e.preventDefault()}
@@ -78,7 +73,7 @@ const SettingsMenu = () => {
               setEditMode(checked);
             }}
           >
-            <MenuItem>
+            <MenuItem padLeft>
               <DropdownMenu.ItemIndicator className="absolute left-2">
                 <CheckIcon />
               </DropdownMenu.ItemIndicator>
@@ -91,7 +86,7 @@ const SettingsMenu = () => {
               className="group px-1 pb-1 focus:outline-none"
               onClick={handleInstall}
             >
-              <MenuItem>
+              <MenuItem padLeft>
                 Install app
                 <InstallMobileIcon
                   className="mr-[1px] sm:hidden"
@@ -111,7 +106,7 @@ const SettingsMenu = () => {
               className="group px-1 pb-1 focus:outline-none"
               onClick={() => location.reload()}
             >
-              <MenuItem>
+              <MenuItem padLeft>
                 Reload
                 <RefreshIcon width="20" height="20" />
               </MenuItem>
@@ -121,7 +116,7 @@ const SettingsMenu = () => {
             className="group px-1 pb-1 focus:outline-none"
             onClick={() => void signOut()}
           >
-            <MenuItem>
+            <MenuItem padLeft>
               Sign out
               <LogoutIcon width="18" height="18" />
             </MenuItem>

@@ -8,6 +8,7 @@ import { api } from "~/utils/api";
 import Checkbox from "./Checkbox";
 import EditItem from "./EditItem";
 import { DeleteIcon, DragIndicatorIcon } from "./Icons";
+import ItemMenu from "./ItemMenu";
 
 type ListItemProps = {
   item: ItemData;
@@ -109,7 +110,7 @@ const Item = ({ item }: ListItemProps) => {
           </button>
         </>
       ) : (
-        <>
+        <ItemMenu>
           <Checkbox
             id={id}
             checked={checked}
@@ -123,7 +124,7 @@ const Item = ({ item }: ListItemProps) => {
           >
             {title}
           </label>
-        </>
+        </ItemMenu>
       )}
     </li>
   );

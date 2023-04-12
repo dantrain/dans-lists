@@ -13,7 +13,6 @@ import SettingsMenu from "~/components/SettingsMenu";
 import Spinner from "~/components/Spinner";
 import Suspense from "~/components/Suspense";
 import useRank from "~/hooks/useRank";
-
 import { api, type RouterOutputs } from "~/utils/api";
 import { theDayToday } from "~/utils/date";
 
