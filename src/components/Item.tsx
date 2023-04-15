@@ -132,7 +132,7 @@ const Item = ({ item }: ListItemProps) => {
             onCheckedChange={handleCheckedChanged}
           />
           <label
-            className={clsx("flex-grow select-none py-1 pl-1 sm:py-0", {
+            className={clsx("flex-grow select-none pl-1 ", {
               "text-gray-400": checked,
               "line-through": checked === "indeterminate",
             })}

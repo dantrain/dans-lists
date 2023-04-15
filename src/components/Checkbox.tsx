@@ -12,7 +12,7 @@ const Checkbox = ({
 }: ComponentProps<typeof RadixCheckbox.Root>) => {
   return (
     <RadixCheckbox.Root
-      className="cursor-default px-1 py-2 text-gray-100 sm:py-1"
+      className="cursor-default px-1 py-1 text-gray-100"
       checked={checked}
       {...rest}
     >
