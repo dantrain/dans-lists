@@ -57,7 +57,7 @@ export const listRouter = createTRPCRouter({
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string(), title: z.string() }))
+    .input(z.object({ id: z.string().cuid(), title: z.string() }))
     .mutation(({ ctx, input }) =>
       ctx.prisma.list.updateMany({
         where: { id: input.id, ownerId: ctx.session.user.id },
@@ -67,7 +67,10 @@ export const listRouter = createTRPCRouter({
 
   editRepeat: protectedProcedure
     .input(
-      z.object({ id: z.string(), repeatDays: z.array(z.enum(daysOfWeek)) })
+      z.object({
+        id: z.string().cuid(),
+        repeatDays: z.array(z.enum(daysOfWeek)),
+      })
     )
     .mutation(({ ctx, input }) =>
       ctx.prisma.list.updateMany({
@@ -86,9 +89,9 @@ export const listRouter = createTRPCRouter({
     .input(
       z
         .object({
-          id: z.string(),
-          beforeId: z.optional(z.string()),
-          afterId: z.optional(z.string()),
+          id: z.string().cuid(),
+          beforeId: z.optional(z.string().cuid()),
+          afterId: z.optional(z.string().cuid()),
         })
         .refine((_) => _.beforeId || _.afterId)
     )
@@ -111,7 +114,7 @@ export const listRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string().cuid() }))
     .mutation(({ ctx, input }) =>
       ctx.prisma.list.deleteMany({
         where: { id: input.id, ownerId: ctx.session.user.id },

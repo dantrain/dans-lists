@@ -10,7 +10,7 @@ export const daysOfWeek = [
 
 export type Weekday = (typeof daysOfWeek)[number];
 
-export const getTheDayToday = () =>
+export const getToday = () =>
   Intl.DateTimeFormat("en-US", {
     weekday: "short",
     timeZone: "Europe/London",

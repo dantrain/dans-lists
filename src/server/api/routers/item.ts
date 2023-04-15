@@ -5,7 +5,7 @@ import { getNextRank, getRankBetween } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ listId: z.string(), title: z.string() }))
+    .input(z.object({ listId: z.string().cuid(), title: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const list = await ctx.prisma.list.findUniqueOrThrow({
         where: { id: input.listId },
@@ -35,7 +35,7 @@ export const itemRouter = createTRPCRouter({
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string(), title: z.string() }))
+    .input(z.object({ id: z.string().cuid(), title: z.string() }))
     .mutation(({ ctx, input }) =>
       ctx.prisma.item.updateMany({
         where: { id: input.id, list: { ownerId: ctx.session.user.id } },
@@ -47,9 +47,9 @@ export const itemRouter = createTRPCRouter({
     .input(
       z
         .object({
-          id: z.string(),
-          beforeId: z.optional(z.string()),
-          afterId: z.optional(z.string()),
+          id: z.string().cuid(),
+          beforeId: z.optional(z.string().cuid()),
+          afterId: z.optional(z.string().cuid()),
         })
         .refine((_) => _.beforeId || _.afterId)
     )
@@ -72,7 +72,7 @@ export const itemRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string().cuid() }))
     .mutation(({ ctx, input }) =>
       ctx.prisma.item.deleteMany({
         where: { id: input.id, list: { ownerId: ctx.session.user.id } },

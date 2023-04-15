@@ -14,7 +14,7 @@ import Spinner from "~/components/Spinner";
 import Suspense from "~/components/Suspense";
 import useRank from "~/hooks/useRank";
 import { api, type RouterOutputs } from "~/utils/api";
-import { getTheDayToday } from "~/utils/date";
+import { getToday } from "~/utils/date";
 
 export type ListData = RouterOutputs["list"]["getAll"][0];
 export type ItemData = ListData["items"][0];
@@ -51,7 +51,7 @@ const Lists = () => {
   const rankList = api.list.rank.useMutation();
 
   const filteredData = useMemo(
-    () => data.filter((list) => list[`repeats${getTheDayToday()}`]),
+    () => data.filter((list) => list[`repeats${getToday()}`]),
     [data]
   );
 

@@ -6,7 +6,7 @@ export const eventRouter = createTRPCRouter({
   upsert: protectedProcedure
     .input(
       z.object({
-        itemId: z.string(),
+        itemId: z.string().cuid(),
         statusName: z.string(),
       })
     )
