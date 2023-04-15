@@ -23,7 +23,7 @@ export const editModeAtom = atom(false);
 
 const Home: NextPage = () => {
   return (
-    <main className="relative px-4 pt-11 sm:pt-20">
+    <main className="relative px-4 pt-12 sm:pt-20">
       <Progress />
       <SettingsMenu />
       <Suspense

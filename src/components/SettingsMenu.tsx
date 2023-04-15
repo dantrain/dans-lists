@@ -51,7 +51,7 @@ const SettingsMenu = () => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="fixed right-0 top-0 p-3 text-gray-200"
+          className="absolute right-0 top-0 p-3 text-gray-200 sm:fixed"
           aria-label="Settings"
         >
           <SettingsIcon width="20" height="20" />
