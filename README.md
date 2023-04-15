@@ -10,8 +10,8 @@
 - [x] PWA
 - [x] Edit lists/items
 - [x] Reordering
-- [ ] List frequency
-- [ ] Skipping
+- [x] List frequency
+- [x] Skipping
 - [ ] Collapsing lists
 - [ ] Fix timezones
 - [ ] Styling
