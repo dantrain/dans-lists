@@ -92,7 +92,7 @@ const Item = ({ item }: ListItemProps) => {
 
   return (
     <li
-      className="relative my-2 flex items-center pr-1"
+      className="relative flex items-center pr-1"
       ref={setNodeRef}
       style={{
         transform: CSS.Translate.toString(transform),

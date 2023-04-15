@@ -6,6 +6,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import * as Collapsible from "@radix-ui/react-collapsible";
+import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useLocalStorage } from "usehooks-ts";
 import useRank from "~/hooks/useRank";
@@ -54,7 +55,7 @@ const List = ({ list }: ListProps) => {
   return (
     <Collapsible.Root open={open || editMode} onOpenChange={setOpen} asChild>
       <li
-        className="relative mb-5"
+        className={clsx("relative", editMode ? "py-4" : "mb-4")}
         ref={setNodeRef}
         style={{
           transform: CSS.Translate.toString(transform),
@@ -62,7 +63,12 @@ const List = ({ list }: ListProps) => {
           zIndex: isDragging ? 100 : undefined,
         }}
       >
-        <div className="mx-2 mb-2 flex justify-between border-b border-gray-500 pb-1">
+        <div
+          className={clsx(
+            "mb-1 flex justify-between border-b border-gray-500 pb-1",
+            !editMode && "mx-2"
+          )}
+        >
           {editMode ? (
             <>
               <button
@@ -109,7 +115,7 @@ const List = ({ list }: ListProps) => {
           </>
         )}
         <Collapsible.Content asChild>
-          <ul className="mx-1">
+          <ul>
             <DndContext
               id={list.id}
               collisionDetection={closestCenter}

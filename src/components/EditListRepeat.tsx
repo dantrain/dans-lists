@@ -42,7 +42,7 @@ const EditListRepeat = ({ list }: { list: ListData }) => {
   });
 
   return (
-    <div className="flex justify-center py-1">
+    <div className="my-2 flex justify-center py-1">
       <ToggleGroup.Root
         className="flex overflow-hidden rounded-md border border-violet-500"
         type="multiple"

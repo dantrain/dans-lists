@@ -14,7 +14,7 @@ const ItemMenu = ({
 }) => {
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger className="flex flex-1">
+      <ContextMenu.Trigger className="flex flex-1 rounded-sm p-1 data-[state=open]:bg-white/10">
         {children}
       </ContextMenu.Trigger>
       <ContextMenu.Portal>

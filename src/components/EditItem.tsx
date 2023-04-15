@@ -15,7 +15,7 @@ const EditItem = ({ item }: { item: ItemData }) => {
 
   return (
     <form
-      className="w-full"
+      className="my-1 w-full"
       onSubmit={(e) => {
         e.preventDefault();
         ref.current?.blur();
