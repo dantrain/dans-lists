@@ -7,7 +7,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import useRank from "~/hooks/useRank";
 import { editModeAtom, type ListData } from "~/pages";
