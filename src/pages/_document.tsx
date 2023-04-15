@@ -51,7 +51,7 @@ export default function Document() {
           );
         })}
       </Head>
-      <body className="bg-[#2e026d]">
+      <body className="bg-[#2e026d] sm:scrollbar-thin sm:scrollbar-track-violet-950 sm:scrollbar-thumb-violet-800 sm:scrollbar-thumb-rounded-full">
         <div className="fixed -z-50 h-screen w-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]" />
         <Main />
         <NextScript />
