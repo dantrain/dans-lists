@@ -87,3 +87,15 @@ export const InstallMobileIcon = (props: IconProps) => (
     <path d="m18 14 5-5-1.41-1.41L19 10.17V3h-2v7.17l-2.59-2.58L13 9z" />
   </SVGIcon>
 );
+
+export const ExpandMoreIcon = (props: IconProps) => (
+  <SVGIcon {...props}>
+    <path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+  </SVGIcon>
+);
+
+export const ExpandLessIcon = (props: IconProps) => (
+  <SVGIcon {...props}>
+    <path d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+  </SVGIcon>
+);

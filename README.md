@@ -12,7 +12,7 @@
 - [x] Reordering
 - [x] List frequency
 - [x] Skipping
-- [ ] Collapsing lists
+- [x] Collapsing lists
 - [ ] Fix timezones
 - [ ] Styling
 - [ ] Try Upstash for session storage
