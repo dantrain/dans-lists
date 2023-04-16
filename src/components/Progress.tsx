@@ -6,6 +6,8 @@ const Progress = () => {
   const isLoading = useIsFetching() + useIsMutating() > 0;
 
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const [minProgress, setMinProgress] = useState(0);
   const [maxProgress, setMaxProgress] = useState(0);
 
   useEffect(() => {
@@ -13,12 +15,14 @@ const Progress = () => {
 
     if (isLoading) {
       setMaxProgress(0);
+      setMinProgress(0);
 
       timeout = setTimeout(() => {
         setIsAnimating(true);
         setMaxProgress(1);
       }, 500);
     } else {
+      setMinProgress(1);
       setIsAnimating(false);
     }
 
@@ -40,7 +44,9 @@ const Progress = () => {
       <div
         className="absolute left-0 z-50 h-[2px] w-full"
         style={{
-          marginLeft: `${(-1 + Math.min(maxProgress, progress)) * 100}%`,
+          marginLeft: `${
+            (-1 + Math.max(minProgress, Math.min(maxProgress, progress))) * 100
+          }%`,
           transition: `margin-left ${animationDuration}ms linear`,
         }}
       >
