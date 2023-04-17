@@ -15,6 +15,7 @@ import { api } from "~/utils/api";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
 import EditListRepeat from "./EditListRepeat";
+import EditListTimeRange from "./EditListTimeRange";
 import {
   DeleteIcon,
   DragIndicatorIcon,
@@ -111,6 +112,7 @@ const List = ({ list }: ListProps) => {
         {editMode && (
           <>
             <EditListRepeat list={list} />
+            <EditListTimeRange list={list} />
             <AddItem listId={list.id} />
           </>
         )}
