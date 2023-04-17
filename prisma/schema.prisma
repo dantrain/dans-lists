@@ -31,6 +31,9 @@ model List {
     repeatsSat Boolean @default(true)
     repeatsSun Boolean @default(true)
 
+    startMinutes Int?
+    endMinutes   Int?
+
     owner   User   @relation(fields: [ownerId], references: [id])
     ownerId String
 

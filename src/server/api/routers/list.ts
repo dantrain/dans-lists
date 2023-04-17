@@ -17,6 +17,8 @@ export const listRouter = createTRPCRouter({
         repeatsFri: true,
         repeatsSat: true,
         repeatsSun: true,
+        startMinutes: true,
+        endMinutes: true,
         items: {
           select: {
             id: true,
