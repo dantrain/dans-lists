@@ -1,3 +1,4 @@
+import { isNull } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { daysOfWeek } from "~/utils/date";
@@ -89,15 +90,26 @@ export const listRouter = createTRPCRouter({
 
   editTimeRange: protectedProcedure
     .input(
-      z.object({
-        id: z.string().cuid(),
-        startMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
-      })
+      z
+        .object({
+          id: z.string().cuid(),
+          startMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
+          endMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
+        })
+        .refine(
+          (_) =>
+            isNull(_.startMinutes) ||
+            isNull(_.endMinutes) ||
+            _.startMinutes <= _.endMinutes
+        )
     )
     .mutation(({ ctx, input }) =>
       ctx.prisma.list.updateMany({
         where: { id: input.id, ownerId: ctx.session.user.id },
-        data: { startMinutes: input.startMinutes },
+        data: {
+          startMinutes: input.startMinutes,
+          endMinutes: input.endMinutes,
+        },
       })
     ),
 
