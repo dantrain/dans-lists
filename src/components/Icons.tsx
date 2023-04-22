@@ -105,3 +105,10 @@ export const LogoIcon = (props: IconProps) => (
     <path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM10 17H5v-2h5v2zm0-4H5v-2h5v2zm0-4H5V7h5v2zm4.82 6L12 12.16l1.41-1.41 1.41 1.42L17.99 9l1.42 1.42L14.82 15z" />
   </SVGIcon>
 );
+
+export const DoubleArrowIcon = (props: IconProps) => (
+  <SVGIcon {...props}>
+    <path d="M15.5 5H11l5 7-5 7h4.5l5-7z" />
+    <path d="M8.5 5H4l5 7-5 7h4.5l5-7z" />
+  </SVGIcon>
+);

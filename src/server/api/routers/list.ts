@@ -1,12 +1,17 @@
-import { isNull } from "lodash";
+import { isNull, omit } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { daysOfWeek } from "~/utils/date";
-import { getDayDateRange, getNextRank, getRankBetween } from "../utils";
+import {
+  getNextRank,
+  getRankBetween,
+  getTodayDateRange,
+  getYesterdayDateRange,
+} from "../utils";
 
 export const listRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.list.findMany({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.prisma.list.findMany({
       where: { ownerId: ctx.session.user.id },
       select: {
         id: true,
@@ -26,11 +31,17 @@ export const listRouter = createTRPCRouter({
             title: true,
             events: {
               where: {
-                createdAt: getDayDateRange(),
+                createdAt: {
+                  gte: getYesterdayDateRange().gte,
+                  lt: getTodayDateRange().lt,
+                },
               },
-              take: 1,
-              select: { status: { select: { name: true } } },
-              orderBy: { createdAt: "asc" },
+              select: {
+                status: { select: { name: true } },
+                createdAt: true,
+                streak: true,
+              },
+              orderBy: { createdAt: "desc" },
             },
           },
           orderBy: { rank: "asc" },
@@ -38,6 +49,27 @@ export const listRouter = createTRPCRouter({
       },
       orderBy: { rank: "asc" },
     });
+
+    const data = result.map((list) => ({
+      ...list,
+      items: list.items.map((item) => {
+        const todayEvents = item.events.filter(
+          (event) => event.createdAt >= new Date(getTodayDateRange().gte)
+        );
+
+        const yesterdayEvents = item.events.filter(
+          (event) => event.createdAt < new Date(getYesterdayDateRange().lt)
+        );
+
+        return {
+          ...omit(item, "events"),
+          event: todayEvents[0],
+          streak: yesterdayEvents[0]?.streak ?? 0,
+        };
+      }),
+    }));
+
+    return data;
   }),
 
   create: protectedProcedure

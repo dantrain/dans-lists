@@ -2,12 +2,12 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { cloneDeep, first, isNil, set } from "lodash";
+import { cloneDeep, isNil, set } from "lodash";
 import { editModeAtom, type ItemData } from "~/pages";
 import { api } from "~/utils/api";
 import Checkbox from "./Checkbox";
 import EditItem from "./EditItem";
-import { DeleteIcon, DragIndicatorIcon } from "./Icons";
+import { DeleteIcon, DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
 
 type ListItemProps = {
@@ -15,8 +15,10 @@ type ListItemProps = {
 };
 
 const Item = ({ item }: ListItemProps) => {
-  const { id, title, events } = item;
-  const status = first(events)?.status.name;
+  const { id, title, event, streak } = item;
+  const status = event?.status.name;
+
+  const currentStreak = status === "COMPLETE" ? streak + 1 : streak;
 
   const checked =
     status === "SKIPPED"
@@ -47,7 +49,7 @@ const Item = ({ item }: ListItemProps) => {
       ) {
         set(
           optimisticData,
-          [listIndex, "items", itemIndex, "events", "0", "status", "name"],
+          [listIndex, "items", itemIndex, "event", "status", "name"],
           input.statusName
         );
       }
@@ -140,6 +142,18 @@ const Item = ({ item }: ListItemProps) => {
           >
             {title}
           </label>
+          {currentStreak > 1 && (
+            <div
+              className={clsx(
+                "flex items-center gap-1 px-2",
+                !checked && "text-gray-200",
+                checked && "text-gray-400"
+              )}
+            >
+              <DoubleArrowIcon width="15" height="15" />
+              <span className="min-w-[0.6em]">{currentStreak}</span>
+            </div>
+          )}
         </ItemMenu>
       )}
     </li>

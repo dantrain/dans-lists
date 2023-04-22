@@ -6,9 +6,18 @@ import { LexoRank } from "lexorank";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDayDateRange = () => ({
+export const getTodayDateRange = () => ({
   gte: dayjs().tz("Europe/London").startOf("day").toISOString(),
-  lte: dayjs().tz("Europe/London").endOf("day").toISOString(),
+  lt: dayjs().tz("Europe/London").endOf("day").toISOString(),
+});
+
+export const getYesterdayDateRange = () => ({
+  gte: dayjs()
+    .tz("Europe/London")
+    .subtract(1, "day")
+    .startOf("day")
+    .toISOString(),
+  lt: dayjs().tz("Europe/London").subtract(1, "day").endOf("day").toISOString(),
 });
 
 type RankItem = { rank: string } | null;

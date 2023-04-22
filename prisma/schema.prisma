@@ -66,6 +66,8 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    streak Int @default(0)
+
     item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
     itemId   String
     status   Status @relation(fields: [statusId], references: [id])
