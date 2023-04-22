@@ -6,32 +6,32 @@ const Progress = () => {
   const isLoading = useIsFetching() + useIsMutating() > 0;
 
   const [isAnimating, setIsAnimating] = useState(false);
-
-  const [minProgress, setMinProgress] = useState(0);
-  const [maxProgress, setMaxProgress] = useState(0);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-
-    if (isLoading) {
-      setMaxProgress(0);
-      setMinProgress(0);
-
-      timeout = setTimeout(() => {
-        setIsAnimating(true);
-        setMaxProgress(1);
-      }, 500);
-    } else {
-      setMinProgress(1);
-      setIsAnimating(false);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [isLoading]);
+  const [isVisible, setIsVisible] = useState(false);
 
   const { animationDuration, isFinished, progress } = useNProgress({
     isAnimating,
   });
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | undefined;
+
+    if (isLoading) {
+      clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        setIsAnimating(true);
+        setIsVisible(true);
+      }, 500);
+    } else {
+      setIsAnimating(false);
+
+      timeout = setTimeout(() => {
+        setIsVisible(false);
+      }, animationDuration * 2);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [animationDuration, isLoading]);
 
   return (
     <div
@@ -44,10 +44,10 @@ const Progress = () => {
       <div
         className="absolute left-0 z-50 h-[2px] w-full"
         style={{
-          marginLeft: `${
-            (-1 + Math.max(minProgress, Math.min(maxProgress, progress))) * 100
-          }%`,
-          transition: `margin-left ${animationDuration}ms linear`,
+          marginLeft: `${isVisible ? (-1 + progress) * 100 : -100}%`,
+          transition: `margin-left ${
+            isAnimating ? animationDuration : 0
+          }ms linear`,
         }}
       >
         <div
