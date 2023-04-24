@@ -1,12 +1,13 @@
+import dayjs from "dayjs";
 import { isNull, omit } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { daysOfWeek } from "~/utils/date";
+import { type Weekday, daysOfWeek, getNow } from "~/utils/date";
 import {
   getNextRank,
   getRankBetween,
   getTodayDateRange,
-  getYesterdayDateRange,
+  getWeekDateRange,
 } from "../utils";
 
 export const listRouter = createTRPCRouter({
@@ -31,10 +32,7 @@ export const listRouter = createTRPCRouter({
             title: true,
             events: {
               where: {
-                createdAt: {
-                  gte: getYesterdayDateRange().gte,
-                  lt: getTodayDateRange().lt,
-                },
+                createdAt: getWeekDateRange(),
               },
               select: {
                 status: { select: { name: true } },
@@ -50,24 +48,62 @@ export const listRouter = createTRPCRouter({
       orderBy: { rank: "asc" },
     });
 
-    const data = result.map((list) => ({
-      ...list,
-      items: list.items.map((item) => {
-        const todayEvents = item.events.filter(
-          (event) => event.createdAt >= new Date(getTodayDateRange().gte)
-        );
+    const today = getNow().today;
+    const todayIndex = daysOfWeek.findIndex((day) => day === today);
 
-        const yesterdayEvents = item.events.filter(
-          (event) => event.createdAt < new Date(getYesterdayDateRange().lt)
-        );
+    const data = result.map((list) => {
+      let lastValidDaysAgo = 1;
 
-        return {
-          ...omit(item, "events"),
-          event: todayEvents[0],
-          streak: yesterdayEvents[0]?.streak ?? 0,
-        };
-      }),
-    }));
+      while (
+        list[
+          `repeats${
+            daysOfWeek[
+              (((todayIndex - lastValidDaysAgo) % 7) + 7) % 7
+            ] as Weekday
+          }`
+        ] === false
+      ) {
+        lastValidDaysAgo++;
+      }
+
+      return {
+        ...list,
+        items: list.items.map((item) => {
+          const todayEvents = item.events.filter(
+            (event) => event.createdAt >= new Date(getTodayDateRange().gte)
+          );
+
+          const lastValidDayEvents = item.events.filter(
+            (event) =>
+              event.createdAt >=
+                dayjs()
+                  .tz("Europe/London")
+                  .subtract(lastValidDaysAgo, "day")
+                  .startOf("day")
+                  .toDate() &&
+              event.createdAt <
+                dayjs()
+                  .tz("Europe/London")
+                  .subtract(lastValidDaysAgo, "day")
+                  .endOf("day")
+                  .toDate()
+          );
+
+          console.log(
+            today,
+            lastValidDaysAgo,
+            lastValidDayEvents,
+            lastValidDayEvents[0]?.streak ?? 0
+          );
+
+          return {
+            ...omit(item, "events"),
+            event: todayEvents[0],
+            streak: lastValidDayEvents[0]?.streak ?? 0,
+          };
+        }),
+      };
+    });
 
     return data;
   }),

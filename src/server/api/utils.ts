@@ -11,13 +11,13 @@ export const getTodayDateRange = () => ({
   lt: dayjs().tz("Europe/London").endOf("day").toISOString(),
 });
 
-export const getYesterdayDateRange = () => ({
+export const getWeekDateRange = () => ({
   gte: dayjs()
     .tz("Europe/London")
-    .subtract(1, "day")
+    .subtract(1, "week")
     .startOf("day")
     .toISOString(),
-  lt: dayjs().tz("Europe/London").subtract(1, "day").endOf("day").toISOString(),
+  lt: dayjs().tz("Europe/London").endOf("day").toISOString(),
 });
 
 type RankItem = { rank: string } | null;
