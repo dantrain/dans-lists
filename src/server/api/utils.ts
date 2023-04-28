@@ -20,6 +20,19 @@ export const getWeekDateRange = () => ({
   lt: dayjs().tz("Europe/London").endOf("day").toISOString(),
 });
 
+export const getDaysAgoDateRange = (daysAgo: number) => ({
+  gte: dayjs()
+    .tz("Europe/London")
+    .subtract(daysAgo, "day")
+    .startOf("day")
+    .toDate(),
+  lt: dayjs()
+    .tz("Europe/London")
+    .subtract(daysAgo, "day")
+    .endOf("day")
+    .toDate(),
+});
+
 type RankItem = { rank: string } | null;
 
 export const getNextRank = (beforeItem?: RankItem) =>

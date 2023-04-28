@@ -1,9 +1,9 @@
-import dayjs from "dayjs";
 import { isNull, omit } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { type Weekday, daysOfWeek, getNow } from "~/utils/date";
+import { daysOfWeek, getNow, type Weekday } from "~/utils/date";
 import {
+  getDaysAgoDateRange,
   getNextRank,
   getRankBetween,
   getTodayDateRange,
@@ -48,23 +48,24 @@ export const listRouter = createTRPCRouter({
       orderBy: { rank: "asc" },
     });
 
-    const today = getNow().today;
-    const todayIndex = daysOfWeek.findIndex((day) => day === today);
+    const now = getNow();
+    const todayIndex = daysOfWeek.findIndex((day) => day === now.today);
 
     const data = result.map((list) => {
       let lastValidDaysAgo = 1;
 
       while (
+        lastValidDaysAgo < 8 &&
         list[
           `repeats${
-            daysOfWeek[
-              (((todayIndex - lastValidDaysAgo) % 7) + 7) % 7
-            ] as Weekday
+            daysOfWeek[((todayIndex - lastValidDaysAgo) % 7) + 7] as Weekday
           }`
         ] === false
       ) {
         lastValidDaysAgo++;
       }
+
+      const lastValidDayDateRange = getDaysAgoDateRange(lastValidDaysAgo);
 
       return {
         ...list,
@@ -75,25 +76,8 @@ export const listRouter = createTRPCRouter({
 
           const lastValidDayEvents = item.events.filter(
             (event) =>
-              event.createdAt >=
-                dayjs()
-                  .tz("Europe/London")
-                  .subtract(lastValidDaysAgo, "day")
-                  .startOf("day")
-                  .toDate() &&
-              event.createdAt <
-                dayjs()
-                  .tz("Europe/London")
-                  .subtract(lastValidDaysAgo, "day")
-                  .endOf("day")
-                  .toDate()
-          );
-
-          console.log(
-            today,
-            lastValidDaysAgo,
-            lastValidDayEvents,
-            lastValidDayEvents[0]?.streak ?? 0
+              event.createdAt >= lastValidDayDateRange.gte &&
+              event.createdAt < lastValidDayDateRange.lt
           );
 
           return {
