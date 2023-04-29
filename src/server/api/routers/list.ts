@@ -1,12 +1,11 @@
 import { isNull, omit } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { daysOfWeek, getNow, type Weekday } from "~/utils/date";
+import { daysOfWeek } from "~/utils/date";
 import {
-  getDaysAgoDateRange,
   getNextRank,
   getRankBetween,
-  getTodayDateRange,
+  getRelevantEvents,
   getWeekDateRange,
 } from "../utils";
 
@@ -48,42 +47,19 @@ export const listRouter = createTRPCRouter({
       orderBy: { rank: "asc" },
     });
 
-    const now = getNow();
-    const todayIndex = daysOfWeek.findIndex((day) => day === now.today);
-
     const data = result.map((list) => {
-      let lastValidDaysAgo = 1;
-
-      while (
-        lastValidDaysAgo < 8 &&
-        list[
-          `repeats${
-            daysOfWeek[((todayIndex - lastValidDaysAgo) % 7) + 7] as Weekday
-          }`
-        ] === false
-      ) {
-        lastValidDaysAgo++;
-      }
-
-      const lastValidDayDateRange = getDaysAgoDateRange(lastValidDaysAgo);
-
       return {
         ...list,
         items: list.items.map((item) => {
-          const todayEvents = item.events.filter(
-            (event) => event.createdAt >= new Date(getTodayDateRange().gte)
-          );
-
-          const lastValidDayEvents = item.events.filter(
-            (event) =>
-              event.createdAt >= lastValidDayDateRange.gte &&
-              event.createdAt < lastValidDayDateRange.lt
+          const { todayEvent, lastValidDayEvent } = getRelevantEvents(
+            list,
+            item.events
           );
 
           return {
             ...omit(item, "events"),
-            event: todayEvents[0],
-            streak: lastValidDayEvents[0]?.streak ?? 0,
+            event: todayEvent,
+            streak: lastValidDayEvent?.streak ?? 0,
           };
         }),
       };
