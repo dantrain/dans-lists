@@ -6,6 +6,7 @@ import Head from "next/head";
 
 import { api } from "~/utils/api";
 
+import { CookiesProvider } from "react-cookie";
 import "~/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -14,16 +15,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <JotaiProvider>
-        <Head>
-          <title>Dan&apos;s Lists</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-          />
-        </Head>
-        <Component {...pageProps} />
-      </JotaiProvider>
+      <CookiesProvider>
+        <JotaiProvider>
+          <Head>
+            <title>Dan&apos;s Lists</title>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+            />
+          </Head>
+          <Component {...pageProps} />
+        </JotaiProvider>
+      </CookiesProvider>
     </SessionProvider>
   );
 };

@@ -22,6 +22,7 @@ import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
   session: Session | null;
+  tzOffset: number;
 };
 
 /**
@@ -36,7 +37,7 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
+    ...opts,
     prisma,
   };
 };
@@ -53,8 +54,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
 
+  const tzOffset = +(req.cookies.tzOffset ?? 0);
+
   return createInnerTRPCContext({
     session,
+    tzOffset,
   });
 };
 

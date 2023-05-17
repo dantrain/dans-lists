@@ -16,7 +16,7 @@ export const eventRouter = createTRPCRouter({
         select: {
           events: {
             where: {
-              createdAt: getWeekDateRange(),
+              createdAt: getWeekDateRange(ctx.tzOffset),
             },
             orderBy: { createdAt: "desc" },
             take: 1,
@@ -41,7 +41,11 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      const { todayEvent, lastValidDayEvent } = getRelevantEvents(list, events);
+      const { todayEvent, lastValidDayEvent } = getRelevantEvents(
+        list,
+        events,
+        ctx.tzOffset
+      );
 
       let streak = 0;
 

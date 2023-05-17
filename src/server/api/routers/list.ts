@@ -31,7 +31,7 @@ export const listRouter = createTRPCRouter({
             title: true,
             events: {
               where: {
-                createdAt: getWeekDateRange(),
+                createdAt: getWeekDateRange(ctx.tzOffset),
               },
               select: {
                 status: { select: { name: true } },
@@ -53,7 +53,8 @@ export const listRouter = createTRPCRouter({
         items: list.items.map((item) => {
           const { todayEvent, lastValidDayEvent } = getRelevantEvents(
             list,
-            item.events
+            item.events,
+            ctx.tzOffset
           );
 
           return {

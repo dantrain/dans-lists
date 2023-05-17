@@ -6,6 +6,7 @@ import {
 import { atom, useAtom } from "jotai";
 import { type NextPage } from "next";
 import { useEffect, useMemo } from "react";
+import { useCookies } from "react-cookie";
 import AddList from "~/components/AddList";
 import { LogoIcon } from "~/components/Icons";
 import List from "~/components/List";
@@ -23,6 +24,17 @@ export type ItemData = ListData["items"][0];
 export const editModeAtom = atom(false);
 
 const Home: NextPage = () => {
+  const [cookies, setCookie] = useCookies(["tzOffset"]);
+
+  useEffect(() => {
+    const tzOffset = new Date().getTimezoneOffset().toString();
+
+    if (cookies.tzOffset !== tzOffset) {
+      setCookie("tzOffset", tzOffset);
+      location.reload();
+    }
+  }, [cookies, setCookie]);
+
   return (
     <main className="relative px-4 pt-12 sm:pt-20">
       <Progress />
