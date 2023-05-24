@@ -62,6 +62,7 @@ const List = ({ list }: ListProps) => {
           transform: CSS.Translate.toString(transform),
           transition,
           zIndex: isDragging ? 100 : undefined,
+          viewTransitionName: `list-${list.id}`,
         }}
       >
         <div
@@ -69,6 +70,7 @@ const List = ({ list }: ListProps) => {
             "mb-1 flex justify-between border-b border-gray-500 pb-1",
             !editMode && "mx-2"
           )}
+          style={{ viewTransitionName: `list-heading-${list.id}` }}
         >
           {editMode ? (
             <>
@@ -117,7 +119,7 @@ const List = ({ list }: ListProps) => {
           </>
         )}
         <Collapsible.Content asChild>
-          <ul>
+          <ul style={{ viewTransitionName: `items-${list.id}` }}>
             <DndContext
               id={list.id}
               collisionDetection={closestCenter}

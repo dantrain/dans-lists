@@ -6,3 +6,13 @@ interface BeforeInstallPromptEvent extends Event {
   }>;
   prompt(): Promise<void>;
 }
+
+interface Document {
+  startViewTransition(callback: () => Promise<void>): void;
+}
+
+declare module "csstype" {
+  interface Properties {
+    viewTransitionName?: string;
+  }
+}

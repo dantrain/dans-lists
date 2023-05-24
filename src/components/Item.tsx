@@ -100,6 +100,7 @@ const Item = ({ item }: ListItemProps) => {
         transform: CSS.Translate.toString(transform),
         transition,
         zIndex: isDragging ? 100 : undefined,
+        viewTransitionName: `item-${id}`,
       }}
     >
       {editMode ? (

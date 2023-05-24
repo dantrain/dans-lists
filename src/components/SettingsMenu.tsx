@@ -70,7 +70,13 @@ const SettingsMenu = () => {
             checked={editMode}
             onCheckedChange={(checked) => {
               if (!checked) void utils.list.invalidate();
-              setEditMode(checked);
+
+              if (document.startViewTransition) {
+                // eslint-disable-next-line @typescript-eslint/require-await
+                document.startViewTransition(async () => setEditMode(checked));
+              } else {
+                setEditMode(checked);
+              }
             }}
           >
             <MenuItem padLeft>
