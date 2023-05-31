@@ -16,7 +16,6 @@ export const getNow = () => {
   return {
     today: Intl.DateTimeFormat("en-US", {
       weekday: "short",
-      timeZone: "Europe/London",
     }).format(now) as Weekday,
     minutes: now.getHours() * 60 + now.getMinutes(),
   };

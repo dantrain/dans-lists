@@ -1,9 +1,11 @@
 import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
 import utc from "dayjs/plugin/utc";
 import { LexoRank } from "lexorank";
-import { daysOfWeek, getNow, type Weekday } from "~/utils/date";
+import { daysOfWeek, type Weekday } from "~/utils/date";
 
 dayjs.extend(utc);
+dayjs.extend(isoWeek);
 
 const getTodayDateRange = (tzOffset: number) => ({
   gte: dayjs().utcOffset(tzOffset).startOf("day").toISOString(),
@@ -49,8 +51,7 @@ export const getRelevantEvents = <
   events: TEvent[],
   tzOffset: number
 ) => {
-  const now = getNow();
-  const todayIndex = daysOfWeek.findIndex((day) => day === now.today);
+  const todayIndex = dayjs().utcOffset(tzOffset).isoWeekday() - 1;
 
   let lastValidDaysAgo = 1;
 
