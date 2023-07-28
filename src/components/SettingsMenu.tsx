@@ -37,8 +37,8 @@ const SettingsMenu = () => {
 
       setIsStandalone(
         window.matchMedia(
-          "(display-mode: standalone), (display-mode: fullscreen)"
-        ).matches
+          "(display-mode: standalone), (display-mode: fullscreen)",
+        ).matches,
       );
     }
   }, []);

@@ -8,7 +8,7 @@ export const eventRouter = createTRPCRouter({
       z.object({
         itemId: z.string().cuid(),
         statusName: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { list, events } = await ctx.prisma.item.findFirstOrThrow({
@@ -44,7 +44,7 @@ export const eventRouter = createTRPCRouter({
       const { todayEvent, lastValidDayEvent } = getRelevantEvents(
         list,
         events,
-        ctx.tzOffset
+        ctx.tzOffset,
       );
 
       let streak = 0;

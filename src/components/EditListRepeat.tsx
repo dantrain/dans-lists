@@ -8,7 +8,7 @@ import { daysOfWeek, type Weekday } from "~/utils/date";
 const EditListRepeat = ({ list }: { list: ListData }) => {
   const value = useMemo(
     () => daysOfWeek.filter((weekday) => list[`repeats${weekday}`]),
-    [list]
+    [list],
   );
 
   const utils = api.useContext();
@@ -26,7 +26,7 @@ const EditListRepeat = ({ list }: { list: ListData }) => {
           set(
             optimisticData,
             [listIndex, `repeats${day}`],
-            input.repeatDays.includes(day)
+            input.repeatDays.includes(day),
           );
         });
       }

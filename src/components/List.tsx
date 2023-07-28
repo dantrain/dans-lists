@@ -68,7 +68,7 @@ const List = ({ list }: ListProps) => {
         <div
           className={clsx(
             "mb-1 flex justify-between border-b border-gray-500 pb-1",
-            !editMode && "mx-2"
+            !editMode && "mx-2",
           )}
           style={{ viewTransitionName: `list-heading-${list.id}` }}
         >

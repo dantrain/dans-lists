@@ -10,8 +10,8 @@ const useRank = <T extends { id: string }>(
       beforeId?: string;
       afterId?: string;
     },
-    options: { onError: () => void }
-  ) => void
+    options: { onError: () => void },
+  ) => void,
 ) => {
   const [items, setItems] = useState(data);
 
@@ -39,7 +39,7 @@ const useRank = <T extends { id: string }>(
             onError: () => {
               setItems(data);
             },
-          }
+          },
         );
 
         return newItems;

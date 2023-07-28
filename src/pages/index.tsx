@@ -69,13 +69,13 @@ const Lists = () => {
       (list) =>
         list[`repeats${today}`] &&
         (list.startMinutes ? minutes >= list.startMinutes : true) &&
-        (list.endMinutes ? minutes <= list.endMinutes : true)
+        (list.endMinutes ? minutes <= list.endMinutes : true),
     );
   }, [data]);
 
   const [lists, handleDragEnd] = useRank(
     editMode ? data : filteredData,
-    rankList.mutate
+    rankList.mutate,
   );
 
   useEffect(() => {

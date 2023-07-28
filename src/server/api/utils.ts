@@ -37,7 +37,7 @@ const getDaysAgoDateRange = (daysAgo: number, tzOffset: number) => ({
 export const getRelevantEvents = <
   TEvent extends {
     createdAt: Date;
-  }
+  },
 >(
   list: {
     repeatsMon: boolean;
@@ -49,7 +49,7 @@ export const getRelevantEvents = <
     repeatsSun: boolean;
   },
   events: TEvent[],
-  tzOffset: number
+  tzOffset: number,
 ) => {
   const todayIndex = dayjs().utcOffset(tzOffset).isoWeekday() - 1;
 
@@ -69,13 +69,13 @@ export const getRelevantEvents = <
   const lastValidDayDateRange = getDaysAgoDateRange(lastValidDaysAgo, tzOffset);
 
   const todayEvents = events.filter(
-    (event) => event.createdAt >= new Date(getTodayDateRange(tzOffset).gte)
+    (event) => event.createdAt >= new Date(getTodayDateRange(tzOffset).gte),
   );
 
   const lastValidDayEvents = events.filter(
     (event) =>
       event.createdAt >= lastValidDayDateRange.gte &&
-      event.createdAt < lastValidDayDateRange.lt
+      event.createdAt < lastValidDayDateRange.lt,
   );
 
   return {
@@ -100,7 +100,7 @@ export const getRankBetween = (beforeItem: RankItem, afterItem: RankItem) => {
     rank = LexoRank.parse(beforeItem.rank).genNext();
   } else if (beforeItem && afterItem) {
     rank = LexoRank.parse(beforeItem.rank).between(
-      LexoRank.parse(afterItem.rank)
+      LexoRank.parse(afterItem.rank),
     );
   } else {
     throw new Error();

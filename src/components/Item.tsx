@@ -50,7 +50,7 @@ const Item = ({ item }: ListItemProps) => {
         set(
           optimisticData,
           [listIndex, "items", itemIndex, "event", "status", "name"],
-          input.statusName
+          input.statusName,
         );
       }
 
@@ -148,7 +148,7 @@ const Item = ({ item }: ListItemProps) => {
               className={clsx(
                 "flex items-center gap-1 px-2",
                 !checked && "text-gray-200",
-                checked && "text-gray-400"
+                checked && "text-gray-400",
               )}
             >
               <DoubleArrowIcon width="15" height="15" />

@@ -40,7 +40,7 @@ export const itemRouter = createTRPCRouter({
       ctx.prisma.item.updateMany({
         where: { id: input.id, list: { ownerId: ctx.session.user.id } },
         data: { title: input.title },
-      })
+      }),
     ),
 
   rank: protectedProcedure
@@ -51,7 +51,7 @@ export const itemRouter = createTRPCRouter({
           beforeId: z.optional(z.string().cuid()),
           afterId: z.optional(z.string().cuid()),
         })
-        .refine((_) => _.beforeId || _.afterId)
+        .refine((_) => _.beforeId || _.afterId),
     )
     .mutation(async ({ ctx, input }) => {
       const [beforeItem, afterItem] = await ctx.prisma.$transaction([
@@ -76,6 +76,6 @@ export const itemRouter = createTRPCRouter({
     .mutation(({ ctx, input }) =>
       ctx.prisma.item.deleteMany({
         where: { id: input.id, list: { ownerId: ctx.session.user.id } },
-      })
+      }),
     ),
 });

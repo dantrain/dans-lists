@@ -8,8 +8,9 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
+    "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}'",
     "start": "next start",
-    "start:db": "pscale connect dans-lists main --port 3309",
+    "start:db": "pscale connect dans-lists --port 3309",
     "pwa-assets": "pwa-asset-generator logo.svg public/ -b \"#2e026d\" -t png"
   },
   "dependencies": {
