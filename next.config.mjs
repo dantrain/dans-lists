@@ -12,7 +12,6 @@ const withPWA = nextPWA({
   buildExcludes: [/middleware-manifest.json$/],
 });
 
-/** @type {import("next").NextConfig} */
 const config = withPWA({
   reactStrictMode: true,
 
