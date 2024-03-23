@@ -13,8 +13,7 @@
 - [x] List frequency
 - [x] Skipping
 - [x] Collapsing lists
+- [x] Switch to Vercel Postgres
+- [ ] Switch to App Router
 - [ ] Fix timezones
 - [ ] Styling
-- [ ] Try Upstash for session storage
-- [ ] Try prisma-kysely
-- [ ] Try Edge runtime

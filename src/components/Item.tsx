@@ -24,8 +24,8 @@ const Item = ({ item }: ListItemProps) => {
     status === "SKIPPED"
       ? "indeterminate"
       : status === "COMPLETE"
-      ? true
-      : false;
+        ? true
+        : false;
 
   const utils = api.useUtils();
 

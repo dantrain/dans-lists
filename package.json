@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "zx ./scripts/dev.mjs",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}'",
     "start": "next start",
-    "start:db": "pscale connect dans-lists --port 3309",
     "pwa-assets": "pwa-asset-generator logo.svg public/ -b \"#2e026d\" -t png"
   },
   "dependencies": {
@@ -66,13 +65,12 @@
     "pwa-asset-generator": "^6.3.1",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.3",
+    "wait-on": "^7.2.0",
+    "zx": "^7.2.3"
   },
   "ct3aMetadata": {
     "initVersion": "7.10.1"
-  },
-  "prisma": {
-    "seed": "ts-node --esm prisma/seed.ts"
   }
 }
