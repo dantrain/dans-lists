@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { api } from "~/utils/api";
 
 const AddList = () => {
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const createList = api.list.create.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),

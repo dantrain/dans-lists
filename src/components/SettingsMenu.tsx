@@ -17,7 +17,7 @@ import MenuItem from "./MenuItem";
 
 const SettingsMenu = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const [isStandalone, setIsStandalone] = useState(false);
 

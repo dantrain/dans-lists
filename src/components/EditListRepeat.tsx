@@ -11,7 +11,7 @@ const EditListRepeat = ({ list }: { list: ListData }) => {
     [list],
   );
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const editListRepeat = api.list.editRepeat.useMutation({
     onMutate: async (input) => {

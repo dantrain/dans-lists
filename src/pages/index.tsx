@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   const [cookies, setCookie] = useCookies(["tzOffset"]);
 
   useEffect(() => {
-    const tzOffset = new Date().getTimezoneOffset().toString();
+    const tzOffset = new Date().getTimezoneOffset();
 
     if (cookies.tzOffset !== tzOffset) {
       setCookie("tzOffset", tzOffset);

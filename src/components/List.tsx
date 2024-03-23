@@ -31,7 +31,7 @@ type ListProps = {
 const List = ({ list }: ListProps) => {
   const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const deleteList = api.list.delete.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),

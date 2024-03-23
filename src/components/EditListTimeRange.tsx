@@ -19,7 +19,7 @@ const TimeRangeSelect = (props: SelectHTMLAttributes<HTMLSelectElement>) => (
 );
 
 const EditListTimeRange = ({ list }: { list: ListData }) => {
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const editListTimeRange = api.list.editTimeRange.useMutation({
     onMutate: async (input) => {

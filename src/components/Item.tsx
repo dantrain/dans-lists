@@ -27,7 +27,7 @@ const Item = ({ item }: ListItemProps) => {
       ? true
       : false;
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const upsertEvent = api.event.upsert.useMutation({
     onMutate: async (input) => {

@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 const EditItem = ({ item }: { item: ItemData }) => {
   const [title, setTitle] = useState(item.title);
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const editItem = api.item.edit.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),
