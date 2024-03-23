@@ -3,7 +3,10 @@ import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import {
   type RefObject,
   createRef,
-  forwardRef, useEffect, useRef, useState
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import {
   Transition,
@@ -22,7 +25,7 @@ const Bar = forwardRef<HTMLDivElement, { state: TransitionStatus }>(
         className="absolute left-0 z-50 h-[2px] w-full"
         ref={ref}
         style={{
-          marginLeft: `${(-1 + progress) * 100}%`,
+          marginLeft: `${(-1 + progress) * 101}%`,
           opacity:
             (state === "exiting" || state === "exited") && isFinished ? 0 : 1,
           transition: `all ${animationDuration}ms linear`,
@@ -83,6 +86,3 @@ export default function Progress() {
     </TransitionGroup>
   );
 }
-
-
-
