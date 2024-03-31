@@ -5,8 +5,10 @@ import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
+  const [hello, session] = await Promise.all([
+    api.post.hello({ text: "from tRPC" }),
+    auth(),
+  ]);
 
   return (
     <main
@@ -41,16 +43,13 @@ export default async function Home() {
           </div>
         </div>
 
-        <CrudShowcase />
+        {session?.user ? <CrudShowcase /> : null}
       </div>
     </main>
   );
 }
 
 async function CrudShowcase() {
-  const session = await auth();
-  if (!session?.user) return null;
-
   const latestPost = await api.post.getLatest();
 
   return (
