@@ -1,15 +1,9 @@
-import { redirect } from "next/navigation";
-import { auth } from "~/server/auth";
-import { api } from "~/trpc/server";
 import Lists from "~/components/Lists";
 import SignOutButton from "~/components/SignOutButton";
+import { api } from "~/trpc/server";
 
 export default async function Home() {
-  const [session, data] = await Promise.all([auth(), api.list.getAll()]);
-
-  if (!session) {
-    redirect("/signin");
-  }
+  const data = await api.list.getAll();
 
   return (
     <main className="relative px-4 pt-12 sm:pt-20">
