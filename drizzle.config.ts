@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     connectionString: env.POSTGRES_URL,
   },
-  tablesFilter: ["dans-lists-next_*"],
+  tablesFilter: ["dans-lists_*"],
 } satisfies Config;

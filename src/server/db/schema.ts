@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   pgTableCreator,
@@ -17,7 +18,103 @@ import { type AdapterAccount } from "next-auth/adapters";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `dans-lists-next_${name}`);
+export const createTable = pgTableCreator((name) => `dans-lists_${name}`);
+
+const commonFields = {
+  id: varchar("id").primaryKey(),
+  createdAt: timestamp("created_at", { mode: "date", precision: 3 })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
+    .$onUpdate(() => new Date())
+    .notNull(),
+};
+
+export const lists = createTable(
+  "list",
+  {
+    ...commonFields,
+
+    title: text("title").notNull(),
+    rank: text("rank").notNull(),
+
+    repeatsMon: boolean("repeats_mon").default(true).notNull(),
+    repeatsTue: boolean("repeats_tue").default(true).notNull(),
+    repeatsWed: boolean("repeats_wed").default(true).notNull(),
+    repeatsThu: boolean("repeats_thu").default(true).notNull(),
+    repeatsFri: boolean("repeats_fri").default(true).notNull(),
+    repeatsSat: boolean("repeats_sat").default(true).notNull(),
+    repeatsSun: boolean("repeats_sun").default(true).notNull(),
+
+    startMinutes: integer("start_minutes"),
+    endMinutes: integer("end_minutes"),
+
+    ownerId: varchar("owner_id")
+      .references(() => users.id)
+      .notNull(),
+  },
+  (list) => ({
+    ownerIdx: index("list_owner_idx").on(list.ownerId),
+    rankIdx: index("list_rank_idx").on(list.rank),
+  }),
+);
+
+export const listRelations = relations(lists, ({ one, many }) => ({
+  user: one(users, { fields: [lists.ownerId], references: [users.id] }),
+  items: many(items),
+}));
+
+export const items = createTable(
+  "item",
+  {
+    ...commonFields,
+
+    title: text("title").notNull(),
+    rank: text("rank").notNull(),
+
+    listId: varchar("list_id")
+      .references(() => lists.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (item) => ({
+    listIdx: index("item_list_idx").on(item.listId),
+    rankIdx: index("item_rank_idx").on(item.rank),
+  }),
+);
+
+export const itemRelations = relations(items, ({ one, many }) => ({
+  list: one(lists, { fields: [items.listId], references: [lists.id] }),
+  events: many(events),
+}));
+
+export const events = createTable(
+  "event",
+  {
+    ...commonFields,
+
+    streak: integer("streak").default(0).notNull(),
+
+    itemId: varchar("item_id")
+      .references(() => items.id, { onDelete: "cascade" })
+      .notNull(),
+    statusId: varchar("status_id")
+      .references(() => statuses.id)
+      .notNull(),
+  },
+  (event) => ({
+    itemIdx: index("event_item_idx").on(event.itemId),
+    statusIdx: index("event_status_idx").on(event.statusId),
+  }),
+);
+
+export const eventRelations = relations(events, ({ one }) => ({
+  item: one(items, { fields: [events.itemId], references: [items.id] }),
+}));
+
+export const statuses = createTable("status", {
+  id: varchar("id").primaryKey(),
+  name: text("name").unique().notNull(),
+});
 
 export const posts = createTable(
   "post",
@@ -32,9 +129,9 @@ export const posts = createTable(
       .notNull(),
     updatedAt: timestamp("updatedAt"),
   },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
+  (post) => ({
+    createdByIdIdx: index("createdById_idx").on(post.createdById),
+    nameIndex: index("name_idx").on(post.name),
   }),
 );
 
@@ -50,6 +147,7 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  lists: many(lists),
 }));
 
 export const accounts = createTable(

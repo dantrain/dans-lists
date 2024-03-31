@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
@@ -8,7 +10,16 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      animation: {
+        fade: "fade 200ms ease-in 500ms both",
+      },
+      keyframes: {
+        fade: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar")({ nocompatible: true })],
 } satisfies Config;
