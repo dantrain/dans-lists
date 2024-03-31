@@ -1,5 +1,3 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { api } from "~/trpc/react";

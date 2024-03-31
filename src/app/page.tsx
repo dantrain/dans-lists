@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import AddList from "~/components/AddList";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
-import SignOutButton from "./SignOutButton";
+import Lists from "~/components/Lists";
+import SignOutButton from "~/components/SignOutButton";
 
 export default async function Home() {
-  const [session] = await Promise.all([auth()]);
+  const [session, data] = await Promise.all([auth(), api.list.getAll()]);
 
   if (!session) {
     redirect("/signin");
@@ -21,19 +21,8 @@ export default async function Home() {
 
         <SignOutButton />
 
-        <Lists />
+        <Lists data={data} />
       </div>
     </main>
-  );
-}
-
-async function Lists() {
-  const data = await api.list.getAll();
-
-  return (
-    <div>
-      <AddList />
-      <pre>{JSON.stringify(data, null, 4)}</pre>
-    </div>
   );
 }

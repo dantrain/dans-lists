@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { getNextRank } from "../utils";
+import { getNextRank, getRelevantEvents } from "../utils";
 import { events, items, lists } from "~/server/db/schema";
 import { asc, desc, eq } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
+import { omit } from "lodash-es";
 
 export const listRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -48,9 +49,26 @@ export const listRouter = createTRPCRouter({
       },
     });
 
-    console.log("result", result);
+    const data = result.map((list) => {
+      return {
+        ...list,
+        items: list.items.map((item) => {
+          const { todayEvent, lastValidDayEvent } = getRelevantEvents(
+            list,
+            item.events,
+            0, // ctx.tzOffset,
+          );
 
-    return result;
+          return {
+            ...omit(item, "events"),
+            event: todayEvent,
+            streak: lastValidDayEvent?.streak ?? 0,
+          };
+        }),
+      };
+    });
+
+    return data;
   }),
 
   create: protectedProcedure
@@ -71,5 +89,19 @@ export const listRouter = createTRPCRouter({
           ownerId: ctx.session.user.id,
         })
         .returning();
+    }),
+
+  rank: protectedProcedure
+    .input(
+      z
+        .object({
+          id: z.string().cuid(),
+          beforeId: z.optional(z.string().cuid()),
+          afterId: z.optional(z.string().cuid()),
+        })
+        .refine((_) => _.beforeId ?? _.afterId),
+    )
+    .mutation(async ({ ctx, input }) => {
+      console.log("yoyo");
     }),
 });

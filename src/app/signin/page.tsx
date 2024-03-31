@@ -1,5 +1,5 @@
 import { type Provider, auth, authConfig } from "~/server/auth";
-import SignInList from "./SignInList";
+import SignInList from "~/components/SignInList";
 import { redirect } from "next/navigation";
 
 export default async function SignIn() {

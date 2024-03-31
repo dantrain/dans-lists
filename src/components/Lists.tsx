@@ -1,0 +1,77 @@
+"use client";
+
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { atom, useAtom } from "jotai";
+import { useEffect, useMemo } from "react";
+import { LogoIcon } from "~/components/Icons";
+import useRank from "~/hooks/useRank";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
+import { getNow } from "~/utils/date";
+import AddList from "./AddList";
+
+type ListsProps = {
+  data: AppRouterOutputs["list"]["getAll"];
+};
+
+export const editModeAtom = atom(true);
+
+export default function Lists({ data }: ListsProps) {
+  const [editMode, setEditMode] = useAtom(editModeAtom);
+
+  const rankList = api.list.rank.useMutation();
+
+  const filteredData = useMemo(() => {
+    const { today, minutes } = getNow();
+    return data.filter(
+      (list) =>
+        list[`repeats${today}`] &&
+        (list.startMinutes ? minutes >= list.startMinutes : true) &&
+        (list.endMinutes ? minutes <= list.endMinutes : true),
+    );
+  }, [data]);
+
+  const [lists, handleDragEnd] = useRank(
+    editMode ? data : filteredData,
+    rankList.mutate,
+  );
+
+  useEffect(() => {
+    if (data.length === 0 && !editMode) {
+      setEditMode(true);
+    }
+  }, [data.length, editMode, setEditMode]);
+
+  return (
+    <div>
+      {editMode && <AddList />}
+      {lists.length ? (
+        <ul>
+          <DndContext
+            id="lists"
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={lists}
+              strategy={verticalListSortingStrategy}
+            >
+              {lists.map((list) => (
+                <pre key={list.id}>{JSON.stringify(list, null, 2)}</pre>
+                // <List key={list.id} list={list} />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </ul>
+      ) : (
+        <div className="flex justify-center pt-14 text-white/25">
+          <LogoIcon width="100" height="100" />
+        </div>
+      )}
+    </div>
+  );
+}
