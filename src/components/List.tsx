@@ -21,6 +21,7 @@ import {
   ExpandMoreIcon,
 } from "./Icons";
 import { editModeAtom } from "./Lists";
+import EditList from "./EditList";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -85,8 +86,7 @@ const List = ({ list }: ListProps) => {
                   height={20}
                 />
               </button>
-              <span>{list.title}</span>
-              {/* <EditList list={list} /> */}
+              <EditList list={list} />
               <button
                 className="px-2 text-gray-400 hover:text-white"
                 title="Delete"

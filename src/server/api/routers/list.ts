@@ -91,6 +91,20 @@ export const listRouter = createTRPCRouter({
         .returning();
     }),
 
+  edit: protectedProcedure
+    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [data] = await ctx.db
+        .update(lists)
+        .set({ title: input.title })
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        )
+        .returning();
+
+      return data;
+    }),
+
   rank: protectedProcedure
     .input(
       z
