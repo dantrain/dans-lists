@@ -1,8 +1,8 @@
-import Link from "next/link";
-
 import { CreatePost } from "~/app/_components/create-post";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
+import SignOutButton from "./SignOutButton";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const [hello, session] = await Promise.all([
@@ -10,16 +10,14 @@ export default async function Home() {
     auth(),
   ]);
 
+  if (!session) {
+    redirect("/signin");
+  }
+
   return (
-    <main
-      className="flex min-h-screen flex-col items-center justify-center
-        bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white"
-    >
-      <div
-        className="container flex flex-col items-center justify-center gap-12
-          px-4 py-16"
-      >
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+    <main className="relative px-4 pt-12 sm:pt-20">
+      <div className="mx-auto mb-10 flex w-full max-w-sm flex-col gap-12">
+        <h1 className="text-5xl font-extrabold tracking-tight">
           Dan&apos;s Lists Next
         </h1>
         <div className="flex gap-2">
@@ -31,19 +29,13 @@ export default async function Home() {
 
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
-              {session && <span>Logged in as {session.user?.name}</span>}
+              <span>Logged in as {session.user?.name}</span>
             </p>
-            <Link
-              href={session ? "/api/auth/signout" : "/api/auth/signin"}
-              className="rounded-full bg-white/10 px-10 py-3 font-semibold
-                no-underline transition hover:bg-white/20"
-            >
-              {session ? "Sign out" : "Sign in"}
-            </Link>
+            <SignOutButton />
           </div>
         </div>
 
-        {session?.user ? <CrudShowcase /> : null}
+        <CrudShowcase />
       </div>
     </main>
   );

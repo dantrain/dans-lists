@@ -1,5 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { type DefaultSession } from "next-auth";
+import { type NextAuthConfig, type DefaultSession } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth from "next-auth";
@@ -29,10 +29,12 @@ declare module "next-auth" {
   // }
 }
 
-export const {
-  handlers: { GET, POST },
-  auth,
-} = NextAuth({
+export type Provider = {
+  id: string;
+  name: string;
+};
+
+export const authConfig: NextAuthConfig = {
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
@@ -58,4 +60,12 @@ export const {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-});
+  pages: {
+    signIn: "/signin",
+  },
+};
+
+export const {
+  handlers: { GET, POST },
+  auth,
+} = NextAuth(authConfig);
