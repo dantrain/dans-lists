@@ -22,6 +22,7 @@ import {
 } from "./Icons";
 import { editModeAtom } from "./Lists";
 import EditList from "./EditList";
+import AddItem from "./AddItem";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -111,9 +112,9 @@ const List = ({ list }: ListProps) => {
         </div>
         {editMode && (
           <>
-            {/* <EditListRepeat list={list} />
-            <EditListTimeRange list={list} />
-            <AddItem listId={list.id} /> */}
+            {/* <EditListRepeat list={list} /> */}
+            {/* <EditListTimeRange list={list} /> */}
+            <AddItem listId={list.id} />
           </>
         )}
         <Collapsible.Content asChild>
