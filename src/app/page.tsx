@@ -1,9 +1,17 @@
+import { redirect } from "next/navigation";
 import Lists from "~/components/Lists";
 import SignOutButton from "~/components/SignOutButton";
 import { api } from "~/trpc/server";
 
 export default async function Home() {
-  const data = await api.list.getAll();
+  const data = await api.list.getAll().catch((err) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (err.code === "UNAUTHORIZED") {
+      redirect("/signin");
+    } else {
+      throw err;
+    }
+  });
 
   return (
     <main className="relative px-4 pt-12 sm:pt-20">
