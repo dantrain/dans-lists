@@ -8,6 +8,7 @@
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "lint": "next lint",
     "start": "next start"
   },
@@ -43,12 +44,16 @@
     "pg": "^8.11.3",
     "postcss": "^8.4.34",
     "prettier": "^3.2.5",
+    "prettier-plugin-classnames": "^0.6.3",
+    "prettier-plugin-merge": "^0.6.0",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-packagejson": "^2.4.14",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.4.2"
   },
+  "packageManager": "pnpm@8.15.4",
   "ct3aMetadata": {
     "initVersion": "7.30.0"
-  },
-  "packageManager": "pnpm@8.15.4"
+  }
 }
