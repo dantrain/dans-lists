@@ -13,6 +13,7 @@ import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import { getNow } from "~/utils/date";
 import AddList from "./AddList";
+import List from "./List";
 
 type ListsProps = {
   data: AppRouterOutputs["list"]["getAll"];
@@ -61,8 +62,7 @@ export default function Lists({ data }: ListsProps) {
               strategy={verticalListSortingStrategy}
             >
               {lists.map((list) => (
-                <pre key={list.id}>{JSON.stringify(list, null, 2)}</pre>
-                // <List key={list.id} list={list} />
+                <List key={list.id} list={list} />
               ))}
             </SortableContext>
           </DndContext>

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { getNextRank, getRelevantEvents } from "../utils";
+import { getNextRank, getRankBetween, getRelevantEvents } from "../utils";
 import { events, items, lists } from "~/server/db/schema";
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { omit } from "lodash-es";
 
@@ -95,13 +95,44 @@ export const listRouter = createTRPCRouter({
     .input(
       z
         .object({
-          id: z.string().cuid(),
-          beforeId: z.optional(z.string().cuid()),
-          afterId: z.optional(z.string().cuid()),
+          id: z.string().cuid2(),
+          beforeId: z.optional(z.string().cuid2()),
+          afterId: z.optional(z.string().cuid2()),
         })
         .refine((_) => _.beforeId ?? _.afterId),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("yoyo");
+      const [beforeItem, afterItem] = await Promise.all([
+        input.beforeId
+          ? ctx.db.query.lists.findFirst({
+              where: eq(lists.id, input.beforeId),
+            })
+          : null,
+        input.afterId
+          ? ctx.db.query.lists.findFirst({
+              where: eq(lists.id, input.afterId),
+            })
+          : null,
+      ]);
+
+      const [data] = await ctx.db
+        .update(lists)
+        .set({ rank: getRankBetween(beforeItem, afterItem) })
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        )
+        .returning();
+
+      return data;
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid2() }))
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .delete(lists)
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
+    ),
 });

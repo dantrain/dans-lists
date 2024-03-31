@@ -6,9 +6,7 @@ const AddList = () => {
   const router = useRouter();
 
   const createList = api.list.create.useMutation({
-    onSettled: () => {
-      router.refresh();
-    },
+    onSettled: () => router.refresh(),
   });
 
   const ref = useRef<HTMLInputElement>(null);

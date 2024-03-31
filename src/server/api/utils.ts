@@ -88,7 +88,7 @@ export const getNextRank = (beforeItem?: RankItem) =>
     ? LexoRank.parse(beforeItem.rank).genNext().toString()
     : LexoRank.middle().toString();
 
-export const getRankBetween = (beforeItem: RankItem, afterItem: RankItem) => {
+export const getRankBetween = (beforeItem?: RankItem, afterItem?: RankItem) => {
   let rank: LexoRank;
 
   if (!beforeItem && afterItem) {
