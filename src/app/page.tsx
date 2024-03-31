@@ -1,11 +1,8 @@
-import { atom } from "jotai";
 import { redirect } from "next/navigation";
 import AddList from "~/components/AddList";
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import SignOutButton from "./SignOutButton";
-
-export const editModeAtom = atom(false);
 
 export default async function Home() {
   const [session] = await Promise.all([auth()]);
