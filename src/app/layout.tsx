@@ -2,6 +2,7 @@ import type { Viewport } from "next";
 import { Inter } from "next/font/google";
 import { type ReactNode } from "react";
 import { TRPCReactProvider } from "~/trpc/react";
+import { Provider as JotaiProvider } from "jotai";
 
 import "~/styles/globals.css";
 
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           className="fixed -z-50 h-screen w-screen bg-gradient-to-b
             from-[#2e026d] to-[#15162c]"
         />
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <JotaiProvider>{children}</JotaiProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

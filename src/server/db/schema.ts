@@ -109,31 +109,16 @@ export const events = createTable(
 
 export const eventRelations = relations(events, ({ one }) => ({
   item: one(items, { fields: [events.itemId], references: [items.id] }),
+  status: one(statuses, {
+    fields: [events.statusId],
+    references: [statuses.id],
+  }),
 }));
 
 export const statuses = createTable("status", {
   id: varchar("id").primaryKey(),
   name: text("name").unique().notNull(),
 });
-
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("createdById", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
-  },
-  (post) => ({
-    createdByIdIdx: index("createdById_idx").on(post.createdById),
-    nameIndex: index("name_idx").on(post.name),
-  }),
-);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
