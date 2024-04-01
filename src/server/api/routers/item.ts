@@ -4,7 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { items, lists } from "~/server/db/schema";
-import { getNextRank } from "../utils";
+import { getNextRank, getRankBetween } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
@@ -40,6 +40,15 @@ export const itemRouter = createTRPCRouter({
       });
     }),
 
+  edit: protectedProcedure
+    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(items)
+        .set({ title: input.title })
+        .where(eq(items.id, input.id)),
+    ),
+
   rank: protectedProcedure
     .input(
       z
@@ -51,6 +60,28 @@ export const itemRouter = createTRPCRouter({
         .refine((_) => _.beforeId ?? _.afterId),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("rank item");
+      const [beforeItem, afterItem] = await Promise.all([
+        input.beforeId
+          ? ctx.db.query.items.findFirst({
+              where: eq(items.id, input.beforeId),
+            })
+          : null,
+        input.afterId
+          ? ctx.db.query.items.findFirst({
+              where: eq(items.id, input.afterId),
+            })
+          : null,
+      ]);
+
+      return ctx.db
+        .update(items)
+        .set({ rank: getRankBetween(beforeItem, afterItem) })
+        .where(eq(items.id, input.id));
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid2() }))
+    .mutation(({ ctx, input }) =>
+      ctx.db.delete(items).where(eq(items.id, input.id)),
+    ),
 });

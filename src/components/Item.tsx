@@ -9,6 +9,7 @@ import Checkbox from "./Checkbox";
 import { DeleteIcon, DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
 import { editModeAtom } from "./Lists";
+import EditItem from "./EditItem";
 
 type ListItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -76,9 +77,9 @@ const Item = ({ item }: ListItemProps) => {
       statusName: status === "SKIPPED" ? "PENDING" : "SKIPPED",
     });
 
-  // const deleteItem = api.item.delete.useMutation({
-  //   onSettled: () => void utils.list.getAll.invalidate(),
-  // });
+  const deleteItem = api.item.delete.useMutation({
+    onSettled: () => void utils.list.getAll.invalidate(),
+  });
 
   const editMode = useAtomValue(editModeAtom);
 
@@ -115,11 +116,11 @@ const Item = ({ item }: ListItemProps) => {
           >
             <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
           </button>
-          {/* <EditItem item={item} /> */}
+          <EditItem item={item} />
           <button
             className="px-2 text-gray-400 hover:text-white"
             title="Delete"
-            // onClick={() => deleteItem.mutate({ id })}
+            onClick={() => deleteItem.mutate({ id })}
           >
             <DeleteIcon />
           </button>

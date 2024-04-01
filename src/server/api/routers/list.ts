@@ -4,7 +4,8 @@ import { getNextRank, getRankBetween, getRelevantEvents } from "../utils";
 import { events, items, lists } from "~/server/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
-import { omit } from "lodash-es";
+import { isNull, omit } from "lodash-es";
+import { daysOfWeek } from "~/utils/date";
 
 export const listRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -80,30 +81,71 @@ export const listRouter = createTRPCRouter({
         .orderBy(desc(lists.rank))
         .limit(1);
 
-      return ctx.db
-        .insert(lists)
-        .values({
-          id: createId(),
-          title: input.title,
-          rank: getNextRank(beforeItem),
-          ownerId: ctx.session.user.id,
-        })
-        .returning();
+      return ctx.db.insert(lists).values({
+        id: createId(),
+        title: input.title,
+        rank: getNextRank(beforeItem),
+        ownerId: ctx.session.user.id,
+      });
     }),
 
   edit: protectedProcedure
     .input(z.object({ id: z.string().cuid2(), title: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const [data] = await ctx.db
+    .mutation(({ ctx, input }) =>
+      ctx.db
         .update(lists)
         .set({ title: input.title })
         .where(
           and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
-        )
-        .returning();
+        ),
+    ),
 
-      return data;
-    }),
+  editRepeat: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid2(),
+        repeatDays: z.array(z.enum(daysOfWeek)),
+      }),
+    )
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(lists)
+        .set(
+          daysOfWeek.reduce(
+            (data, day) => ({
+              ...data,
+              [`repeats${day}`]: input.repeatDays.includes(day),
+            }),
+            {},
+          ),
+        )
+        .where(eq(lists.id, input.id)),
+    ),
+
+  editTimeRange: protectedProcedure
+    .input(
+      z
+        .object({
+          id: z.string().cuid2(),
+          startMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
+          endMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
+        })
+        .refine(
+          (_) =>
+            isNull(_.startMinutes) ||
+            isNull(_.endMinutes) ||
+            _.startMinutes <= _.endMinutes,
+        ),
+    )
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(lists)
+        .set({
+          startMinutes: input.startMinutes,
+          endMinutes: input.endMinutes,
+        })
+        .where(eq(lists.id, input.id)),
+    ),
 
   rank: protectedProcedure
     .input(
@@ -129,15 +171,12 @@ export const listRouter = createTRPCRouter({
           : null,
       ]);
 
-      const [data] = await ctx.db
+      return ctx.db
         .update(lists)
         .set({ rank: getRankBetween(beforeItem, afterItem) })
         .where(
           and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
-        )
-        .returning();
-
-      return data;
+        );
     }),
 
   delete: protectedProcedure

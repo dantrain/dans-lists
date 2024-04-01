@@ -22,6 +22,8 @@ import {
 } from "./Icons";
 import Item from "./Item";
 import { editModeAtom } from "./Lists";
+import EditListRepeat from "./EditListRepeat";
+import EditListTimeRange from "./EditListTimeRange";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -111,8 +113,8 @@ const List = ({ list }: ListProps) => {
         </div>
         {editMode && (
           <>
-            {/* <EditListRepeat list={list} /> */}
-            {/* <EditListTimeRange list={list} /> */}
+            <EditListRepeat list={list} />
+            <EditListTimeRange list={list} />
             <AddItem listId={list.id} />
           </>
         )}
