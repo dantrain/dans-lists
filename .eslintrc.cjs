@@ -38,4 +38,5 @@ const config = {
     "drizzle/enforce-update-with-where": "error",
   },
 };
+
 module.exports = config;
