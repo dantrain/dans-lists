@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::view-transition-group(*) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
