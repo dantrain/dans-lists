@@ -15,8 +15,18 @@ const inter = Inter({
 export const metadata = {
   title: "Dan's Lists",
   description: "Track daily and other checklists",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: {
+    icon: [
+      { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-touch-icon.png",
+    other: [
+      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#2e026d" },
+    ],
+  },
   appleWebApp: { statusBarStyle: "black" },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
