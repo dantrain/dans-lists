@@ -119,7 +119,9 @@ export const listRouter = createTRPCRouter({
             {},
           ),
         )
-        .where(eq(lists.id, input.id)),
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
     ),
 
   editTimeRange: protectedProcedure
@@ -144,7 +146,9 @@ export const listRouter = createTRPCRouter({
           startMinutes: input.startMinutes,
           endMinutes: input.endMinutes,
         })
-        .where(eq(lists.id, input.id)),
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
     ),
 
   rank: protectedProcedure

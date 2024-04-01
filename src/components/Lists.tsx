@@ -19,7 +19,7 @@ type ListsProps = {
   initialData: AppRouterOutputs["list"]["getAll"];
 };
 
-export const editModeAtom = atom(true);
+export const editModeAtom = atom(false);
 
 export default function Lists({ initialData }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
@@ -54,7 +54,7 @@ export default function Lists({ initialData }: ListsProps) {
   }, [data.length, editMode, setEditMode]);
 
   return (
-    <div>
+    <div className="mx-auto mb-10 w-full max-w-sm">
       {editMode && <AddList />}
       {lists.length ? (
         <ul>
