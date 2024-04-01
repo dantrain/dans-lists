@@ -1,8 +1,12 @@
 import { useRef, useState } from "react";
-import { type ItemData } from "~/pages";
-import { api } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 
-const EditItem = ({ item }: { item: ItemData }) => {
+type EditItemProps = {
+  item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
+};
+
+const EditItem = ({ item }: EditItemProps) => {
   const [title, setTitle] = useState(item.title);
 
   const utils = api.useUtils();
@@ -29,7 +33,8 @@ const EditItem = ({ item }: { item: ItemData }) => {
       <input
         id={`editItemInput-${item.id}`}
         ref={ref}
-        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
+        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2
+          py-1 placeholder:text-gray-400"
         type="text"
         autoComplete="off"
         value={title}

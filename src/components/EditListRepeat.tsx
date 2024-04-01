@@ -1,11 +1,15 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { cloneDeep, isNil, set } from "lodash";
+import { cloneDeep, isNil, set } from "lodash-es";
 import { useMemo } from "react";
-import { type ListData } from "~/pages";
-import { api } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 import { daysOfWeek, type Weekday } from "~/utils/date";
 
-const EditListRepeat = ({ list }: { list: ListData }) => {
+const EditListRepeat = ({
+  list,
+}: {
+  list: AppRouterOutputs["list"]["getAll"][0];
+}) => {
   const value = useMemo(
     () => daysOfWeek.filter((weekday) => list[`repeats${weekday}`]),
     [list],
@@ -54,7 +58,9 @@ const EditListRepeat = ({ list }: { list: ListData }) => {
         {daysOfWeek.map((_) => (
           <ToggleGroup.Item
             key={_}
-            className="border-r border-violet-500 px-2 py-1 text-violet-300 last:border-r-0 data-[state=on]:bg-violet-900 data-[state=on]:text-white"
+            className="border-r border-violet-500 px-2 py-1 text-violet-300
+              last:border-r-0 data-[state=on]:bg-violet-900
+              data-[state=on]:text-white"
             value={_}
           >
             {_}

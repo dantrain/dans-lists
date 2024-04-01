@@ -1,12 +1,14 @@
+"use client";
+
 import { useNProgress } from "@tanem/react-nprogress";
 import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import {
-  type RefObject,
   createRef,
   forwardRef,
   useEffect,
   useRef,
   useState,
+  type RefObject,
 } from "react";
 import {
   Transition,
@@ -16,23 +18,32 @@ import {
 
 const Bar = forwardRef<HTMLDivElement, { state: TransitionStatus }>(
   ({ state }, ref) => {
-    const { animationDuration, isFinished, progress } = useNProgress({
+    const { animationDuration, progress } = useNProgress({
       isAnimating: state === "entered",
     });
+
+    const enteredRef = useRef(false);
+
+    useEffect(() => {
+      if (state === "entered") {
+        enteredRef.current = true;
+      }
+    }, [state]);
 
     return (
       <div
         className="absolute left-0 z-50 h-[2px] w-full"
         ref={ref}
         style={{
-          marginLeft: `${(-1 + progress) * 101}%`,
-          opacity:
-            (state === "exiting" || state === "exited") && isFinished ? 0 : 1,
-          transition: `all ${animationDuration}ms linear`,
+          marginLeft: `${(-1 + (enteredRef.current ? progress : 0)) * 101}%`,
+          opacity: state === "exiting" || state === "exited" ? 0 : 1,
+          transition: `margin-left ${animationDuration}ms linear
+            ${enteredRef.current ? ", opacity 500ms ease-out" : ""}`,
         }}
       >
         <div
-          className="absolute right-0 h-full w-28 translate-x-[1px] translate-y-[-4px] rotate-3 bg-gray-100"
+          className="absolute right-0 h-full w-28 translate-x-[1px]
+            translate-y-[-4px] rotate-3 bg-gray-100"
           style={{
             boxShadow: "0 0 10px #f1f5f9, 0 0 5px #f1f5f9",
           }}
@@ -68,7 +79,9 @@ export default function Progress() {
   }, [isLoading]);
 
   return (
-    <TransitionGroup className="pointer-events-none fixed inset-x-0 top-0 h-1 overflow-hidden">
+    <TransitionGroup
+      className="pointer-events-none fixed inset-x-0 top-0 h-1 overflow-hidden"
+    >
       {bar ? (
         <Transition
           key={bar.key}

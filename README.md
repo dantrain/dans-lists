@@ -14,6 +14,6 @@
 - [x] Skipping
 - [x] Collapsing lists
 - [x] Switch to Vercel Postgres
-- [ ] Switch to App Router
+- [x] Switch to App Router
 - [ ] Fix timezones
 - [ ] Styling

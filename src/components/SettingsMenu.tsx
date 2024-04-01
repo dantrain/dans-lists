@@ -1,9 +1,10 @@
+"use client";
+
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useAtom } from "jotai";
 import { signOut } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
-import { editModeAtom } from "~/pages";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 import {
   CheckIcon,
   EditIcon,
@@ -13,10 +14,13 @@ import {
   RefreshIcon,
   SettingsIcon,
 } from "./Icons";
+import { editModeAtom } from "./Lists";
 import MenuItem from "./MenuItem";
+import { useRouter } from "next/navigation";
 
 const SettingsMenu = () => {
   const [editMode, setEditMode] = useAtom(editModeAtom);
+  const router = useRouter();
   const utils = api.useUtils();
 
   const [isStandalone, setIsStandalone] = useState(false);
@@ -60,7 +64,9 @@ const SettingsMenu = () => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w-[200px] cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl"
+          className="min-w-[200px] cursor-default overflow-hidden rounded border
+            border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white
+            shadow-xl"
           sideOffset={-6}
           collisionPadding={8}
           onCloseAutoFocus={(e) => e.preventDefault()}
@@ -72,7 +78,6 @@ const SettingsMenu = () => {
               if (!checked) void utils.list.invalidate();
 
               if (document.startViewTransition) {
-                // eslint-disable-next-line @typescript-eslint/require-await
                 document.startViewTransition(async () => setEditMode(checked));
               } else {
                 setEditMode(checked);
@@ -120,7 +125,10 @@ const SettingsMenu = () => {
           )}
           <DropdownMenu.Item
             className="group px-1 pb-1 focus:outline-none"
-            onClick={() => void signOut()}
+            onClick={async () => {
+              await signOut({ redirect: false });
+              router.push("/signin");
+            }}
           >
             <MenuItem padLeft>
               Sign out

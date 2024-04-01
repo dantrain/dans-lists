@@ -1,7 +1,7 @@
-import { cloneDeep, isNil, isNull, padStart, range, set } from "lodash";
+import { cloneDeep, isNil, isNull, padStart, range, set } from "lodash-es";
 import { type SelectHTMLAttributes } from "react";
-import { type ListData } from "~/pages";
-import { api } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 
 const TimeRangeSelect = (props: SelectHTMLAttributes<HTMLSelectElement>) => (
   <select
@@ -18,7 +18,11 @@ const TimeRangeSelect = (props: SelectHTMLAttributes<HTMLSelectElement>) => (
   </select>
 );
 
-const EditListTimeRange = ({ list }: { list: ListData }) => {
+const EditListTimeRange = ({
+  list,
+}: {
+  list: AppRouterOutputs["list"]["getAll"][0];
+}) => {
   const utils = api.useUtils();
 
   const editListTimeRange = api.list.editTimeRange.useMutation({

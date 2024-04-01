@@ -1,81 +1,87 @@
+import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { items, lists } from "~/server/db/schema";
 import { getNextRank, getRankBetween } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ listId: z.string().cuid(), title: z.string() }))
+    .input(z.object({ listId: z.string().cuid2(), title: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const list = await ctx.prisma.list.findUniqueOrThrow({
-        where: { id: input.listId },
-        select: {
+      const list = await ctx.db.query.lists.findFirst({
+        where: eq(lists.id, input.listId),
+        columns: {
           ownerId: true,
+        },
+        with: {
           items: {
-            select: { rank: true },
-            take: 1,
-            orderBy: { rank: "desc" },
+            columns: {
+              rank: true,
+            },
+            orderBy: [desc(items.rank)],
+            limit: 1,
           },
         },
       });
 
-      if (list.ownerId !== ctx.session.user.id) {
+      if (list?.ownerId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
       const beforeItem = list.items[0];
 
-      return ctx.prisma.item.create({
-        data: {
-          title: input.title,
-          list: { connect: { id: input.listId } },
-          rank: getNextRank(beforeItem),
-        },
+      return ctx.db.insert(items).values({
+        id: createId(),
+        title: input.title,
+        rank: getNextRank(beforeItem),
+        listId: input.listId,
       });
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string().cuid(), title: z.string() }))
+    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
     .mutation(({ ctx, input }) =>
-      ctx.prisma.item.updateMany({
-        where: { id: input.id, list: { ownerId: ctx.session.user.id } },
-        data: { title: input.title },
-      }),
+      ctx.db
+        .update(items)
+        .set({ title: input.title })
+        .where(eq(items.id, input.id)),
     ),
 
   rank: protectedProcedure
     .input(
       z
         .object({
-          id: z.string().cuid(),
-          beforeId: z.optional(z.string().cuid()),
-          afterId: z.optional(z.string().cuid()),
+          id: z.string().cuid2(),
+          beforeId: z.optional(z.string().cuid2()),
+          afterId: z.optional(z.string().cuid2()),
         })
-        .refine((_) => _.beforeId || _.afterId),
+        .refine((_) => _.beforeId ?? _.afterId),
     )
     .mutation(async ({ ctx, input }) => {
-      const [beforeItem, afterItem] = await ctx.prisma.$transaction([
-        ctx.prisma.item.findFirst({
-          where: { id: input.beforeId ?? "%other" },
-          select: { rank: true },
-        }),
-        ctx.prisma.item.findFirst({
-          where: { id: input.afterId ?? "%other" },
-          select: { rank: true },
-        }),
+      const [beforeItem, afterItem] = await Promise.all([
+        input.beforeId
+          ? ctx.db.query.items.findFirst({
+              where: eq(items.id, input.beforeId),
+            })
+          : null,
+        input.afterId
+          ? ctx.db.query.items.findFirst({
+              where: eq(items.id, input.afterId),
+            })
+          : null,
       ]);
 
-      return ctx.prisma.item.update({
-        where: { id: input.id },
-        data: { rank: getRankBetween(beforeItem, afterItem) },
-      });
+      return ctx.db
+        .update(items)
+        .set({ rank: getRankBetween(beforeItem, afterItem) })
+        .where(eq(items.id, input.id));
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.string().cuid2() }))
     .mutation(({ ctx, input }) =>
-      ctx.prisma.item.deleteMany({
-        where: { id: input.id, list: { ownerId: ctx.session.user.id } },
-      }),
+      ctx.db.delete(items).where(eq(items.id, input.id)),
     ),
 });

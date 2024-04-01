@@ -1,49 +1,77 @@
+import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { events, items, statuses } from "~/server/db/schema";
 import { getRelevantEvents, getWeekDateRange } from "../utils";
+import invariant from "tiny-invariant";
+import { createId } from "@paralleldrive/cuid2";
+import { TRPCError } from "@trpc/server";
 
 export const eventRouter = createTRPCRouter({
   upsert: protectedProcedure
     .input(
       z.object({
-        itemId: z.string().cuid(),
+        itemId: z.string().cuid2(),
         statusName: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { list, events } = await ctx.prisma.item.findFirstOrThrow({
-        where: { id: input.itemId, list: { ownerId: ctx.session.user.id } },
-        select: {
-          events: {
-            where: {
-              createdAt: getWeekDateRange(ctx.tzOffset),
+      const range = getWeekDateRange(ctx.tzOffset);
+
+      const [status, result] = await Promise.all([
+        ctx.db.query.statuses.findFirst({
+          where: eq(statuses.name, input.statusName),
+        }),
+        ctx.db.query.items.findFirst({
+          where: eq(items.id, input.itemId),
+          columns: {},
+          with: {
+            events: {
+              where: and(
+                gte(events.createdAt, new Date(range.gte)),
+                lt(events.createdAt, new Date(range.lt)),
+              ),
+              limit: 1,
+              orderBy: [desc(events.createdAt)],
+              columns: {
+                id: true,
+                createdAt: true,
+                streak: true,
+              },
+              with: {
+                status: {
+                  columns: {
+                    name: true,
+                  },
+                },
+              },
             },
-            orderBy: { createdAt: "desc" },
-            take: 1,
-            select: {
-              id: true,
-              createdAt: true,
-              status: true,
-              streak: true,
+            list: {
+              columns: {
+                ownerId: true,
+                repeatsMon: true,
+                repeatsTue: true,
+                repeatsWed: true,
+                repeatsThu: true,
+                repeatsFri: true,
+                repeatsSat: true,
+                repeatsSun: true,
+              },
             },
           },
-          list: {
-            select: {
-              repeatsMon: true,
-              repeatsTue: true,
-              repeatsWed: true,
-              repeatsThu: true,
-              repeatsFri: true,
-              repeatsSat: true,
-              repeatsSun: true,
-            },
-          },
-        },
-      });
+        }),
+      ]);
+
+      invariant(status, "Status not found");
+      invariant(result, "Item not found");
+
+      if (result.list.ownerId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
 
       const { todayEvent, lastValidDayEvent } = getRelevantEvents(
-        list,
-        events,
+        result.list,
+        result.events,
         ctx.tzOffset,
       );
 
@@ -58,20 +86,19 @@ export const eventRouter = createTRPCRouter({
       }
 
       if (todayEvent) {
-        await ctx.prisma.event.update({
-          where: { id: todayEvent.id },
-          data: {
-            status: { connect: { name: input.statusName } },
+        await ctx.db
+          .update(events)
+          .set({
+            statusId: status.id,
             streak,
-          },
-        });
+          })
+          .where(eq(events.id, todayEvent.id));
       } else {
-        await ctx.prisma.event.create({
-          data: {
-            item: { connect: { id: input.itemId } },
-            status: { connect: { name: input.statusName } },
-            streak,
-          },
+        await ctx.db.insert(events).values({
+          id: createId(),
+          itemId: input.itemId,
+          statusId: status.id,
+          streak,
         });
       }
     }),

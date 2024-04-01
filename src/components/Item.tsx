@@ -2,16 +2,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { cloneDeep, isNil, set } from "lodash";
-import { editModeAtom, type ItemData } from "~/pages";
-import { api } from "~/utils/api";
+import { cloneDeep, isNil, set } from "lodash-es";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 import Checkbox from "./Checkbox";
-import EditItem from "./EditItem";
 import { DeleteIcon, DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
+import { editModeAtom } from "./Lists";
+import EditItem from "./EditItem";
 
 type ListItemProps = {
-  item: ItemData;
+  item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
 };
 
 const Item = ({ item }: ListItemProps) => {

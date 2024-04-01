@@ -1,63 +1,32 @@
-import { closestCenter, DndContext } from "@dnd-kit/core";
+"use client";
+
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { atom, useAtom } from "jotai";
-import { type NextPage } from "next";
 import { useEffect, useMemo } from "react";
-import { useCookies } from "react-cookie";
-import AddList from "~/components/AddList";
 import { LogoIcon } from "~/components/Icons";
-import List from "~/components/List";
-import Progress from "~/components/Progress";
-import SettingsMenu from "~/components/SettingsMenu";
-import Spinner from "~/components/Spinner";
-import Suspense from "~/components/Suspense";
 import useRank from "~/hooks/useRank";
-import { api, type RouterOutputs } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 import { getNow } from "~/utils/date";
+import AddList from "./AddList";
+import List from "./List";
 
-export type ListData = RouterOutputs["list"]["getAll"][0];
-export type ItemData = ListData["items"][0];
+type ListsProps = {
+  initialData: AppRouterOutputs["list"]["getAll"];
+};
 
 export const editModeAtom = atom(false);
 
-const Home: NextPage = () => {
-  const [cookies, setCookie] = useCookies(["tzOffset"]);
-
-  useEffect(() => {
-    const tzOffset = new Date().getTimezoneOffset();
-
-    if (cookies.tzOffset !== tzOffset) {
-      setCookie("tzOffset", tzOffset);
-      location.reload();
-    }
-  }, [cookies, setCookie]);
-
-  return (
-    <main className="relative px-4 pt-12 sm:pt-20">
-      <Progress />
-      <SettingsMenu />
-      <Suspense
-        fallback={
-          <div className="flex animate-fade justify-center pt-10 text-white">
-            <Spinner />
-          </div>
-        }
-      >
-        <Lists />
-      </Suspense>
-    </main>
-  );
-};
-
-export default Home;
-
-const Lists = () => {
+export default function Lists({ initialData }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
 
-  const [data] = api.list.getAll.useSuspenseQuery(undefined, {
+  const { data } = api.list.getAll.useQuery(undefined, {
+    initialData,
+    staleTime: 1000,
     refetchInterval: process.env.NODE_ENV === "development" ? false : 30 * 1000,
   });
 
@@ -85,7 +54,7 @@ const Lists = () => {
   }, [data.length, editMode, setEditMode]);
 
   return (
-    <div className="mx-auto mb-10 w-full max-w-sm text-white">
+    <div className="mx-auto mb-10 w-full max-w-sm">
       {editMode && <AddList />}
       {lists.length ? (
         <ul>
@@ -111,4 +80,4 @@ const Lists = () => {
       )}
     </div>
   );
-};
+}

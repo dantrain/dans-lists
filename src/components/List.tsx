@@ -10,12 +10,10 @@ import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useLocalStorage } from "usehooks-ts";
 import useRank from "~/hooks/useRank";
-import { editModeAtom, type ListData } from "~/pages";
-import { api } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
-import EditListRepeat from "./EditListRepeat";
-import EditListTimeRange from "./EditListTimeRange";
 import {
   DeleteIcon,
   DragIndicatorIcon,
@@ -23,15 +21,17 @@ import {
   ExpandMoreIcon,
 } from "./Icons";
 import Item from "./Item";
+import { editModeAtom } from "./Lists";
+import EditListRepeat from "./EditListRepeat";
+import EditListTimeRange from "./EditListTimeRange";
 
 type ListProps = {
-  list: ListData;
+  list: AppRouterOutputs["list"]["getAll"][0];
 };
 
 const List = ({ list }: ListProps) => {
-  const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
-
   const utils = api.useUtils();
+  const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
 
   const deleteList = api.list.delete.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),

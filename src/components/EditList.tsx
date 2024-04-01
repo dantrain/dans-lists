@@ -1,11 +1,14 @@
 import { useRef, useState } from "react";
-import { type ListData } from "~/pages";
-import { api } from "~/utils/api";
+import { type AppRouterOutputs } from "~/server/api/root";
+import { api } from "~/trpc/react";
 
-const EditList = ({ list }: { list: ListData }) => {
-  const [title, setTitle] = useState(list.title);
+type EditListProps = {
+  list: AppRouterOutputs["list"]["getAll"][0];
+};
 
+const EditList = ({ list }: EditListProps) => {
   const utils = api.useUtils();
+  const [title, setTitle] = useState(list.title);
 
   const editList = api.list.edit.useMutation({
     onSettled: () => void utils.list.getAll.invalidate(),
@@ -29,7 +32,8 @@ const EditList = ({ list }: { list: ListData }) => {
       <input
         id={`editListInput-${list.id}`}
         ref={ref}
-        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
+        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2
+          py-1 placeholder:text-gray-400"
         type="text"
         autoComplete="off"
         value={title}

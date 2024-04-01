@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import utc from "dayjs/plugin/utc";
 import { LexoRank } from "lexorank";
-import { daysOfWeek, type Weekday } from "~/utils/date";
+import { daysOfWeek } from "~/utils/date";
+import invariant from "tiny-invariant";
 
 dayjs.extend(utc);
 dayjs.extend(isoWeek);
@@ -57,11 +58,8 @@ export const getRelevantEvents = <
 
   while (
     lastValidDaysAgo < 8 &&
-    list[
-      `repeats${
-        daysOfWeek[((todayIndex - lastValidDaysAgo) % 7) + 7] as Weekday
-      }`
-    ] === false
+    list[`repeats${daysOfWeek[((todayIndex - lastValidDaysAgo) % 7) + 7]!}`] ===
+      false
   ) {
     lastValidDaysAgo++;
   }
@@ -91,7 +89,7 @@ export const getNextRank = (beforeItem?: RankItem) =>
     ? LexoRank.parse(beforeItem.rank).genNext().toString()
     : LexoRank.middle().toString();
 
-export const getRankBetween = (beforeItem: RankItem, afterItem: RankItem) => {
+export const getRankBetween = (beforeItem?: RankItem, afterItem?: RankItem) => {
   let rank: LexoRank;
 
   if (!beforeItem && afterItem) {
@@ -107,4 +105,9 @@ export const getRankBetween = (beforeItem: RankItem, afterItem: RankItem) => {
   }
 
   return rank.toString();
+};
+
+export const exists = <T>(value: T) => {
+  invariant(value);
+  return value;
 };

@@ -14,11 +14,17 @@ const ItemMenu = ({
 }) => {
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger className="flex flex-1 rounded-sm p-1 data-[state=open]:bg-white/10">
+      <ContextMenu.Trigger
+        className="flex flex-1 rounded-sm p-1 data-[state=open]:bg-white/10"
+      >
         {children}
       </ContextMenu.Trigger>
       <ContextMenu.Portal>
-        <ContextMenu.Content className="min-w-[150px] cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl">
+        <ContextMenu.Content
+          className="min-w-[150px] cursor-default overflow-hidden rounded border
+            border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white
+            shadow-xl"
+        >
           <ContextMenu.Item
             className="group p-1 focus:outline-none"
             onClick={onToggleSkip}

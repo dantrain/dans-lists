@@ -1,19 +1,25 @@
-import { isNull, omit } from "lodash";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { daysOfWeek } from "~/utils/date";
 import {
   getNextRank,
   getRankBetween,
   getRelevantEvents,
   getWeekDateRange,
 } from "../utils";
+import { events, items, lists } from "~/server/db/schema";
+import { and, asc, desc, eq, gte, lt } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
+import { isNull, omit } from "lodash-es";
+import { daysOfWeek } from "~/utils/date";
 
 export const listRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.prisma.list.findMany({
-      where: { ownerId: ctx.session.user.id },
-      select: {
+    const range = getWeekDateRange(ctx.tzOffset);
+
+    const result = await ctx.db.query.lists.findMany({
+      where: eq(lists.ownerId, ctx.session.user.id),
+      orderBy: [asc(lists.rank)],
+      columns: {
         id: true,
         title: true,
         repeatsMon: true,
@@ -25,26 +31,34 @@ export const listRouter = createTRPCRouter({
         repeatsSun: true,
         startMinutes: true,
         endMinutes: true,
+      },
+      with: {
         items: {
-          select: {
+          orderBy: [asc(items.rank)],
+          columns: {
             id: true,
             title: true,
+          },
+          with: {
             events: {
-              where: {
-                createdAt: getWeekDateRange(ctx.tzOffset),
-              },
-              select: {
-                status: { select: { name: true } },
+              where: and(
+                gte(lists.createdAt, new Date(range.gte)),
+                lt(lists.createdAt, new Date(range.lt)),
+              ),
+              orderBy: [desc(events.createdAt)],
+              columns: {
                 createdAt: true,
                 streak: true,
               },
-              orderBy: { createdAt: "desc" },
+              with: {
+                status: {
+                  columns: { name: true },
+                },
+              },
             },
           },
-          orderBy: { rank: "asc" },
         },
       },
-      orderBy: { rank: "asc" },
     });
 
     const data = result.map((list) => {
@@ -72,56 +86,60 @@ export const listRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const [beforeItem] = await ctx.prisma.list.findMany({
-        where: { ownerId: ctx.session.user.id },
-        select: { rank: true },
-        take: 1,
-        orderBy: { rank: "desc" },
-      });
+      const [beforeItem] = await ctx.db
+        .select({ rank: lists.rank })
+        .from(lists)
+        .orderBy(desc(lists.rank))
+        .limit(1);
 
-      return ctx.prisma.list.create({
-        data: {
-          title: input.title,
-          owner: { connect: { id: ctx.session.user.id } },
-          rank: getNextRank(beforeItem),
-        },
+      return ctx.db.insert(lists).values({
+        id: createId(),
+        title: input.title,
+        rank: getNextRank(beforeItem),
+        ownerId: ctx.session.user.id,
       });
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string().cuid(), title: z.string() }))
+    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
     .mutation(({ ctx, input }) =>
-      ctx.prisma.list.updateMany({
-        where: { id: input.id, ownerId: ctx.session.user.id },
-        data: { title: input.title },
-      }),
+      ctx.db
+        .update(lists)
+        .set({ title: input.title })
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
     ),
 
   editRepeat: protectedProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        id: z.string().cuid2(),
         repeatDays: z.array(z.enum(daysOfWeek)),
       }),
     )
     .mutation(({ ctx, input }) =>
-      ctx.prisma.list.updateMany({
-        where: { id: input.id, ownerId: ctx.session.user.id },
-        data: daysOfWeek.reduce(
-          (data, day) => ({
-            ...data,
-            [`repeats${day}`]: input.repeatDays.includes(day),
-          }),
-          {},
+      ctx.db
+        .update(lists)
+        .set(
+          daysOfWeek.reduce(
+            (data, day) => ({
+              ...data,
+              [`repeats${day}`]: input.repeatDays.includes(day),
+            }),
+            {},
+          ),
+        )
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
         ),
-      }),
     ),
 
   editTimeRange: protectedProcedure
     .input(
       z
         .object({
-          id: z.string().cuid(),
+          id: z.string().cuid2(),
           startMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
           endMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
         })
@@ -133,48 +151,56 @@ export const listRouter = createTRPCRouter({
         ),
     )
     .mutation(({ ctx, input }) =>
-      ctx.prisma.list.updateMany({
-        where: { id: input.id, ownerId: ctx.session.user.id },
-        data: {
+      ctx.db
+        .update(lists)
+        .set({
           startMinutes: input.startMinutes,
           endMinutes: input.endMinutes,
-        },
-      }),
+        })
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
     ),
 
   rank: protectedProcedure
     .input(
       z
         .object({
-          id: z.string().cuid(),
-          beforeId: z.optional(z.string().cuid()),
-          afterId: z.optional(z.string().cuid()),
+          id: z.string().cuid2(),
+          beforeId: z.optional(z.string().cuid2()),
+          afterId: z.optional(z.string().cuid2()),
         })
-        .refine((_) => _.beforeId || _.afterId),
+        .refine((_) => _.beforeId ?? _.afterId),
     )
     .mutation(async ({ ctx, input }) => {
-      const [beforeItem, afterItem] = await ctx.prisma.$transaction([
-        ctx.prisma.list.findFirst({
-          where: { id: input.beforeId ?? "%other" },
-          select: { rank: true },
-        }),
-        ctx.prisma.list.findFirst({
-          where: { id: input.afterId ?? "%other" },
-          select: { rank: true },
-        }),
+      const [beforeItem, afterItem] = await Promise.all([
+        input.beforeId
+          ? ctx.db.query.lists.findFirst({
+              where: eq(lists.id, input.beforeId),
+            })
+          : null,
+        input.afterId
+          ? ctx.db.query.lists.findFirst({
+              where: eq(lists.id, input.afterId),
+            })
+          : null,
       ]);
 
-      return ctx.prisma.list.update({
-        where: { id: input.id },
-        data: { rank: getRankBetween(beforeItem, afterItem) },
-      });
+      return ctx.db
+        .update(lists)
+        .set({ rank: getRankBetween(beforeItem, afterItem) })
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        );
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.string().cuid2() }))
     .mutation(({ ctx, input }) =>
-      ctx.prisma.list.deleteMany({
-        where: { id: input.id, ownerId: ctx.session.user.id },
-      }),
+      ctx.db
+        .delete(lists)
+        .where(
+          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
+        ),
     ),
 });

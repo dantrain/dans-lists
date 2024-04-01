@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 const AddItem = ({ listId }: { listId: string }) => {
   const utils = api.useUtils();
@@ -27,7 +27,8 @@ const AddItem = ({ listId }: { listId: string }) => {
       <input
         id={`addItemInput-${listId}`}
         ref={ref}
-        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
+        className="w-full rounded-md border border-[#5b2da0] bg-[#411f72] px-2
+          py-1 placeholder:text-gray-400"
         type="text"
         placeholder="Add an item"
         autoComplete="off"
