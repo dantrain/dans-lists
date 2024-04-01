@@ -1,6 +1,11 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
@@ -8,7 +13,17 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "~/server/api/root";
 
-const createQueryClient = () => new QueryClient();
+const onError = (err: Error) => {
+  if (typeof window !== "undefined" && err.message === "UNAUTHORIZED") {
+    window.location.href = "/signin";
+  }
+};
+
+const createQueryClient = () =>
+  new QueryClient({
+    queryCache: new QueryCache({ onError }),
+    mutationCache: new MutationCache({ onError }),
+  });
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
