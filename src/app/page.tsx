@@ -18,13 +18,7 @@ export default async function Home() {
     <main className="relative px-4 pt-12 sm:pt-20">
       <Progress />
       <SettingsMenu />
-
       <Lists initialData={data} />
-
-      <div className="fixed bottom-4 right-4 flex gap-2 text-xs">
-        <span>Next runtime:</span>
-        <pre>{process.env.NEXT_RUNTIME}</pre>
-      </div>
     </main>
   );
 }
