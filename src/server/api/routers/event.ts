@@ -1,8 +1,8 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { events, items, statuses } from "~/server/db/schema";
-import { getRelevantEvents } from "../utils";
+import { getRelevantEvents, getWeekDateRange } from "../utils";
 import invariant from "tiny-invariant";
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
@@ -16,6 +16,8 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const range = getWeekDateRange(ctx.tzOffset);
+
       const [status, result] = await Promise.all([
         ctx.db.query.statuses.findFirst({
           where: eq(statuses.name, input.statusName),
@@ -25,7 +27,10 @@ export const eventRouter = createTRPCRouter({
           columns: {},
           with: {
             events: {
-              // TODO: where
+              where: and(
+                gte(events.createdAt, new Date(range.gte)),
+                lt(events.createdAt, new Date(range.lt)),
+              ),
               limit: 1,
               orderBy: [desc(events.createdAt)],
               columns: {
@@ -67,7 +72,7 @@ export const eventRouter = createTRPCRouter({
       const { todayEvent, lastValidDayEvent } = getRelevantEvents(
         result.list,
         result.events,
-        0, // TODO: ctx.tzOffset,
+        ctx.tzOffset,
       );
 
       let streak = 0;

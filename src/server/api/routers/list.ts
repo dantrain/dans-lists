@@ -1,14 +1,21 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { getNextRank, getRankBetween, getRelevantEvents } from "../utils";
+import {
+  getNextRank,
+  getRankBetween,
+  getRelevantEvents,
+  getWeekDateRange,
+} from "../utils";
 import { events, items, lists } from "~/server/db/schema";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lt } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { isNull, omit } from "lodash-es";
 import { daysOfWeek } from "~/utils/date";
 
 export const listRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
+    const range = getWeekDateRange(ctx.tzOffset);
+
     const result = await ctx.db.query.lists.findMany({
       where: eq(lists.ownerId, ctx.session.user.id),
       orderBy: [asc(lists.rank)],
@@ -34,6 +41,10 @@ export const listRouter = createTRPCRouter({
           },
           with: {
             events: {
+              where: and(
+                gte(lists.createdAt, new Date(range.gte)),
+                lt(lists.createdAt, new Date(range.lt)),
+              ),
               orderBy: [desc(events.createdAt)],
               columns: {
                 createdAt: true,
@@ -57,7 +68,7 @@ export const listRouter = createTRPCRouter({
           const { todayEvent, lastValidDayEvent } = getRelevantEvents(
             list,
             item.events,
-            0, // TODO: ctx.tzOffset,
+            ctx.tzOffset,
           );
 
           return {

@@ -9,6 +9,7 @@
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import Cookies from "universal-cookie";
 import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
@@ -29,9 +30,13 @@ import { db } from "~/server/db";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
+  const cookies = new Cookies(opts.headers.get("cookie"), { path: "/" });
+  const tzOffset = +(cookies.get("tzOffset") ?? 0);
+
   return {
     db,
     session,
+    tzOffset,
     ...opts,
   };
 };

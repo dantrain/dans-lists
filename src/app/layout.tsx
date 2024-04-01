@@ -5,6 +5,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Provider as JotaiProvider } from "jotai";
 
 import "~/styles/globals.css";
+import SetTimezoneCookie from "~/components/SetTimezoneCookie";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <TRPCReactProvider>
           <JotaiProvider>{children}</JotaiProvider>
         </TRPCReactProvider>
+        <SetTimezoneCookie />
       </body>
     </html>
   );

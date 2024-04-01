@@ -64,7 +64,9 @@ const SettingsMenu = () => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w-[200px] cursor-default overflow-hidden rounded border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white shadow-xl"
+          className="min-w-[200px] cursor-default overflow-hidden rounded border
+            border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white
+            shadow-xl"
           sideOffset={-6}
           collisionPadding={8}
           onCloseAutoFocus={(e) => e.preventDefault()}

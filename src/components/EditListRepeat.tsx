@@ -58,7 +58,9 @@ const EditListRepeat = ({
         {daysOfWeek.map((_) => (
           <ToggleGroup.Item
             key={_}
-            className="border-r border-violet-500 px-2 py-1 text-violet-300 last:border-r-0 data-[state=on]:bg-violet-900 data-[state=on]:text-white"
+            className="border-r border-violet-500 px-2 py-1 text-violet-300
+              last:border-r-0 data-[state=on]:bg-violet-900
+              data-[state=on]:text-white"
             value={_}
           >
             {_}
