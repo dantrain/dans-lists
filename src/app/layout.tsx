@@ -1,16 +1,40 @@
+import { Provider as JotaiProvider } from "jotai";
+import { flatten } from "lodash-es";
 import type { Viewport } from "next";
 import { Inter } from "next/font/google";
+import appleDeviceSpecsForLaunchImages from "pwa-asset-generator/dist/config/apple-fallback-data.json";
 import { type ReactNode } from "react";
+import SetTimezoneCookie from "~/components/SetTimezoneCookie";
 import { TRPCReactProvider } from "~/trpc/react";
-import { Provider as JotaiProvider } from "jotai";
 
 import "~/styles/globals.css";
-import SetTimezoneCookie from "~/components/SetTimezoneCookie";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const appleSplashImages = flatten(
+  appleDeviceSpecsForLaunchImages.map((spec) => [
+    {
+      rel: "apple-touch-startup-image",
+      url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
+      media: `(device-width: ${
+        spec.portrait.width / spec.scaleFactor
+      }px) and (device-height: ${
+        spec.portrait.height / spec.scaleFactor
+      }px) and (-webkit-device-pixel-ratio: ${
+        spec.scaleFactor
+      }) and (orientation: portrait)`,
+    },
+    {
+      rel: "apple-touch-startup-image",
+      url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
+      media: `(device-width: ${
+        spec.portrait.height / spec.scaleFactor
+      }px) and (device-height: ${
+        spec.portrait.width / spec.scaleFactor
+      }px) and (-webkit-device-pixel-ratio: ${
+        spec.scaleFactor
+      }) and (orientation: landscape)`,
+    },
+  ]),
+);
 
 export const metadata = {
   title: "Dan's Lists",
@@ -23,6 +47,7 @@ export const metadata = {
     apple: "/apple-touch-icon.png",
     other: [
       { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#2e026d" },
+      ...appleSplashImages,
     ],
   },
   appleWebApp: { statusBarStyle: "black" },
@@ -33,6 +58,11 @@ export const viewport: Viewport = {
   themeColor: "#2e026d",
   viewportFit: "cover",
 };
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
