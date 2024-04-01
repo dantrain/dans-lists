@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Lists from "~/components/Lists";
+import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
 import { api } from "~/trpc/server";
 
@@ -15,6 +16,7 @@ export default async function Home() {
 
   return (
     <main className="relative px-4 pt-12 sm:pt-20">
+      <Progress />
       <SettingsMenu />
 
       <Lists initialData={data} />
