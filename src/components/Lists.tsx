@@ -19,7 +19,7 @@ type ListsProps = {
   initialData: AppRouterOutputs["list"]["getAll"];
 };
 
-export const editModeAtom = atom(false);
+export const editModeAtom = atom(true);
 
 export default function Lists({ initialData }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);

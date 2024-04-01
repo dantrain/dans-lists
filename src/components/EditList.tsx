@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
@@ -8,11 +7,11 @@ type EditListProps = {
 };
 
 const EditList = ({ list }: EditListProps) => {
-  const router = useRouter();
+  const utils = api.useUtils();
   const [title, setTitle] = useState(list.title);
 
   const editList = api.list.edit.useMutation({
-    onSettled: () => router.refresh(),
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const ref = useRef<HTMLInputElement>(null);

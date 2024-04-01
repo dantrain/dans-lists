@@ -1,12 +1,11 @@
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { api } from "~/trpc/react";
 
 const AddItem = ({ listId }: { listId: string }) => {
-  const router = useRouter();
+  const utils = api.useUtils();
 
   const createItem = api.item.create.useMutation({
-    onSettled: () => router.refresh(),
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const ref = useRef<HTMLInputElement>(null);

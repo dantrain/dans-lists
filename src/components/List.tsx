@@ -1,4 +1,3 @@
-/* eslint-disable drizzle/enforce-delete-with-where */
 import { closestCenter, DndContext } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -9,32 +8,31 @@ import { CSS } from "@dnd-kit/utilities";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { useRouter } from "next/navigation";
 import { useLocalStorage } from "usehooks-ts";
 import useRank from "~/hooks/useRank";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
+import AddItem from "./AddItem";
+import EditList from "./EditList";
 import {
   DeleteIcon,
   DragIndicatorIcon,
   ExpandLessIcon,
   ExpandMoreIcon,
 } from "./Icons";
-import { editModeAtom } from "./Lists";
-import EditList from "./EditList";
-import AddItem from "./AddItem";
 import Item from "./Item";
+import { editModeAtom } from "./Lists";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
 };
 
 const List = ({ list }: ListProps) => {
-  const router = useRouter();
+  const utils = api.useUtils();
   const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
 
   const deleteList = api.list.delete.useMutation({
-    onSettled: () => router.refresh(),
+    onSettled: () => void utils.list.getAll.invalidate(),
   });
 
   const rankItem = api.item.rank.useMutation();
