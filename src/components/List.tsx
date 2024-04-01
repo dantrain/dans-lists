@@ -23,6 +23,7 @@ import {
 import { editModeAtom } from "./Lists";
 import EditList from "./EditList";
 import AddItem from "./AddItem";
+import Item from "./Item";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -129,8 +130,7 @@ const List = ({ list }: ListProps) => {
                 strategy={verticalListSortingStrategy}
               >
                 {items.map((item) => (
-                  <pre key={item.id}>{JSON.stringify(item, null, 4)}</pre>
-                  // <Item key={item.id} item={item} />
+                  <Item key={item.id} item={item} />
                 ))}
               </SortableContext>
             </DndContext>

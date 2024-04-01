@@ -16,13 +16,19 @@ import AddList from "./AddList";
 import List from "./List";
 
 type ListsProps = {
-  data: AppRouterOutputs["list"]["getAll"];
+  initialData: AppRouterOutputs["list"]["getAll"];
 };
 
-export const editModeAtom = atom(true);
+export const editModeAtom = atom(false);
 
-export default function Lists({ data }: ListsProps) {
+export default function Lists({ initialData }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
+
+  const { data } = api.list.getAll.useQuery(undefined, {
+    initialData,
+    staleTime: 1000,
+    refetchInterval: process.env.NODE_ENV === "development" ? false : 30 * 1000,
+  });
 
   const rankList = api.list.rank.useMutation();
 

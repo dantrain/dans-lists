@@ -23,7 +23,7 @@ export default async function Home() {
 
         <SignOutButton />
 
-        <Lists data={data} />
+        <Lists initialData={data} />
       </div>
     </main>
   );

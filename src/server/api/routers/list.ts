@@ -56,7 +56,7 @@ export const listRouter = createTRPCRouter({
           const { todayEvent, lastValidDayEvent } = getRelevantEvents(
             list,
             item.events,
-            0, // ctx.tzOffset,
+            0, // TODO: ctx.tzOffset,
           );
 
           return {

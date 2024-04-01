@@ -3,6 +3,7 @@ import isoWeek from "dayjs/plugin/isoWeek";
 import utc from "dayjs/plugin/utc";
 import { LexoRank } from "lexorank";
 import { daysOfWeek } from "~/utils/date";
+import invariant from "tiny-invariant";
 
 dayjs.extend(utc);
 dayjs.extend(isoWeek);
@@ -104,4 +105,9 @@ export const getRankBetween = (beforeItem?: RankItem, afterItem?: RankItem) => {
   }
 
   return rank.toString();
+};
+
+export const exists = <T>(value: T) => {
+  invariant(value);
+  return value;
 };
