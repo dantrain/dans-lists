@@ -23,7 +23,7 @@ import {
   ExpandMoreIcon,
 } from "./Icons";
 import Item from "./Item";
-import { editModeTransitionAtom } from "./Lists";
+import { editModeAtom, editModeTransitionAtom } from "./Lists";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -41,7 +41,8 @@ const List = ({ list }: ListProps) => {
 
   const [items, handleDragEnd] = useRank(list.items, rankItem.mutate);
 
-  const editMode = useAtomValue(editModeTransitionAtom);
+  const editMode = useAtomValue(editModeAtom);
+  const editModeTransition = useAtomValue(editModeTransitionAtom);
 
   const {
     attributes,
@@ -56,7 +57,7 @@ const List = ({ list }: ListProps) => {
   return (
     <Collapsible.Root open={open || editMode} onOpenChange={setOpen} asChild>
       <li
-        className={clsx("relative", editMode ? "py-4" : "mb-4")}
+        className={clsx("relative", editModeTransition ? "py-4" : "mb-4")}
         ref={setNodeRef}
         style={{
           transform: CSS.Translate.toString(transform),
@@ -68,11 +69,11 @@ const List = ({ list }: ListProps) => {
         <div
           className={clsx(
             "mb-1 flex justify-between border-b border-gray-500 pb-1",
-            !editMode && "mx-2",
+            !editModeTransition && "mx-2",
           )}
           style={{ viewTransitionName: `list-heading-${list.id}` }}
         >
-          {editMode ? (
+          {editModeTransition ? (
             <>
               <button
                 className={`touch-none ${
@@ -111,7 +112,7 @@ const List = ({ list }: ListProps) => {
             </>
           )}
         </div>
-        {editMode && (
+        {editModeTransition && (
           <>
             <EditListRepeat list={list} />
             <EditListTimeRange list={list} />
