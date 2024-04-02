@@ -10,8 +10,10 @@ export const daysOfWeek = [
 
 export type Weekday = (typeof daysOfWeek)[number];
 
-export const getNow = () => {
+export const getNow = (tzOffset: number) => {
   const now = new Date();
+
+  now.setHours(now.getUTCHours() - tzOffset / 60);
 
   return {
     today: Intl.DateTimeFormat("en-US", {

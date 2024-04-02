@@ -3,6 +3,7 @@ import Lists from "~/components/Lists";
 import Progress from "~/components/Progress";
 import SettingsMenu from "~/components/SettingsMenu";
 import { api } from "~/trpc/server";
+import { cookies } from "next/headers";
 
 export default async function Home() {
   const data = await api.list.getAll().catch((err) => {
@@ -14,11 +15,14 @@ export default async function Home() {
     }
   });
 
+  const cookieStore = cookies();
+  const tzOffset = +(cookieStore.get("tzOffset")?.value ?? 0);
+
   return (
     <main className="relative px-4 pt-12 sm:pt-20">
       <Progress />
       <SettingsMenu />
-      <Lists initialData={data} />
+      <Lists initialData={data} tzOffset={tzOffset} />
     </main>
   );
 }

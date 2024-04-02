@@ -15,10 +15,6 @@ import { getNow } from "~/utils/date";
 import AddList from "./AddList";
 import List from "./List";
 
-type ListsProps = {
-  initialData: AppRouterOutputs["list"]["getAll"];
-};
-
 export const editModeAtom = atom(false);
 export const editModeTransitionAtom = atom(false);
 
@@ -36,7 +32,12 @@ export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
   });
 });
 
-export default function Lists({ initialData }: ListsProps) {
+type ListsProps = {
+  initialData: AppRouterOutputs["list"]["getAll"];
+  tzOffset: number;
+};
+
+export default function Lists({ initialData, tzOffset }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
   const [editModeTransition, setEditModeTransition] = useAtom(
     editModeTransitionAtom,
@@ -51,14 +52,14 @@ export default function Lists({ initialData }: ListsProps) {
   const rankList = api.list.rank.useMutation();
 
   const filteredData = useMemo(() => {
-    const { today, minutes } = getNow();
+    const { today, minutes } = getNow(tzOffset);
     return data.filter(
       (list) =>
         list[`repeats${today}`] &&
         (list.startMinutes ? minutes >= list.startMinutes : true) &&
         (list.endMinutes ? minutes <= list.endMinutes : true),
     );
-  }, [data]);
+  }, [data, tzOffset]);
 
   const [lists, handleDragEnd] = useRank(
     editMode ? data : filteredData,
