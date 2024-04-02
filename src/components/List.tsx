@@ -14,6 +14,8 @@ import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
+import EditListRepeat from "./EditListRepeat";
+import EditListTimeRange from "./EditListTimeRange";
 import {
   DeleteIcon,
   DragIndicatorIcon,
@@ -21,9 +23,7 @@ import {
   ExpandMoreIcon,
 } from "./Icons";
 import Item from "./Item";
-import { editModeAtom } from "./Lists";
-import EditListRepeat from "./EditListRepeat";
-import EditListTimeRange from "./EditListTimeRange";
+import { editModeTransitionAtom } from "./Lists";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -41,7 +41,7 @@ const List = ({ list }: ListProps) => {
 
   const [items, handleDragEnd] = useRank(list.items, rankItem.mutate);
 
-  const editMode = useAtomValue(editModeAtom);
+  const editMode = useAtomValue(editModeTransitionAtom);
 
   const {
     attributes,

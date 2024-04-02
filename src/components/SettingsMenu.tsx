@@ -1,8 +1,9 @@
 "use client";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import {
@@ -14,12 +15,13 @@ import {
   RefreshIcon,
   SettingsIcon,
 } from "./Icons";
-import { editModeAtom } from "./Lists";
+import { editModeAtom, editModeSetterAtom } from "./Lists";
 import MenuItem from "./MenuItem";
-import { useRouter } from "next/navigation";
 
 const SettingsMenu = () => {
-  const [editMode, setEditMode] = useAtom(editModeAtom);
+  const editMode = useAtomValue(editModeAtom);
+  const setEditMode = useSetAtom(editModeSetterAtom);
+
   const router = useRouter();
   const utils = api.useUtils();
 
@@ -76,12 +78,7 @@ const SettingsMenu = () => {
             checked={editMode}
             onCheckedChange={(checked) => {
               if (!checked) void utils.list.invalidate();
-
-              if (document.startViewTransition) {
-                document.startViewTransition(async () => setEditMode(checked));
-              } else {
-                setEditMode(checked);
-              }
+              setEditMode(checked);
             }}
           >
             <MenuItem padLeft>

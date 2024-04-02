@@ -20,9 +20,27 @@ type ListsProps = {
 };
 
 export const editModeAtom = atom(false);
+export const editModeTransitionAtom = atom(false);
+
+export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
+  set(editModeAtom, update);
+
+  requestAnimationFrame(() => {
+    if (document.startViewTransition) {
+      document.startViewTransition(async () =>
+        set(editModeTransitionAtom, update),
+      );
+    } else {
+      set(editModeTransitionAtom, update);
+    }
+  });
+});
 
 export default function Lists({ initialData }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
+  const [editModeTransition, setEditModeTransition] = useAtom(
+    editModeTransitionAtom,
+  );
 
   const { data } = api.list.getAll.useQuery(undefined, {
     initialData,
@@ -50,12 +68,13 @@ export default function Lists({ initialData }: ListsProps) {
   useEffect(() => {
     if (data.length === 0 && !editMode) {
       setEditMode(true);
+      setEditModeTransition(true);
     }
-  }, [data.length, editMode, setEditMode]);
+  }, [data.length, editMode, setEditMode, setEditModeTransition]);
 
   return (
     <div className="mx-auto mb-10 w-full max-w-sm">
-      {editMode && <AddList />}
+      {editModeTransition && <AddList />}
       {lists.length ? (
         <ul>
           <DndContext

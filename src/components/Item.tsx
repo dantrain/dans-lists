@@ -8,7 +8,7 @@ import { api } from "~/trpc/react";
 import Checkbox from "./Checkbox";
 import { DeleteIcon, DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
-import { editModeAtom } from "./Lists";
+import { editModeTransitionAtom } from "./Lists";
 import EditItem from "./EditItem";
 
 type ListItemProps = {
@@ -81,7 +81,7 @@ const Item = ({ item }: ListItemProps) => {
     onSettled: () => void utils.list.getAll.invalidate(),
   });
 
-  const editMode = useAtomValue(editModeAtom);
+  const editMode = useAtomValue(editModeTransitionAtom);
 
   const {
     attributes,
