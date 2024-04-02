@@ -88,7 +88,7 @@ export default function Progress() {
           mountOnEnter
           nodeRef={bar.nodeRef}
           timeout={{
-            enter: 800,
+            enter: 1000,
             exit: 500,
           }}
           unmountOnExit
