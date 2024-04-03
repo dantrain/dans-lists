@@ -9,27 +9,27 @@ dayjs.extend(utc);
 dayjs.extend(isoWeek);
 
 const getTodayDateRange = (tzOffset: number) => ({
-  gte: dayjs().utcOffset(tzOffset).startOf("day").toISOString(),
-  lt: dayjs().utcOffset(tzOffset).endOf("day").toISOString(),
+  gte: dayjs().utcOffset(-tzOffset).startOf("day").toISOString(),
+  lt: dayjs().utcOffset(-tzOffset).endOf("day").toISOString(),
 });
 
 export const getWeekDateRange = (tzOffset: number) => ({
   gte: dayjs()
-    .utcOffset(tzOffset)
+    .utcOffset(-tzOffset)
     .subtract(1, "week")
     .startOf("day")
     .toISOString(),
-  lt: dayjs().utcOffset(tzOffset).endOf("day").toISOString(),
+  lt: dayjs().utcOffset(-tzOffset).endOf("day").toISOString(),
 });
 
 const getDaysAgoDateRange = (daysAgo: number, tzOffset: number) => ({
   gte: dayjs()
-    .utcOffset(tzOffset)
+    .utcOffset(-tzOffset)
     .subtract(daysAgo, "day")
     .startOf("day")
     .toDate(),
   lt: dayjs()
-    .utcOffset(tzOffset)
+    .utcOffset(-tzOffset)
     .subtract(daysAgo, "day")
     .endOf("day")
     .toDate(),
@@ -52,7 +52,7 @@ export const getRelevantEvents = <
   events: TEvent[],
   tzOffset: number,
 ) => {
-  const todayIndex = dayjs().utcOffset(tzOffset).isoWeekday() - 1;
+  const todayIndex = dayjs().utcOffset(-tzOffset).isoWeekday() - 1;
 
   let lastValidDaysAgo = 1;
 
