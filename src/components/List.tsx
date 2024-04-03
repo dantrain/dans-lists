@@ -14,8 +14,6 @@ import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import AddItem from "./AddItem";
 import EditList from "./EditList";
-import EditListRepeat from "./EditListRepeat";
-import EditListTimeRange from "./EditListTimeRange";
 import {
   DeleteIcon,
   DragIndicatorIcon,
@@ -112,13 +110,7 @@ const List = ({ list }: ListProps) => {
             </>
           )}
         </div>
-        {editModeTransition && (
-          <>
-            <EditListRepeat list={list} />
-            <EditListTimeRange list={list} />
-            <AddItem listId={list.id} />
-          </>
-        )}
+        {editModeTransition && <AddItem listId={list.id} />}
         <Collapsible.Content asChild>
           <ul style={{ viewTransitionName: `items-${list.id}` }}>
             <DndContext

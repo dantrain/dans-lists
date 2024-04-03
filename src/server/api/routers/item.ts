@@ -8,7 +8,7 @@ import { getNextRank, getRankBetween } from "../utils";
 
 export const itemRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ listId: z.string().cuid2(), title: z.string() }))
+    .input(z.object({ listId: z.string().cuid2(), title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const list = await ctx.db.query.lists.findFirst({
         where: eq(lists.id, input.listId),
@@ -41,7 +41,7 @@ export const itemRouter = createTRPCRouter({
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
+    .input(z.object({ id: z.string().cuid2(), title: z.string().min(1) }))
     .mutation(({ ctx, input }) =>
       ctx.db
         .update(items)

@@ -84,7 +84,7 @@ export const listRouter = createTRPCRouter({
   }),
 
   create: protectedProcedure
-    .input(z.object({ title: z.string() }))
+    .input(z.object({ title: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const [beforeItem] = await ctx.db
         .select({ rank: lists.rank })
@@ -101,47 +101,14 @@ export const listRouter = createTRPCRouter({
     }),
 
   edit: protectedProcedure
-    .input(z.object({ id: z.string().cuid2(), title: z.string() }))
-    .mutation(({ ctx, input }) =>
-      ctx.db
-        .update(lists)
-        .set({ title: input.title })
-        .where(
-          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
-        ),
-    ),
-
-  editRepeat: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().cuid2(),
-        repeatDays: z.array(z.enum(daysOfWeek)),
-      }),
-    )
-    .mutation(({ ctx, input }) =>
-      ctx.db
-        .update(lists)
-        .set(
-          daysOfWeek.reduce(
-            (data, day) => ({
-              ...data,
-              [`repeats${day}`]: input.repeatDays.includes(day),
-            }),
-            {},
-          ),
-        )
-        .where(
-          and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
-        ),
-    ),
-
-  editTimeRange: protectedProcedure
     .input(
       z
         .object({
           id: z.string().cuid2(),
+          title: z.string().min(1),
           startMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
           endMinutes: z.nullable(z.number().int().gte(0).lte(1440)),
+          repeatDays: z.array(z.enum(daysOfWeek)),
         })
         .refine(
           (_) =>
@@ -154,8 +121,16 @@ export const listRouter = createTRPCRouter({
       ctx.db
         .update(lists)
         .set({
+          title: input.title,
           startMinutes: input.startMinutes,
           endMinutes: input.endMinutes,
+          ...daysOfWeek.reduce(
+            (data, day) => ({
+              ...data,
+              [`repeats${day}`]: input.repeatDays.includes(day),
+            }),
+            {},
+          ),
         })
         .where(
           and(eq(lists.id, input.id), eq(lists.ownerId, ctx.session.user.id)),
