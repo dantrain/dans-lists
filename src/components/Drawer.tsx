@@ -47,13 +47,14 @@ const DrawerContent = React.forwardRef<
       className={cn(
         `fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col
         rounded-t-[10px] border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,20%)]
-        px-8`,
+        px-8 pb-6`,
         className,
       )}
       {...props}
     >
       <div
-        className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-[hsl(264,56%,40%)]"
+        className="mx-auto mb-2 mt-4 h-2 w-[100px] rounded-full
+          bg-[hsl(264,56%,40%)]"
       />
       {children}
     </DrawerPrimitive.Content>
