@@ -13,13 +13,9 @@ import useRank from "~/hooks/useRank";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import AddItem from "./AddItem";
+import DeleteList from "./DeleteList";
 import EditList from "./EditList";
-import {
-  DeleteIcon,
-  DragIndicatorIcon,
-  ExpandLessIcon,
-  ExpandMoreIcon,
-} from "./Icons";
+import { DragIndicatorIcon, ExpandLessIcon, ExpandMoreIcon } from "./Icons";
 import Item from "./Item";
 import { editModeAtom, editModeTransitionAtom } from "./Lists";
 
@@ -28,12 +24,7 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
-  const utils = api.useUtils();
   const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
-
-  const deleteList = api.list.delete.useMutation({
-    onSettled: () => void utils.list.getAll.invalidate(),
-  });
 
   const rankItem = api.item.rank.useMutation();
 
@@ -88,13 +79,7 @@ const List = ({ list }: ListProps) => {
                 />
               </button>
               <EditList list={list} />
-              <button
-                className="px-2 text-gray-400 hover:text-white"
-                title="Delete"
-                onClick={() => deleteList.mutate({ id: list.id })}
-              >
-                <DeleteIcon />
-              </button>
+              <DeleteList list={list} />
             </>
           ) : (
             <>
