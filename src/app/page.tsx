@@ -19,7 +19,7 @@ export default async function Home() {
   const tzOffset = +(cookieStore.get("tzOffset")?.value ?? 0);
 
   return (
-    <main className="relative px-4 pt-12 sm:pt-20">
+    <main className="relative px-4 pt-12 sm:pt-20" vaul-drawer-wrapper="">
       <Progress />
       <SettingsMenu />
       <Lists initialData={data} tzOffset={tzOffset} />
