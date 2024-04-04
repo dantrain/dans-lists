@@ -26,7 +26,7 @@ const AddList = () => {
       <input
         id="addListInput"
         ref={ref}
-        className="mb-4 w-full rounded-md border border-[hsl(264,56%,40%)]
+        className="mb-2 w-full rounded-md border border-[hsl(264,56%,40%)]
           bg-white/10 px-2 py-1 placeholder:text-gray-400"
         type="text"
         placeholder="Add a list"

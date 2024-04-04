@@ -6,10 +6,11 @@ import { cloneDeep, isNil, set } from "lodash-es";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import Checkbox from "./Checkbox";
-import { DeleteIcon, DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
+import DeleteItem from "./DeleteItem";
+import EditItem from "./EditItem";
+import { DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
 import { editModeTransitionAtom } from "./Lists";
-import EditItem from "./EditItem";
 
 type ListItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -77,10 +78,6 @@ const Item = ({ item }: ListItemProps) => {
       statusName: status === "SKIPPED" ? "PENDING" : "SKIPPED",
     });
 
-  const deleteItem = api.item.delete.useMutation({
-    onSettled: () => void utils.list.getAll.invalidate(),
-  });
-
   const editMode = useAtomValue(editModeTransitionAtom);
 
   const {
@@ -117,13 +114,7 @@ const Item = ({ item }: ListItemProps) => {
             <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
           </button>
           <EditItem item={item} />
-          <button
-            className="px-2 text-gray-400 hover:text-white"
-            title="Delete"
-            onClick={() => deleteItem.mutate({ id })}
-          >
-            <DeleteIcon />
-          </button>
+          <DeleteItem item={item} />
         </>
       ) : (
         <ItemMenu

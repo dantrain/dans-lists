@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,21 +16,24 @@ import {
   DrawerTitle,
   DrawerFooter,
   DrawerClose,
+  DrawerDescription,
 } from "./Drawer";
 
 type ResponsiveDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  title: ReactNode;
   trigger: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
   content: ReactNode;
 };
 
 const ResponsiveDialog = ({
   open,
   onOpenChange,
-  title,
   trigger,
+  title,
+  description,
   content,
 }: ResponsiveDialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -43,6 +47,9 @@ const ResponsiveDialog = ({
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
+          {description ? (
+            <DialogDescription>{description}</DialogDescription>
+          ) : null}
           {content}
         </DialogContent>
       </Dialog>
@@ -57,6 +64,9 @@ const ResponsiveDialog = ({
         <DrawerHeader className="text-left">
           <DrawerTitle>{title}</DrawerTitle>
         </DrawerHeader>
+        {description ? (
+          <DrawerDescription className="mb-4">{description}</DrawerDescription>
+        ) : null}
         {content}
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>

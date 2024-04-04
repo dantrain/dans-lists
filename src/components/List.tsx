@@ -46,7 +46,7 @@ const List = ({ list }: ListProps) => {
   return (
     <Collapsible.Root open={open || editMode} onOpenChange={setOpen} asChild>
       <li
-        className={clsx("relative", editModeTransition ? "py-4" : "mb-4")}
+        className={clsx("relative", editModeTransition ? "py-3" : "mb-4")}
         ref={setNodeRef}
         style={{
           transform: CSS.Translate.toString(transform),

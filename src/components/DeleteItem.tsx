@@ -4,16 +4,16 @@ import { type AppRouterOutputs } from "~/server/api/root";
 import { useState } from "react";
 import ResponsiveDialog from "./ResponsiveDialog";
 
-type DeleteListProps = {
-  list: AppRouterOutputs["list"]["getAll"][0];
+type DeleteItemProps = {
+  item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
 };
 
-const DeleteList = ({ list }: DeleteListProps) => {
+const DeleteItem = ({ item }: DeleteItemProps) => {
   const [open, setOpen] = useState(false);
 
   const utils = api.useUtils();
 
-  const deleteList = api.list.delete.useMutation({
+  const deleteItem = api.item.delete.useMutation({
     onSuccess: () => setOpen(false),
     onSettled: () => void utils.list.getAll.invalidate(),
   });
@@ -27,15 +27,15 @@ const DeleteList = ({ list }: DeleteListProps) => {
           <DeleteIcon />
         </button>
       }
-      title="Delete list"
-      description="Are you sure you want to delete this list and all its items? This cannot be undone."
+      title="Delete item"
+      description="Are you sure?"
       content={
         <button
           className="w-full rounded-md border-violet-500 bg-violet-900 px-2 py-1
             text-violet-100 disabled:opacity-60"
           type="button"
-          onClick={() => deleteList.mutate({ id: list.id })}
-          disabled={deleteList.isPending}
+          onClick={() => deleteItem.mutate({ id: item.id })}
+          disabled={deleteItem.isPending}
         >
           Delete
         </button>
@@ -44,4 +44,4 @@ const DeleteList = ({ list }: DeleteListProps) => {
   );
 };
 
-export default DeleteList;
+export default DeleteItem;

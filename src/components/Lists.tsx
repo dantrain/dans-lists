@@ -21,15 +21,15 @@ export const editModeTransitionAtom = atom(false);
 export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
   set(editModeAtom, update);
 
-  requestAnimationFrame(() => {
-    if (document.startViewTransition) {
+  if (document.startViewTransition) {
+    requestAnimationFrame(() => {
       document.startViewTransition(async () =>
         set(editModeTransitionAtom, update),
       );
-    } else {
-      set(editModeTransitionAtom, update);
-    }
-  });
+    });
+  } else {
+    set(editModeTransitionAtom, update);
+  }
 });
 
 type ListsProps = {
