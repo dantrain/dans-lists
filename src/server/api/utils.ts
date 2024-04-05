@@ -4,6 +4,10 @@ import utc from "dayjs/plugin/utc";
 import { LexoRank } from "lexorank";
 import { daysOfWeek } from "~/utils/date";
 import invariant from "tiny-invariant";
+import { type inferRouterContext, TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import { items } from "../db/schema";
+import { type AppRouter } from "./root";
 
 dayjs.extend(utc);
 dayjs.extend(isoWeek);
@@ -110,4 +114,19 @@ export const getRankBetween = (beforeItem?: RankItem, afterItem?: RankItem) => {
 export const exists = <T>(value: T) => {
   invariant(value);
   return value;
+};
+
+export const verifyIsListOwner = async (
+  id: string,
+  ctx: inferRouterContext<AppRouter>,
+) => {
+  const result = await ctx.db.query.items.findFirst({
+    where: eq(items.id, id),
+    columns: {},
+    with: { list: { columns: { ownerId: true } } },
+  });
+
+  if (result?.list.ownerId !== ctx.session?.user.id) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 };
