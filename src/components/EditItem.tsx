@@ -14,9 +14,17 @@ type EditItemProps = {
 };
 
 const EditItem = ({ item }: EditItemProps) => {
-  const [open, setOpen] = useState(false);
-
   const [title, setTitle] = useState(item.title);
+
+  const [open, setOpenInner] = useState(false);
+
+  const setOpen = (open: boolean) => {
+    if (open) {
+      setTitle(item.title);
+    }
+
+    setOpenInner(open);
+  };
 
   const utils = api.useUtils();
 

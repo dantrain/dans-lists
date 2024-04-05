@@ -38,19 +38,28 @@ type EditListProps = {
 };
 
 const EditList = ({ list }: EditListProps) => {
-  const [open, setOpen] = useState(false);
-
-  const [title, setTitle] = useState(list.title);
-
   const initialRepeatDays = useMemo(
     () => daysOfWeek.filter((weekday) => list[`repeats${weekday}`]),
     [list],
   );
 
+  const [title, setTitle] = useState(list.title);
   const [repeatDays, setRepeatDays] = useState(initialRepeatDays);
-
   const [startMinutes, setStartMinutes] = useState(list.startMinutes);
   const [endMinutes, setEndMinutes] = useState(list.endMinutes);
+
+  const [open, setOpenInner] = useState(false);
+
+  const setOpen = (open: boolean) => {
+    if (open) {
+      setTitle(list.title);
+      setRepeatDays(initialRepeatDays);
+      setStartMinutes(list.startMinutes);
+      setEndMinutes(list.endMinutes);
+    }
+
+    setOpenInner(open);
+  };
 
   const utils = api.useUtils();
 

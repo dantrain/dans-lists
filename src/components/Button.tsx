@@ -11,6 +11,7 @@ type ButtonProps = {
   children: ReactNode;
   variant?: "default" | "outline";
   disabled?: boolean;
+  onClick?: () => void;
 } & (({ asChild?: false } & AriaButtonOptions<"button">) | { asChild: true });
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -20,6 +21,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant = "default",
       disabled = false,
+      onClick,
       children,
       ...rest
     },
@@ -31,7 +33,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const { isFocusVisible } = useFocusVisible();
 
     const { buttonProps, isPressed } = useButton(
-      { ...rest, isDisabled: disabled },
+      { onPress: onClick, ...rest, isDisabled: disabled },
       ref,
     );
 
