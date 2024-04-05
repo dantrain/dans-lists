@@ -35,9 +35,14 @@ export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
 type ListsProps = {
   initialData: AppRouterOutputs["list"]["getAll"];
   tzOffset: number;
+  collapsedLists?: Record<string, boolean>;
 };
 
-export default function Lists({ initialData, tzOffset }: ListsProps) {
+export default function Lists({
+  initialData,
+  tzOffset,
+  collapsedLists,
+}: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
   const [editModeTransition, setEditModeTransition] = useAtom(
     editModeTransitionAtom,
@@ -88,7 +93,11 @@ export default function Lists({ initialData, tzOffset }: ListsProps) {
               strategy={verticalListSortingStrategy}
             >
               {lists.map((list) => (
-                <List key={list.id} list={list} />
+                <List
+                  key={list.id}
+                  list={list}
+                  collapsedLists={collapsedLists}
+                />
               ))}
             </SortableContext>
           </DndContext>

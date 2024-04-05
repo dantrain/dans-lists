@@ -8,7 +8,8 @@ import { CSS } from "@dnd-kit/utilities";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { useLocalStorage } from "usehooks-ts";
+import { useState } from "react";
+import Cookies from "universal-cookie";
 import useRank from "~/hooks/useRank";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
@@ -21,10 +22,11 @@ import { editModeAtom, editModeTransitionAtom } from "./Lists";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
+  collapsedLists?: Record<string, boolean>;
 };
 
-const List = ({ list }: ListProps) => {
-  const [open, setOpen] = useLocalStorage(`list-${list.id}-open`, true);
+const List = ({ list, collapsedLists }: ListProps) => {
+  const [collapsed, setCollapsed] = useState(!!collapsedLists?.[list.id]);
 
   const rankItem = api.item.rank.useMutation();
 
@@ -44,7 +46,20 @@ const List = ({ list }: ListProps) => {
   } = useSortable({ id: list.id });
 
   return (
-    <Collapsible.Root open={open || editMode} onOpenChange={setOpen} asChild>
+    <Collapsible.Root
+      open={!collapsed || editMode}
+      onOpenChange={(open) => {
+        const cookies = new Cookies(null, { path: "/" });
+
+        cookies.set("collapsedLists", {
+          ...cookies.get("collapsedLists"),
+          [list.id]: !open,
+        });
+
+        setCollapsed(!open);
+      }}
+      asChild
+    >
       <li
         className={clsx("relative", editModeTransition ? "py-3" : "mb-4")}
         ref={setNodeRef}
@@ -87,9 +102,9 @@ const List = ({ list }: ListProps) => {
               <Collapsible.Trigger asChild>
                 <button
                   className="px-2 text-gray-400 hover:text-white"
-                  title={open ? "Collapse" : "Expand"}
+                  title={collapsed ? "Expand" : "Collapse"}
                 >
-                  {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  {collapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
                 </button>
               </Collapsible.Trigger>
             </>
