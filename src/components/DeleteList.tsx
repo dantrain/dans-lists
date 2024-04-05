@@ -32,7 +32,7 @@ const DeleteList = ({ list }: DeleteListProps) => {
           <DeleteIcon />
         </button>
       }
-      title="Delete list"
+      title={`Delete “${list.title}”`}
       description="Are you sure you want to delete this list and all its items? This cannot be undone."
       content={
         <ResponsiveDialogFooter>

@@ -32,7 +32,7 @@ const DeleteItem = ({ item }: DeleteItemProps) => {
           <DeleteIcon />
         </button>
       }
-      title="Delete item"
+      title={`Delete “${item.title}”`}
       description="Are you sure?"
       content={
         <ResponsiveDialogFooter>
