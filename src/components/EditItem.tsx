@@ -1,8 +1,13 @@
 import { type FormEvent, useRef, useState } from "react";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
-import ResponsiveDialog from "./ResponsiveDialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogClose,
+  ResponsiveDialogFooter,
+} from "./ResponsiveDialog";
 import { EditIcon } from "./Icons";
+import Button from "./Button";
 
 type EditItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -56,8 +61,8 @@ const EditItem = ({ item }: EditItemProps) => {
             <input
               id={`editItemInput-${item.id}`}
               ref={ref}
-              className="mb-4 w-full rounded-md border border-[#5b2da0]
-                bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
+              className="mb-8 w-full rounded-md border border-[#5b2da0]
+                bg-[#411f72] px-2 py-1 placeholder:text-gray-400 sm:mb-6"
               type="text"
               autoComplete="off"
               value={title}
@@ -72,14 +77,18 @@ const EditItem = ({ item }: EditItemProps) => {
               disabled={editItem.isPending}
             />
 
-            <button
-              className="w-full rounded-md border-violet-500 bg-violet-900 px-2
-                py-1 text-violet-100 disabled:opacity-60"
-              type="submit"
-              disabled={editItem.isPending}
-            >
-              Save
-            </button>
+            <ResponsiveDialogFooter>
+              <Button
+                className="flex-1 sm:flex-none"
+                type="submit"
+                disabled={editItem.isPending || !open}
+              >
+                Save
+              </Button>
+              <ResponsiveDialogClose asChild>
+                <Button>Cancel</Button>
+              </ResponsiveDialogClose>
+            </ResponsiveDialogFooter>
           </form>
         }
       />

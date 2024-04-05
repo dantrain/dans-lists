@@ -2,7 +2,12 @@ import { api } from "~/trpc/react";
 import { DeleteIcon } from "./Icons";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { useState } from "react";
-import ResponsiveDialog from "./ResponsiveDialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogClose,
+  ResponsiveDialogFooter,
+} from "./ResponsiveDialog";
+import Button from "./Button";
 
 type DeleteItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -30,15 +35,18 @@ const DeleteItem = ({ item }: DeleteItemProps) => {
       title="Delete item"
       description="Are you sure?"
       content={
-        <button
-          className="w-full rounded-md border-violet-500 bg-violet-900 px-2 py-1
-            text-violet-100 disabled:opacity-60"
-          type="button"
-          onClick={() => deleteItem.mutate({ id: item.id })}
-          disabled={deleteItem.isPending}
-        >
-          Delete
-        </button>
+        <ResponsiveDialogFooter>
+          <Button
+            className="flex-1 sm:flex-none"
+            onPress={() => deleteItem.mutate({ id: item.id })}
+            disabled={deleteItem.isPending || !open}
+          >
+            Delete
+          </Button>
+          <ResponsiveDialogClose asChild>
+            <Button>Cancel</Button>
+          </ResponsiveDialogClose>
+        </ResponsiveDialogFooter>
       }
     />
   );

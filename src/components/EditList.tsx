@@ -11,7 +11,12 @@ import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import { daysOfWeek, type Weekday } from "~/utils/date";
 import { EditIcon } from "./Icons";
-import ResponsiveDialog from "./ResponsiveDialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogClose,
+  ResponsiveDialogFooter,
+} from "./ResponsiveDialog";
+import Button from "./Button";
 
 const TimeRangeSelect = (props: SelectHTMLAttributes<HTMLSelectElement>) => (
   <select
@@ -133,7 +138,7 @@ const EditList = ({ list }: EditListProps) => {
               {daysOfWeek.map((_) => (
                 <ToggleGroup.Item
                   key={_}
-                  className="border-r border-violet-500 px-2 py-1
+                  className="border-r border-violet-500 py-1 text-center
                     text-violet-300 last:border-r-0
                     data-[state=on]:bg-violet-900 data-[state=on]:text-white"
                   value={_}
@@ -173,14 +178,18 @@ const EditList = ({ list }: EditListProps) => {
               />
             </div>
 
-            <button
-              className="w-full rounded-md border-violet-500 bg-violet-900 px-2
-                py-1 text-violet-100 disabled:opacity-60"
-              type="submit"
-              disabled={editList.isPending}
-            >
-              Save
-            </button>
+            <ResponsiveDialogFooter>
+              <Button
+                className="flex-1 sm:flex-none"
+                type="submit"
+                disabled={editList.isPending || !open}
+              >
+                Save
+              </Button>
+              <ResponsiveDialogClose asChild>
+                <Button>Cancel</Button>
+              </ResponsiveDialogClose>
+            </ResponsiveDialogFooter>
           </form>
         }
       />

@@ -2,7 +2,8 @@ import { api } from "~/trpc/react";
 import { DeleteIcon } from "./Icons";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { useState } from "react";
-import ResponsiveDialog from "./ResponsiveDialog";
+import { ResponsiveDialog } from "./ResponsiveDialog";
+import Button from "./Button";
 
 type DeleteListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -30,15 +31,15 @@ const DeleteList = ({ list }: DeleteListProps) => {
       title="Delete list"
       description="Are you sure you want to delete this list and all its items? This cannot be undone."
       content={
-        <button
-          className="w-full rounded-md border-violet-500 bg-violet-900 px-2 py-1
-            text-violet-100 disabled:opacity-60"
-          type="button"
-          onClick={() => deleteList.mutate({ id: list.id })}
-          disabled={deleteList.isPending}
-        >
-          Delete
-        </button>
+        <div className="flex sm:justify-end">
+          <Button
+            className="flex-1 sm:flex-none"
+            onPress={() => deleteList.mutate({ id: list.id })}
+            disabled={deleteList.isPending || !open}
+          >
+            Delete
+          </Button>
+        </div>
       }
     />
   );
