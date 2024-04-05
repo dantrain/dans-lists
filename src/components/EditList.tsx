@@ -187,7 +187,7 @@ const EditList = ({ list }: EditListProps) => {
                 Save
               </Button>
               <ResponsiveDialogClose asChild>
-                <Button>Cancel</Button>
+                <Button variant="outline">Cancel</Button>
               </ResponsiveDialogClose>
             </ResponsiveDialogFooter>
           </form>

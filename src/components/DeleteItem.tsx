@@ -44,7 +44,7 @@ const DeleteItem = ({ item }: DeleteItemProps) => {
             Delete
           </Button>
           <ResponsiveDialogClose asChild>
-            <Button>Cancel</Button>
+            <Button variant="outline">Cancel</Button>
           </ResponsiveDialogClose>
         </ResponsiveDialogFooter>
       }

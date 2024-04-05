@@ -9,12 +9,20 @@ import { twMerge } from "tailwind-merge";
 type ButtonProps = {
   className?: string;
   children: ReactNode;
+  variant?: "default" | "outline";
   disabled?: boolean;
 } & (({ asChild?: false } & AriaButtonOptions<"button">) | { asChild: true });
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { asChild, className, disabled = false, children, ...rest },
+    {
+      asChild,
+      className,
+      variant = "default",
+      disabled = false,
+      children,
+      ...rest
+    },
     forwardedRef,
   ) => {
     const ref = useObjectRef(forwardedRef);
@@ -31,10 +39,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={twMerge(
           cva(
-            `inline-block cursor-pointer select-none rounded-md bg-violet-800
-            px-4 py-1.5 text-center text-white focus:outline-none`,
+            `inline-block cursor-pointer select-none rounded-md px-4 py-1.5
+            text-center text-violet-100 focus:outline-none`,
             {
               variants: {
+                variant: {
+                  default: "bg-violet-800",
+                  outline: "shadow-[inset_0_0_0_2px] shadow-violet-800",
+                },
                 disabled: { true: "opacity-50" },
                 isPressed: { true: "" },
                 isFocusVisible: {
@@ -46,18 +58,32 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               },
               compoundVariants: [
                 {
+                  variant: "default",
+                  isPressed: false,
+                  disabled: false,
+                  className: "sm:hover:bg-violet-700 sm:hover:text-white",
+                },
+                {
+                  variant: "outline",
+                  isPressed: false,
+                  disabled: false,
+                  className: "sm:hover:text-white sm:hover:shadow-violet-700",
+                },
+                {
+                  variant: "default",
                   isPressed: true,
                   disabled: false,
                   className: "bg-violet-900",
                 },
                 {
-                  isPressed: false,
+                  variant: "outline",
+                  isPressed: true,
                   disabled: false,
-                  className: "sm:hover:bg-violet-700",
+                  className: "shadow-violet-900",
                 },
               ],
             },
-          )({ disabled, isPressed, isFocusVisible }),
+          )({ variant, disabled, isPressed, isFocusVisible }),
           className,
         )}
         type={Comp === "button" ? "button" : undefined}
