@@ -6,7 +6,7 @@ import {
   getRelevantEvents,
   getWeekDateRange,
 } from "../utils";
-import { events, items, lists } from "~/server/db/schema";
+import { events, items, lists, shuffleChoices } from "~/server/db/schema";
 import { and, asc, desc, eq, gte, lt } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { isNull, omit } from "lodash-es";
@@ -38,8 +38,13 @@ export const listRouter = createTRPCRouter({
           columns: {
             id: true,
             title: true,
+            shuffleMode: true,
           },
           with: {
+            shuffleChoices: {
+              where: eq(shuffleChoices.isDeleted, false),
+              orderBy: [asc(shuffleChoices.createdAt)],
+            },
             events: {
               where: and(
                 gte(lists.createdAt, new Date(range.gte)),

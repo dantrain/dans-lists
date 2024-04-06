@@ -70,6 +70,7 @@ export const items = createTable(
 
     title: text("title").notNull(),
     rank: text("rank").notNull(),
+    shuffleMode: boolean("shuffle_mode").default(false).notNull(),
 
     listId: varchar("list_id")
       .references(() => lists.id, { onDelete: "cascade" })
@@ -83,7 +84,29 @@ export const items = createTable(
 
 export const itemRelations = relations(items, ({ one, many }) => ({
   list: one(lists, { fields: [items.listId], references: [lists.id] }),
+  shuffleChoices: many(shuffleChoices),
   events: many(events),
+}));
+
+export const shuffleChoices = createTable(
+  "shuffle_choice",
+  {
+    ...commonFields,
+
+    title: text("title").notNull(),
+    isDeleted: boolean("is_deleted").default(false).notNull(),
+
+    itemId: varchar("item_id")
+      .references(() => items.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (shuffleChoice) => ({
+    itemIdx: index("shuffle_choice_item_idx").on(shuffleChoice.itemId),
+  }),
+);
+
+export const shuffleChoicesRelations = relations(shuffleChoices, ({ one }) => ({
+  item: one(items, { fields: [shuffleChoices.itemId], references: [items.id] }),
 }));
 
 export const events = createTable(
