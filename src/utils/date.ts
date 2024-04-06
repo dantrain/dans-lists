@@ -20,5 +20,6 @@ export const getNow = (tzOffset: number) => {
       weekday: "short",
     }).format(now) as Weekday,
     minutes: now.getHours() * 60 + now.getMinutes(),
+    daysSince1970: Math.floor(now.getTime() / (1000 * 60 * 60 * 24)),
   };
 };

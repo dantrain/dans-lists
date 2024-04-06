@@ -105,9 +105,16 @@ export const shuffleChoices = createTable(
   }),
 );
 
-export const shuffleChoicesRelations = relations(shuffleChoices, ({ one }) => ({
-  item: one(items, { fields: [shuffleChoices.itemId], references: [items.id] }),
-}));
+export const shuffleChoicesRelations = relations(
+  shuffleChoices,
+  ({ one, many }) => ({
+    item: one(items, {
+      fields: [shuffleChoices.itemId],
+      references: [items.id],
+    }),
+    events: many(events),
+  }),
+);
 
 export const events = createTable(
   "event",
@@ -122,6 +129,9 @@ export const events = createTable(
     statusId: varchar("status_id")
       .references(() => statuses.id)
       .notNull(),
+    shuffleChoiceId: varchar("shuffle_choice_id").references(
+      () => shuffleChoices.id,
+    ),
   },
   (event) => ({
     itemIdx: index("event_item_idx").on(event.itemId),
@@ -134,6 +144,10 @@ export const eventRelations = relations(events, ({ one }) => ({
   status: one(statuses, {
     fields: [events.statusId],
     references: [statuses.id],
+  }),
+  shuffleChoice: one(shuffleChoices, {
+    fields: [events.shuffleChoiceId],
+    references: [shuffleChoices.id],
   }),
 }));
 

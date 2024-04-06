@@ -2,23 +2,46 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
-import { cloneDeep, isNil, set } from "lodash-es";
+import { cloneDeep, isNil, set, shuffle } from "lodash-es";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import Checkbox from "./Checkbox";
 import DeleteItem from "./DeleteItem";
 import EditItem from "./EditItem";
-import { DoubleArrowIcon, DragIndicatorIcon } from "./Icons";
+import { DoubleArrowIcon, DragIndicatorIcon, ShuffleIcon } from "./Icons";
 import ItemMenu from "./ItemMenu";
-import { editModeTransitionAtom } from "./Lists";
+import { TzOffsetContext, editModeTransitionAtom } from "./Lists";
+import { useContext, useEffect, useState } from "react";
+import { getNow } from "~/utils/date";
 
 type ListItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
 };
 
+const getInitialShuffleChoice = (
+  shuffleChoices: ListItemProps["item"]["shuffleChoices"],
+  tzOffset: number,
+) => {
+  return shuffleChoices.length
+    ? shuffleChoices[getNow(tzOffset).daysSince1970 % shuffleChoices.length]
+    : undefined;
+};
+
 const Item = ({ item }: ListItemProps) => {
-  const { id, title, event, streak } = item;
-  const status = event?.status.name;
+  const { id, title, event, streak, shuffleMode, shuffleChoices } = item;
+  const status = event?.status.name ?? "PENDING";
+  const tzOffset = useContext(TzOffsetContext);
+
+  const [shuffleChoice, setShuffleChoice] = useState(
+    event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset),
+  );
+
+  useEffect(() => {
+    setShuffleChoice(
+      event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(item.shuffleChoices), tzOffset]);
 
   const currentStreak = status === "COMPLETE" ? streak + 1 : streak;
 
@@ -70,13 +93,30 @@ const Item = ({ item }: ListItemProps) => {
     upsertEvent.mutate({
       itemId: id,
       statusName: status === "COMPLETE" ? "PENDING" : "COMPLETE",
+      shuffleChoiceId: shuffleChoice?.id,
     });
 
   const handleToggleSkip = () =>
     upsertEvent.mutate({
       itemId: id,
       statusName: status === "SKIPPED" ? "PENDING" : "SKIPPED",
+      shuffleChoiceId: shuffleChoice?.id,
     });
+
+  const handleShuffleChoice = () => {
+    const choice =
+      shuffle(
+        shuffleChoices.filter((_) => _.title !== shuffleChoice?.title),
+      )[0] ?? shuffleChoice;
+
+    setShuffleChoice(choice);
+
+    upsertEvent.mutate({
+      itemId: id,
+      statusName: status,
+      shuffleChoiceId: choice?.id,
+    });
+  };
 
   const editMode = useAtomValue(editModeTransitionAtom);
 
@@ -133,8 +173,17 @@ const Item = ({ item }: ListItemProps) => {
             })}
             htmlFor={id}
           >
-            {title}
+            {shuffleMode && shuffleChoice ? shuffleChoice.title : title}
           </label>
+          {shuffleMode && status === "PENDING" && (
+            <button
+              className="px-2 text-gray-400 hover:text-white"
+              title="Shuffle"
+              onClick={handleShuffleChoice}
+            >
+              <ShuffleIcon />
+            </button>
+          )}
           {currentStreak > 1 && (
             <div
               className={clsx(

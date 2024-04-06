@@ -13,6 +13,7 @@ export const eventRouter = createTRPCRouter({
       z.object({
         itemId: z.string().cuid2(),
         statusName: z.string(),
+        shuffleChoiceId: z.string().cuid2().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -90,6 +91,7 @@ export const eventRouter = createTRPCRouter({
           .update(events)
           .set({
             statusId: status.id,
+            shuffleChoiceId: input.shuffleChoiceId,
             streak,
           })
           .where(eq(events.id, todayEvent.id));
@@ -98,6 +100,7 @@ export const eventRouter = createTRPCRouter({
           id: createId(),
           itemId: input.itemId,
           statusId: status.id,
+          shuffleChoiceId: input.shuffleChoiceId,
           streak,
         });
       }

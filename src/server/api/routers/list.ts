@@ -56,6 +56,7 @@ export const listRouter = createTRPCRouter({
                 streak: true,
               },
               with: {
+                shuffleChoice: true,
                 status: {
                   columns: { name: true },
                 },

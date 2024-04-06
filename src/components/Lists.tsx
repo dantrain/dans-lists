@@ -6,7 +6,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { atom, useAtom } from "jotai";
-import { useEffect, useMemo } from "react";
+import { createContext, useEffect, useMemo } from "react";
 import { LogoIcon } from "~/components/Icons";
 import useRank from "~/hooks/useRank";
 import { type AppRouterOutputs } from "~/server/api/root";
@@ -31,6 +31,8 @@ export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
     set(editModeTransitionAtom, update);
   }
 });
+
+export const TzOffsetContext = createContext(0);
 
 type ListsProps = {
   initialData: AppRouterOutputs["list"]["getAll"];
@@ -79,34 +81,36 @@ export default function Lists({
   }, [data.length, editMode, setEditMode, setEditModeTransition]);
 
   return (
-    <div className="mx-auto mb-10 w-full max-w-sm">
-      {editModeTransition && <AddList />}
-      {lists.length ? (
-        <ul>
-          <DndContext
-            id="lists"
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={lists}
-              strategy={verticalListSortingStrategy}
+    <TzOffsetContext.Provider value={tzOffset}>
+      <div className="mx-auto mb-10 w-full max-w-sm">
+        {editModeTransition && <AddList />}
+        {lists.length ? (
+          <ul>
+            <DndContext
+              id="lists"
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              {lists.map((list) => (
-                <List
-                  key={list.id}
-                  list={list}
-                  collapsedLists={collapsedLists}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </ul>
-      ) : (
-        <div className="flex justify-center pt-14 text-white/25">
-          <LogoIcon width="100" height="100" />
-        </div>
-      )}
-    </div>
+              <SortableContext
+                items={lists}
+                strategy={verticalListSortingStrategy}
+              >
+                {lists.map((list) => (
+                  <List
+                    key={list.id}
+                    list={list}
+                    collapsedLists={collapsedLists}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </ul>
+        ) : (
+          <div className="flex justify-center pt-14 text-white/25">
+            <LogoIcon width="100" height="100" />
+          </div>
+        )}
+      </div>
+    </TzOffsetContext.Provider>
   );
 }
