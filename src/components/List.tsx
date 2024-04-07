@@ -112,7 +112,11 @@ const List = ({ list, collapsedLists }: ListProps) => {
         </div>
         {editModeTransition && <AddItem listId={list.id} />}
         <Collapsible.Content asChild>
-          <ul style={{ viewTransitionName: `items-${list.id}` }}>
+          <ul
+            style={{ viewTransitionName: `items-${list.id}` }}
+            className="data-[state=open]:animate-slide-down
+              data-[state=closed]:animate-slide-up overflow-hidden"
+          >
             <DndContext
               id={list.id}
               collisionDetection={closestCenter}

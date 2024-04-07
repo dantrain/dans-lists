@@ -10,6 +10,7 @@ import {
   ResponsiveDialogClose,
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
+import * as Collapsible from "@radix-ui/react-collapsible";
 
 type EditItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -105,73 +106,83 @@ const EditItem = ({ item }: EditItemProps) => {
               disabled={editItem.isPending}
             />
 
-            <div className="mb-2 flex">
-              <Checkbox
-                id="shuffleModeCheckbox"
-                checked={shuffleMode}
-                onCheckedChange={(checked: boolean) => setShuffleMode(checked)}
-              />
-              <label
-                className="flex-grow select-none pl-1"
-                htmlFor={"shuffleModeCheckbox"}
-              >
-                Shuffle mode
-              </label>
-            </div>
-
-            {shuffleMode ? (
-              <div className="mb-6 mt-2">
-                <input
-                  id="addShuffleChoiceInput"
-                  className="mb-3 w-full rounded-md border border-[#5b2da0]
-                    bg-[#411f72] px-2 py-1 placeholder:text-gray-400"
-                  type="text"
-                  placeholder="Add a choice"
-                  autoComplete="off"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const inputElement = e.target as HTMLInputElement;
-
-                      if (
-                        inputElement.value &&
-                        !shuffleChoices.includes(inputElement.value)
-                      ) {
-                        setShuffleChoices([
-                          ...shuffleChoices,
-                          inputElement.value,
-                        ]);
-                      }
-
-                      inputElement.value = "";
-                    }
-                  }}
+            <div className="mb-6 sm:mb-2">
+              <div className="flex">
+                <Checkbox
+                  id="shuffleModeCheckbox"
+                  checked={shuffleMode}
+                  onCheckedChange={(checked: boolean) =>
+                    setShuffleMode(checked)
+                  }
                 />
-
-                <ul className="flex flex-wrap gap-2">
-                  {shuffleChoices.map((title) => (
-                    <li
-                      key={title}
-                      className="flex rounded-md bg-violet-900 py-0.5 pl-3"
-                    >
-                      {title}
-                      <button
-                        className="px-2 leading-[0.8] text-gray-400
-                          hover:text-white"
-                        title="Delete"
-                        onClick={() => {
-                          setShuffleChoices(
-                            shuffleChoices.filter((_) => _ !== title),
-                          );
-                        }}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <label
+                  className="flex-grow select-none pl-1"
+                  htmlFor={"shuffleModeCheckbox"}
+                >
+                  Shuffle mode
+                </label>
               </div>
-            ) : null}
+
+              <Collapsible.Root open={shuffleMode}>
+                <Collapsible.Content asChild>
+                  <div
+                    className="data-[state=open]:animate-slide-down
+                      data-[state=closed]:animate-slide-up overflow-hidden"
+                  >
+                    <input
+                      id="addShuffleChoiceInput"
+                      className="mb-3 mt-3 w-full rounded-md border
+                        border-[#5b2da0] bg-[#411f72] px-2 py-1
+                        placeholder:text-gray-400"
+                      type="text"
+                      placeholder="Add a choice"
+                      autoComplete="off"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const inputElement = e.target as HTMLInputElement;
+
+                          if (
+                            inputElement.value &&
+                            !shuffleChoices.includes(inputElement.value)
+                          ) {
+                            setShuffleChoices([
+                              ...shuffleChoices,
+                              inputElement.value,
+                            ]);
+                          }
+
+                          inputElement.value = "";
+                        }
+                      }}
+                    />
+
+                    <ul className="mb-2 flex flex-wrap gap-2">
+                      {shuffleChoices.map((title) => (
+                        <li
+                          key={title}
+                          className="flex rounded-md bg-violet-900 py-0.5 pl-3"
+                        >
+                          {title}
+                          <button
+                            className="px-2 leading-[0.8] text-gray-400
+                              hover:text-white"
+                            title="Delete"
+                            onClick={() => {
+                              setShuffleChoices(
+                                shuffleChoices.filter((_) => _ !== title),
+                              );
+                            }}
+                          >
+                            ×
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Collapsible.Content>
+              </Collapsible.Root>
+            </div>
 
             <ResponsiveDialogFooter>
               <Button
