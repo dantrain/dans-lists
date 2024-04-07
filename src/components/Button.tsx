@@ -9,7 +9,7 @@ import { twMerge } from "tailwind-merge";
 type ButtonProps = {
   className?: string;
   children: ReactNode;
-  variant?: "default" | "outline";
+  variant?: "default" | "outline" | "icon";
   disabled?: boolean;
   onClick?: () => void;
 } & (({ asChild?: false } & AriaButtonOptions<"button">) | { asChild: true });
@@ -41,19 +41,23 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={twMerge(
           cva(
-            `inline-block cursor-pointer select-none rounded-md px-4 py-1.5
-            text-center text-violet-100 focus:outline-none`,
+            `inline-block cursor-pointer select-none rounded-sm text-center
+            text-violet-100 focus:outline-none`,
             {
               variants: {
                 variant: {
-                  default: "bg-violet-800",
-                  outline: "shadow-[inset_0_0_0_2px] shadow-violet-800",
+                  default: "rounded-md bg-violet-800 px-4 py-1.5",
+                  outline: [
+                    `rounded-md px-4 py-1.5 shadow-[inset_0_0_0_2px]
+                    shadow-violet-800`,
+                  ],
+                  icon: "px-2 text-gray-400",
                 },
                 disabled: { true: "opacity-50" },
                 isPressed: { true: "" },
                 isFocusVisible: {
                   true: [
-                    `ring-violet-700 ring-offset-2 ring-offset-violet-950
+                    `ring-violet-600 ring-offset-2 ring-offset-violet-950
                     focus:ring-2`,
                   ],
                 },
@@ -72,6 +76,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                   className: "sm:hover:text-white sm:hover:shadow-violet-700",
                 },
                 {
+                  variant: "icon",
+                  isPressed: false,
+                  disabled: false,
+                  className: "sm:hover:text-white",
+                },
+                {
                   variant: "default",
                   isPressed: true,
                   disabled: false,
@@ -82,6 +92,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                   isPressed: true,
                   disabled: false,
                   className: "shadow-violet-900",
+                },
+                {
+                  variant: "icon",
+                  isPressed: true,
+                  disabled: false,
+                  className: "text-gray-300",
                 },
               ],
             },

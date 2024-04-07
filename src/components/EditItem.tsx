@@ -11,6 +11,7 @@ import {
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
 import * as Collapsible from "@radix-ui/react-collapsible";
+import { VisuallyHidden } from "react-aria";
 
 type EditItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -80,13 +81,18 @@ const EditItem = ({ item }: EditItemProps) => {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <button className="px-2 text-gray-400 hover:text-white" title="Edit">
+          <Button variant="icon">
             <EditIcon />
-          </button>
+            <VisuallyHidden>Edit</VisuallyHidden>
+          </Button>
         }
         title="Edit item"
         content={
-          <form className="w-full" onSubmit={handleSubmit} tabIndex={0}>
+          <form
+            className="w-full outline-none"
+            onSubmit={handleSubmit}
+            tabIndex={0}
+          >
             <input
               id={`editItemInput-${item.id}`}
               ref={ref}

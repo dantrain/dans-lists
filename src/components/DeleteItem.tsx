@@ -8,6 +8,7 @@ import {
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
 import Button from "./Button";
+import { VisuallyHidden } from "react-aria";
 
 type DeleteItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -28,9 +29,10 @@ const DeleteItem = ({ item }: DeleteItemProps) => {
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <button className="px-2 text-gray-400 hover:text-white" title="Delete">
+        <Button variant="icon">
           <DeleteIcon />
-        </button>
+          <VisuallyHidden>Delete</VisuallyHidden>
+        </Button>
       }
       title={`Delete “${item.title}”`}
       description="Are you sure?"

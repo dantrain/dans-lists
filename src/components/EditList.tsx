@@ -17,6 +17,7 @@ import {
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
 import Button from "./Button";
+import { VisuallyHidden } from "react-aria";
 
 const TimeRangeSelect = (props: SelectHTMLAttributes<HTMLSelectElement>) => (
   <select
@@ -110,13 +111,18 @@ const EditList = ({ list }: EditListProps) => {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <button className="px-2 text-gray-400 hover:text-white" title="Edit">
+          <Button variant="icon">
             <EditIcon />
-          </button>
+            <VisuallyHidden>Edit</VisuallyHidden>
+          </Button>
         }
         title="Edit list"
         content={
-          <form className="w-full" onSubmit={handleSubmit} tabIndex={0}>
+          <form
+            className="w-full outline-none"
+            onSubmit={handleSubmit}
+            tabIndex={0}
+          >
             <input
               id={`editListInput-${list.id}`}
               ref={ref}

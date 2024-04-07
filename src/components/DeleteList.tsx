@@ -8,6 +8,7 @@ import {
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
 import Button from "./Button";
+import { VisuallyHidden } from "react-aria";
 
 type DeleteListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -28,9 +29,10 @@ const DeleteList = ({ list }: DeleteListProps) => {
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <button className="px-2 text-gray-400 hover:text-white" title="Delete">
+        <Button variant="icon">
           <DeleteIcon />
-        </button>
+          <VisuallyHidden>Delete</VisuallyHidden>
+        </Button>
       }
       title={`Delete “${list.title}”`}
       description="Are you sure you want to delete this list and all its items? This cannot be undone."
