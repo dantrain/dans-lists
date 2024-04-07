@@ -1,17 +1,17 @@
+import * as Collapsible from "@radix-ui/react-collapsible";
 import { isEqual } from "lodash-es";
-import { useRef, useState, type FormEvent, useMemo } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
+import { VisuallyHidden } from "react-aria";
 import { type AppRouterOutputs } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import Button from "./Button";
-import Checkbox from "./Checkbox";
 import { EditIcon } from "./Icons";
 import {
   ResponsiveDialog,
   ResponsiveDialogClose,
   ResponsiveDialogFooter,
 } from "./ResponsiveDialog";
-import * as Collapsible from "@radix-ui/react-collapsible";
-import { VisuallyHidden } from "react-aria";
+import Switch from "./Switch";
 
 type EditItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -114,7 +114,7 @@ const EditItem = ({ item }: EditItemProps) => {
 
             <div className="mb-6 sm:mb-2">
               <div className="flex">
-                <Checkbox
+                <Switch
                   id="shuffleModeCheckbox"
                   checked={shuffleMode}
                   onCheckedChange={(checked: boolean) =>
@@ -122,7 +122,7 @@ const EditItem = ({ item }: EditItemProps) => {
                   }
                 />
                 <label
-                  className="flex-grow select-none pl-1"
+                  className="flex-grow select-none pl-2"
                   htmlFor={"shuffleModeCheckbox"}
                 >
                   Shuffle mode
@@ -138,7 +138,7 @@ const EditItem = ({ item }: EditItemProps) => {
                   >
                     <input
                       id="addShuffleChoiceInput"
-                      className="mb-3 mt-3 w-full rounded-md border
+                      className="mb-3 mt-4 w-full rounded-md border
                         border-[#5b2da0] bg-[#411f72] px-2 py-1
                         placeholder:text-gray-400"
                       type="text"
