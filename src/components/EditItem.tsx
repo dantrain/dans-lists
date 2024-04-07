@@ -132,8 +132,9 @@ const EditItem = ({ item }: EditItemProps) => {
               <Collapsible.Root open={shuffleMode}>
                 <Collapsible.Content asChild>
                   <div
-                    className="data-[state=open]:animate-slide-down
-                      data-[state=closed]:animate-slide-up overflow-hidden"
+                    className="overflow-hidden
+                      data-[state=closed]:animate-slide-up
+                      data-[state=open]:animate-slide-down"
                   >
                     <input
                       id="addShuffleChoiceInput"
@@ -170,18 +171,17 @@ const EditItem = ({ item }: EditItemProps) => {
                           className="flex rounded-md bg-violet-900 py-0.5 pl-3"
                         >
                           {title}
-                          <button
-                            className="px-2 leading-[0.8] text-gray-400
-                              hover:text-white"
-                            title="Delete"
-                            onClick={() => {
+                          <Button
+                            className="leading-[0.8]"
+                            variant="icon"
+                            onPress={() => {
                               setShuffleChoices(
                                 shuffleChoices.filter((_) => _ !== title),
                               );
                             }}
                           >
-                            ×
-                          </button>
+                            ×<VisuallyHidden>Remove</VisuallyHidden>
+                          </Button>
                         </li>
                       ))}
                     </ul>

@@ -19,6 +19,8 @@ import EditList from "./EditList";
 import { DragIndicatorIcon, ExpandLessIcon, ExpandMoreIcon } from "./Icons";
 import Item from "./Item";
 import { editModeAtom, editModeTransitionAtom } from "./Lists";
+import Button from "./Button";
+import { VisuallyHidden } from "react-aria";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
@@ -100,12 +102,19 @@ const List = ({ list, collapsedLists }: ListProps) => {
             <>
               <span className="select-none font-bold">{list.title}</span>
               <Collapsible.Trigger asChild>
-                <button
-                  className="px-2 text-gray-400 hover:text-white"
-                  title={collapsed ? "Expand" : "Collapse"}
-                >
-                  {collapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-                </button>
+                <Button variant="icon">
+                  {collapsed ? (
+                    <>
+                      <ExpandMoreIcon />
+                      <VisuallyHidden>Expand</VisuallyHidden>
+                    </>
+                  ) : (
+                    <>
+                      <ExpandLessIcon />
+                      <VisuallyHidden>Collapse</VisuallyHidden>
+                    </>
+                  )}
+                </Button>
               </Collapsible.Trigger>
             </>
           )}
@@ -114,8 +123,8 @@ const List = ({ list, collapsedLists }: ListProps) => {
         <Collapsible.Content asChild>
           <ul
             style={{ viewTransitionName: `items-${list.id}` }}
-            className="data-[state=open]:animate-slide-down
-              data-[state=closed]:animate-slide-up overflow-hidden"
+            className="overflow-hidden data-[state=closed]:animate-slide-up
+              data-[state=open]:animate-slide-down"
           >
             <DndContext
               id={list.id}

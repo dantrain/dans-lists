@@ -13,6 +13,8 @@ import ItemMenu from "./ItemMenu";
 import { TzOffsetContext, editModeTransitionAtom } from "./Lists";
 import { useContext, useEffect, useState } from "react";
 import { getNow } from "~/utils/date";
+import { VisuallyHidden } from "react-aria";
+import Button from "./Button";
 
 type ListItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
@@ -176,13 +178,10 @@ const Item = ({ item }: ListItemProps) => {
             {shuffleMode && shuffleChoice ? shuffleChoice.title : title}
           </label>
           {shuffleMode && status === "PENDING" && (
-            <button
-              className="px-2 text-gray-400 hover:text-white"
-              title="Shuffle"
-              onClick={handleShuffleChoice}
-            >
+            <Button variant="icon" onPress={handleShuffleChoice}>
               <ShuffleIcon />
-            </button>
+              <VisuallyHidden>Shuffle</VisuallyHidden>
+            </Button>
           )}
           {currentStreak > 1 && (
             <div
