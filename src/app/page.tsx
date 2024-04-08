@@ -30,7 +30,10 @@ export default async function Home() {
   );
 
   return (
-    <main className="relative px-4 pt-12 sm:pt-20" vaul-drawer-wrapper="">
+    <main
+      className="relative px-4 pt-12 sm:pt-[clamp(3rem,7dvh,5rem)]"
+      vaul-drawer-wrapper=""
+    >
       <Progress />
       <SettingsMenu />
       <Lists

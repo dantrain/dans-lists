@@ -30,8 +30,8 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <div
       className="fixed inset-0 z-50 grid
-        grid-cols-[minmax(16px,1fr)_auto_minmax(16px,1fr)]
-        grid-rows-[minmax(16px,1fr)_auto_minmax(16px,3fr)] justify-center"
+        grid-cols-[minmax(1rem,1fr)_auto_minmax(1rem,1fr)]
+        grid-rows-[minmax(1rem,1fr)_auto_minmax(1rem,3fr)] justify-center"
     >
       <DialogPrimitive.Content
         ref={ref}
