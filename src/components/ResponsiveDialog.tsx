@@ -12,7 +12,10 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      `fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in
+      `fixed inset-0 z-50 grid
+      grid-cols-[minmax(1rem,1fr)_auto_minmax(1rem,1fr)]
+      grid-rows-[minmax(1rem,1fr)_auto_minmax(1rem,3fr)] justify-center
+      overflow-y-auto bg-black/80 data-[state=open]:animate-in
       data-[state=closed]:animate-out data-[state=closed]:fade-out-0
       data-[state=open]:fade-in-0`,
       className,
@@ -27,12 +30,7 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Portal>
-    <DialogOverlay />
-    <div
-      className="fixed inset-0 z-50 grid
-        grid-cols-[minmax(1rem,1fr)_auto_minmax(1rem,1fr)]
-        grid-rows-[minmax(1rem,1fr)_auto_minmax(1rem,3fr)] justify-center"
-    >
+    <DialogOverlay>
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
@@ -49,7 +47,7 @@ const DialogContent = React.forwardRef<
       >
         {children}
       </DialogPrimitive.Content>
-    </div>
+    </DialogOverlay>
   </DialogPrimitive.Portal>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
@@ -127,14 +125,16 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        `fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col border-t
-        border-[hsl(264,56%,40%)] bg-[hsl(264,56%,20%)] px-6 pb-8`,
+        `fixed inset-x-0 bottom-0 z-50 flex max-h-[96dvh] flex-col border-t
+        border-[hsl(264,56%,40%)] bg-[hsl(264,56%,20%)]`,
         className,
       )}
       {...props}
     >
-      <div className="mx-auto mb-4 mt-4 h-2 w-[100px] rounded-full bg-white/20" />
-      {children}
+      <div className="overflow-y-auto px-6 pb-8">
+        <div className="mx-auto mb-4 mt-4 h-2 w-[100px] rounded-full bg-white/20" />
+        {children}
+      </div>
     </DrawerPrimitive.Content>
   </DrawerPrimitive.Portal>
 ));
