@@ -66,11 +66,11 @@ const inter = Inter({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body
-        className={`font-sans ${inter.variable} bg-[#2e026d] text-white
-        sm:scrollbar-thin sm:scrollbar-track-violet-950
-        sm:scrollbar-thumb-violet-800 sm:scrollbar-thumb-rounded-full`}
+        className={`bg-[#2e026d] font-sans text-white sm:scrollbar-thin
+          sm:scrollbar-track-violet-950 sm:scrollbar-thumb-violet-800
+          sm:scrollbar-thumb-rounded-full`}
       >
         <div
           className="fixed -z-50 h-screen w-screen bg-gradient-to-b

@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: ["var(--font-sans, ui-sans-serif)", ...fontFamily.sans],
       },
       animation: {
         fade: "fade 200ms ease-in 500ms both",
