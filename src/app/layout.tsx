@@ -10,7 +10,7 @@ import "~/styles/globals.css";
 
 const appleSplashImages = appleDeviceSpecsForLaunchImages.flatMap((spec) => [
   {
-    url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
+    url: `/apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
     media: `(device-width: ${
       spec.portrait.width / spec.scaleFactor
     }px) and (device-height: ${
@@ -20,7 +20,7 @@ const appleSplashImages = appleDeviceSpecsForLaunchImages.flatMap((spec) => [
     }) and (orientation: portrait)`,
   },
   {
-    url: `apple-splash-${spec.portrait.height}-${spec.portrait.width}.png`,
+    url: `/apple-splash-${spec.portrait.height}-${spec.portrait.width}.png`,
     media: `(device-width: ${
       spec.portrait.height / spec.scaleFactor
     }px) and (device-height: ${
@@ -34,6 +34,9 @@ const appleSplashImages = appleDeviceSpecsForLaunchImages.flatMap((spec) => [
 export const metadata = {
   title: "Dan's Lists",
   description: "Track daily and other checklists",
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   icons: {
     icon: [
       { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
