@@ -67,6 +67,7 @@ export default function Lists({
   const [lists, handleDragEnd] = useRank(
     editMode ? data : filteredData,
     rankList.mutate,
+    "list",
   );
 
   useEffect(() => {

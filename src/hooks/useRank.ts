@@ -12,6 +12,7 @@ const useRank = <T extends { id: string }>(
     },
     options: { onError: () => void },
   ) => void,
+  type?: string,
 ) => {
   const [items, setItems] = useState(data);
 
@@ -23,6 +24,9 @@ const useRank = <T extends { id: string }>(
     const { source, target } = event.operation;
 
     if (event.canceled || !source || !target) return;
+
+    // Only handle events matching our type
+    if (type && source.type !== type) return;
 
     if (source.id !== target.id) {
       setItems((items) => {

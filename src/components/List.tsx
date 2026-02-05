@@ -28,12 +28,16 @@ const List = ({ list, index, collapsedLists }: ListProps) => {
 
   const rankItem = api.item.rank.useMutation();
 
-  const [items, handleDragEnd] = useRank(list.items, rankItem.mutate);
+  const [items, handleDragEnd] = useRank(list.items, rankItem.mutate, "item");
 
   const editMode = useAtomValue(editModeAtom);
   const editModeTransition = useAtomValue(editModeTransitionAtom);
 
-  const { ref, handleRef, isDragging } = useSortable({ id: list.id, index });
+  const { ref, handleRef, isDragging } = useSortable({
+    id: list.id,
+    index,
+    type: "list",
+  });
 
   return (
     <Collapsible.Root

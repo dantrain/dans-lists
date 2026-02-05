@@ -122,7 +122,11 @@ const Item = ({ item, index }: ListItemProps) => {
 
   const editMode = useAtomValue(editModeTransitionAtom);
 
-  const { ref, handleRef, isDragging } = useSortable({ id, index });
+  const { ref, handleRef, isDragging } = useSortable({
+    id,
+    index,
+    type: "item",
+  });
 
   return (
     <li
