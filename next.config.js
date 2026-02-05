@@ -11,6 +11,10 @@ const withPWA = nextPWA({
   disable: process.env.NODE_ENV !== "production",
 });
 
-const config = withPWA({});
+const config = withPWA({
+  // Turbopack config silences the "webpack config detected" warning
+  // PWA plugin requires webpack, so builds use --webpack flag
+  turbopack: {},
+});
 
 export default config;
