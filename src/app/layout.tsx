@@ -68,9 +68,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
       <body
-        className={`bg-[#2e026d] font-sans text-white sm:scrollbar-thin
-          sm:scrollbar-track-violet-950 sm:scrollbar-thumb-violet-800
-          sm:scrollbar-thumb-rounded-full`}
+        className={`sm:scrollbar-thin sm:scrollbar-track-violet-950
+          sm:scrollbar-thumb-violet-800 sm:scrollbar-thumb-rounded-full
+          bg-[#2e026d] font-sans text-white`}
       >
         <div
           className="fixed -z-50 h-screen w-screen bg-gradient-to-b

@@ -100,7 +100,7 @@ const List = ({ list, collapsedLists }: ListProps) => {
             </>
           ) : (
             <>
-              <span className="select-none font-bold">{list.title}</span>
+              <span className="font-bold select-none">{list.title}</span>
               <Collapsible.Trigger asChild>
                 <Button variant="icon">
                   {collapsed ? (
@@ -123,8 +123,8 @@ const List = ({ list, collapsedLists }: ListProps) => {
         <Collapsible.Content asChild>
           <ul
             style={{ viewTransitionName: `items-${list.id}` }}
-            className="overflow-hidden data-[state=closed]:animate-slide-up
-              data-[state=open]:animate-slide-down"
+            className="data-[state=closed]:animate-slide-up
+              data-[state=open]:animate-slide-down overflow-hidden"
           >
             <DndContext
               id={list.id}

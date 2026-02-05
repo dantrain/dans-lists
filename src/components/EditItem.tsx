@@ -72,7 +72,7 @@ const EditItem = ({ item }: EditItemProps) => {
   return (
     <>
       <span
-        className="w-full select-none py-1.5"
+        className="w-full py-1.5 select-none"
         onDoubleClick={() => setOpen(true)}
       >
         {item.title}
@@ -122,7 +122,7 @@ const EditItem = ({ item }: EditItemProps) => {
                   }
                 />
                 <label
-                  className="flex-grow select-none pl-2"
+                  className="flex-grow pl-2 select-none"
                   htmlFor={"shuffleModeCheckbox"}
                 >
                   Shuffle mode
@@ -132,13 +132,12 @@ const EditItem = ({ item }: EditItemProps) => {
               <Collapsible.Root open={shuffleMode}>
                 <Collapsible.Content asChild>
                   <div
-                    className="overflow-hidden
-                      data-[state=closed]:animate-slide-up
-                      data-[state=open]:animate-slide-down"
+                    className="data-[state=closed]:animate-slide-up
+                      data-[state=open]:animate-slide-down overflow-hidden"
                   >
                     <input
                       id="addShuffleChoiceInput"
-                      className="mb-3 mt-4 w-full rounded-md border
+                      className="mt-4 mb-3 w-full rounded-md border
                         border-[#5b2da0] bg-[#411f72] px-2 py-1
                         placeholder:text-gray-400"
                       type="text"

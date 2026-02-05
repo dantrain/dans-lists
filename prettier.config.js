@@ -9,7 +9,7 @@ const config = {
   ],
   tailwindFunctions: ["cva", "cx", "twMerge"],
   customFunctions: ["cva", "cx", "twMerge"],
-  endingPosition: "absolute-with-indent",
+  endingPosition: "absolute",
 };
 
 export default config;

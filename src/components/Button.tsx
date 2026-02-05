@@ -41,15 +41,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={twMerge(
           cva(
-            `inline-block cursor-pointer select-none rounded-sm text-center
-            text-violet-100 focus:outline-none`,
+            `inline-block cursor-pointer rounded-sm text-center text-violet-100 select-none focus:outline-none`,
             {
               variants: {
                 variant: {
                   default: "rounded-md bg-violet-800 px-4 py-1.5",
                   outline: [
-                    `rounded-md px-4 py-1.5 shadow-[inset_0_0_0_2px]
-                    shadow-violet-800`,
+                    `rounded-md px-4 py-1.5 shadow-[inset_0_0_0_2px] shadow-violet-800`,
                   ],
                   icon: "px-2 text-gray-400",
                 },
@@ -57,8 +55,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 isPressed: { true: "" },
                 isFocusVisible: {
                   true: [
-                    `ring-violet-600 ring-offset-2 ring-offset-violet-950
-                    focus:ring-2`,
+                    `ring-violet-600 ring-offset-2 ring-offset-violet-950 focus:ring-2`,
                   ],
                 },
               },

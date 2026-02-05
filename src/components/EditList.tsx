@@ -102,7 +102,7 @@ const EditList = ({ list }: EditListProps) => {
   return (
     <>
       <span
-        className="w-full select-none font-bold"
+        className="w-full font-bold select-none"
         onDoubleClick={() => setOpen(true)}
       >
         {list.title}

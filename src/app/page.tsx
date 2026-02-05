@@ -22,7 +22,7 @@ export default async function Home() {
     }
   });
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const tzOffset = tzOffsetSchema.parse(cookieStore.get("tzOffset")?.value);
   const collapsedLists = collapsedListsSchema.parse(

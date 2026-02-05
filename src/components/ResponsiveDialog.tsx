@@ -12,12 +12,11 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      `fixed inset-0 z-50 grid
-      grid-cols-[minmax(1rem,1fr)_auto_minmax(1rem,1fr)]
+      `data-[state=open]:animate-in data-[state=closed]:animate-out
+      data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0
+      z-50 grid grid-cols-[minmax(1rem,1fr)_auto_minmax(1rem,1fr)]
       grid-rows-[minmax(1rem,1fr)_auto_minmax(1rem,3fr)] justify-center
-      overflow-y-auto bg-black/80 data-[state=open]:animate-in
-      data-[state=closed]:animate-out data-[state=closed]:fade-out-0
-      data-[state=open]:fade-in-0`,
+      overflow-y-auto bg-black/80`,
       className,
     )}
     {...props}
@@ -34,13 +33,13 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          `col-start-2 row-start-2 w-screen max-w-md rounded-md border
-          border-[hsl(264,56%,40%)] bg-[hsl(264,56%,20%)] p-6 shadow-lg
-          data-[state=open]:animate-in data-[state=closed]:animate-out
+          `data-[state=open]:animate-in data-[state=closed]:animate-out
           data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0
           data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95
           data-[state=closed]:slide-out-to-top-[5%]
-          data-[state=open]:slide-in-from-top-[5%]`,
+          data-[state=open]:slide-in-from-top-[5%] col-start-2 row-start-2
+          w-screen max-w-md rounded-md border border-[hsl(264,56%,40%)]
+          bg-[hsl(264,56%,20%)] p-6 shadow-lg`,
           className,
         )}
         {...props}
@@ -73,7 +72,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-lg leading-none font-semibold tracking-tight",
       className,
     )}
     {...props}
@@ -132,7 +131,9 @@ const DrawerContent = React.forwardRef<
       {...props}
     >
       <div className="overflow-y-auto px-6 pb-8">
-        <div className="mx-auto mb-4 mt-4 h-2 w-[100px] rounded-full bg-white/20" />
+        <div
+          className="mx-auto mt-4 mb-4 h-2 w-[100px] rounded-full bg-white/20"
+        />
         {children}
       </div>
     </DrawerPrimitive.Content>
@@ -158,7 +159,7 @@ const DrawerTitle = React.forwardRef<
   <DrawerPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-lg leading-none font-semibold tracking-tight",
       className,
     )}
     {...props}
