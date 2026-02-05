@@ -44,3 +44,7 @@ yarn-error.log*
 # next-pwa
 /public/sw.js
 /public/workbox*
+
+# Ignoring Claude for now
+.claude
+CLAUDE.md
