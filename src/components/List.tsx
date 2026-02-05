@@ -1,10 +1,5 @@
-import { closestCenter, DndContext } from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { DragDropProvider } from "@dnd-kit/react";
+import { useSortable } from "@dnd-kit/react/sortable";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
@@ -24,10 +19,11 @@ import { VisuallyHidden } from "react-aria";
 
 type ListProps = {
   list: AppRouterOutputs["list"]["getAll"][0];
+  index: number;
   collapsedLists?: Record<string, boolean>;
 };
 
-const List = ({ list, collapsedLists }: ListProps) => {
+const List = ({ list, index, collapsedLists }: ListProps) => {
   const [collapsed, setCollapsed] = useState(!!collapsedLists?.[list.id]);
 
   const rankItem = api.item.rank.useMutation();
@@ -37,15 +33,7 @@ const List = ({ list, collapsedLists }: ListProps) => {
   const editMode = useAtomValue(editModeAtom);
   const editModeTransition = useAtomValue(editModeTransitionAtom);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: list.id });
+  const { ref, handleRef, isDragging } = useSortable({ id: list.id, index });
 
   return (
     <Collapsible.Root
@@ -64,10 +52,8 @@ const List = ({ list, collapsedLists }: ListProps) => {
     >
       <li
         className={clsx("relative", editModeTransition ? "py-3" : "mb-4")}
-        ref={setNodeRef}
+        ref={ref}
         style={{
-          transform: CSS.Translate.toString(transform),
-          transition,
           zIndex: isDragging ? 100 : undefined,
           viewTransitionName: `list-${list.id}`,
         }}
@@ -85,9 +71,7 @@ const List = ({ list, collapsedLists }: ListProps) => {
                 className={`touch-none ${
                   isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
-                ref={setActivatorNodeRef}
-                {...listeners}
-                {...attributes}
+                ref={handleRef}
               >
                 <DragIndicatorIcon
                   className="w-6 pr-2"
@@ -126,20 +110,11 @@ const List = ({ list, collapsedLists }: ListProps) => {
             className="data-[state=closed]:animate-slide-up
               data-[state=open]:animate-slide-down overflow-hidden"
           >
-            <DndContext
-              id={list.id}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={items}
-                strategy={verticalListSortingStrategy}
-              >
-                {items.map((item) => (
-                  <Item key={item.id} item={item} />
-                ))}
-              </SortableContext>
-            </DndContext>
+            <DragDropProvider onDragEnd={handleDragEnd}>
+              {items.map((item, itemIndex) => (
+                <Item key={item.id} item={item} index={itemIndex} />
+              ))}
+            </DragDropProvider>
           </ul>
         </Collapsible.Content>
       </li>

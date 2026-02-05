@@ -1,5 +1,5 @@
-import { type DragEndEvent } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import type { DragDropEvents } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
 import { useEffect, useState } from "react";
 
 const useRank = <T extends { id: string }>(
@@ -19,19 +19,20 @@ const useRank = <T extends { id: string }>(
     setItems(data);
   }, [data]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+  const handleDragEnd: DragDropEvents["dragend"] = (event) => {
+    const { source, target } = event.operation;
 
-    if (over && active.id !== over.id) {
+    if (event.canceled || !source || !target) return;
+
+    if (source.id !== target.id) {
       setItems((items) => {
-        const oldIndex = items.findIndex((_) => _.id === active.id);
-        const newIndex = items.findIndex((_) => _.id === over.id);
+        const newItems = move(items, event);
 
-        const newItems = arrayMove(items, oldIndex, newIndex);
+        const newIndex = newItems.findIndex((_) => _.id === source.id);
 
         onMove(
           {
-            id: active.id as string,
+            id: source.id as string,
             beforeId: newItems[newIndex - 1]?.id,
             afterId: newItems[newIndex + 1]?.id,
           },

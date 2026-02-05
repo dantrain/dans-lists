@@ -1,10 +1,6 @@
 "use client";
 
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DragDropProvider } from "@dnd-kit/react";
 import { atom, useAtom } from "jotai";
 import { createContext, useEffect, useMemo } from "react";
 import { LogoIcon } from "~/components/Icons";
@@ -85,26 +81,18 @@ export default function Lists({
       <div className="mx-auto mb-10 w-full max-w-sm">
         {editModeTransition && <AddList />}
         {lists.length ? (
-          <ul>
-            <DndContext
-              id="lists"
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={lists}
-                strategy={verticalListSortingStrategy}
-              >
-                {lists.map((list) => (
-                  <List
-                    key={list.id}
-                    list={list}
-                    collapsedLists={collapsedLists}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </ul>
+          <DragDropProvider onDragEnd={handleDragEnd}>
+            <ul>
+              {lists.map((list, index) => (
+                <List
+                  key={list.id}
+                  list={list}
+                  index={index}
+                  collapsedLists={collapsedLists}
+                />
+              ))}
+            </ul>
+          </DragDropProvider>
         ) : (
           <div className="flex justify-center pt-14 text-white/25">
             <LogoIcon width="100" height="100" />

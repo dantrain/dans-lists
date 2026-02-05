@@ -1,5 +1,4 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/react/sortable";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { cloneDeep, isNil, set, shuffle } from "lodash-es";
@@ -18,6 +17,7 @@ import Button from "./Button";
 
 type ListItemProps = {
   item: AppRouterOutputs["list"]["getAll"][0]["items"][0];
+  index: number;
 };
 
 const getInitialShuffleChoice = (
@@ -29,7 +29,7 @@ const getInitialShuffleChoice = (
     : undefined;
 };
 
-const Item = ({ item }: ListItemProps) => {
+const Item = ({ item, index }: ListItemProps) => {
   const { id, title, event, streak, shuffleMode, shuffleChoices } = item;
   const status = event?.status.name ?? "PENDING";
   const tzOffset = useContext(TzOffsetContext);
@@ -122,23 +122,13 @@ const Item = ({ item }: ListItemProps) => {
 
   const editMode = useAtomValue(editModeTransitionAtom);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
+  const { ref, handleRef, isDragging } = useSortable({ id, index });
 
   return (
     <li
       className="relative flex items-center pr-1"
-      ref={setNodeRef}
+      ref={ref}
       style={{
-        transform: CSS.Translate.toString(transform),
-        transition,
         zIndex: isDragging ? 100 : undefined,
         viewTransitionName: `item-${id}`,
       }}
@@ -149,9 +139,7 @@ const Item = ({ item }: ListItemProps) => {
             className={`touch-none ${
               isDragging ? "cursor-grabbing" : "cursor-grab"
             }`}
-            ref={setActivatorNodeRef}
-            {...listeners}
-            {...attributes}
+            ref={handleRef}
           >
             <DragIndicatorIcon className="w-6 pr-2" width={20} height={20} />
           </button>

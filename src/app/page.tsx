@@ -8,7 +8,10 @@ import { z } from "zod";
 
 const tzOffsetSchema = z.coerce.number().default(0);
 const collapsedListsSchema = z.preprocess(
-  (val) => (typeof val === "string" ? JSON.parse(val) : val),
+  (val) =>
+    typeof val === "string"
+      ? (JSON.parse(val) as Record<string, boolean>)
+      : val,
   z.record(z.string().cuid2(), z.boolean()).optional(),
 );
 
