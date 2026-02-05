@@ -33,6 +33,6 @@
   "background_color": "#2e026d",
   "start_url": "/",
   "scope": "/",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait"
 }

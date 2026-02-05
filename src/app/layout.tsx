@@ -1,5 +1,4 @@
 import { Provider as JotaiProvider } from "jotai";
-import { flatten } from "lodash-es";
 import type { Viewport } from "next";
 import { Inter } from "next/font/google";
 import appleDeviceSpecsForLaunchImages from "pwa-asset-generator/dist/config/apple-fallback-data.json";
@@ -9,32 +8,28 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/styles/globals.css";
 
-const appleSplashImages = flatten(
-  appleDeviceSpecsForLaunchImages.map((spec) => [
-    {
-      rel: "apple-touch-startup-image",
-      url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
-      media: `(device-width: ${
-        spec.portrait.width / spec.scaleFactor
-      }px) and (device-height: ${
-        spec.portrait.height / spec.scaleFactor
-      }px) and (-webkit-device-pixel-ratio: ${
-        spec.scaleFactor
-      }) and (orientation: portrait)`,
-    },
-    {
-      rel: "apple-touch-startup-image",
-      url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
-      media: `(device-width: ${
-        spec.portrait.height / spec.scaleFactor
-      }px) and (device-height: ${
-        spec.portrait.width / spec.scaleFactor
-      }px) and (-webkit-device-pixel-ratio: ${
-        spec.scaleFactor
-      }) and (orientation: landscape)`,
-    },
-  ]),
-);
+const appleSplashImages = appleDeviceSpecsForLaunchImages.flatMap((spec) => [
+  {
+    url: `apple-splash-${spec.portrait.width}-${spec.portrait.height}.png`,
+    media: `(device-width: ${
+      spec.portrait.width / spec.scaleFactor
+    }px) and (device-height: ${
+      spec.portrait.height / spec.scaleFactor
+    }px) and (-webkit-device-pixel-ratio: ${
+      spec.scaleFactor
+    }) and (orientation: portrait)`,
+  },
+  {
+    url: `apple-splash-${spec.portrait.height}-${spec.portrait.width}.png`,
+    media: `(device-width: ${
+      spec.portrait.height / spec.scaleFactor
+    }px) and (device-height: ${
+      spec.portrait.width / spec.scaleFactor
+    }px) and (-webkit-device-pixel-ratio: ${
+      spec.scaleFactor
+    }) and (orientation: landscape)`,
+  },
+]);
 
 export const metadata = {
   title: "Dan's Lists",
@@ -47,10 +42,13 @@ export const metadata = {
     apple: "/apple-touch-icon.png",
     other: [
       { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#2e026d" },
-      ...appleSplashImages,
     ],
   },
-  appleWebApp: { statusBarStyle: "black" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black",
+    startupImage: appleSplashImages,
+  },
   manifest: "/manifest.json",
 };
 
