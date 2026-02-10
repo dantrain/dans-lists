@@ -28,28 +28,28 @@ const useRank = <T extends { id: string }>(
     // Only handle events matching our type
     if (type && source.type !== type) return;
 
-    if (source.id !== target.id) {
-      setItems((items) => {
-        const newItems = move(items, event);
+    setItems((items) => {
+      const newItems = move(items, event);
 
-        const newIndex = newItems.findIndex((_) => _.id === source.id);
+      if (newItems === items) return items;
 
-        onMove(
-          {
-            id: source.id as string,
-            beforeId: newItems[newIndex - 1]?.id,
-            afterId: newItems[newIndex + 1]?.id,
+      const newIndex = newItems.findIndex((_) => _.id === source.id);
+
+      onMove(
+        {
+          id: source.id as string,
+          beforeId: newItems[newIndex - 1]?.id,
+          afterId: newItems[newIndex + 1]?.id,
+        },
+        {
+          onError: () => {
+            setItems(data);
           },
-          {
-            onError: () => {
-              setItems(data);
-            },
-          },
-        );
+        },
+      );
 
-        return newItems;
-      });
-    }
+      return newItems;
+    });
   };
 
   return [items, handleDragEnd] as const;
