@@ -113,6 +113,18 @@ export const DoubleArrowIcon = (props: IconProps) => (
   </SVGIcon>
 );
 
+export const ChevronLeftIcon = (props: IconProps) => (
+  <SVGIcon {...props}>
+    <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+  </SVGIcon>
+);
+
+export const ChevronRightIcon = (props: IconProps) => (
+  <SVGIcon {...props}>
+    <path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+  </SVGIcon>
+);
+
 export const ShuffleIcon = (props: IconProps) => (
   <SVGIcon {...props} viewBox="0 0 16 16">
     <path

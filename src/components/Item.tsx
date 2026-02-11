@@ -7,10 +7,17 @@ import { api } from "~/trpc/react";
 import Checkbox from "./Checkbox";
 import DeleteItem from "./DeleteItem";
 import EditItem from "./EditItem";
-import { DoubleArrowIcon, DragIndicatorIcon, ShuffleIcon } from "./Icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowIcon,
+  DragIndicatorIcon,
+  ShuffleIcon,
+} from "./Icons";
 import ItemMenu from "./ItemMenu";
 import { TzOffsetContext, editModeTransitionAtom } from "./Lists";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useInteractOutside } from "react-aria";
 import { getNow } from "~/utils/date";
 import { VisuallyHidden } from "react-aria";
 import Button from "./Button";
@@ -128,10 +135,20 @@ const Item = ({ item, index }: ListItemProps) => {
       shuffleChoiceId: shuffleChoice?.id,
     });
 
-  const handleShuffleChoice = () => {
+  const [navigating, setNavigating] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useInteractOutside({
+    ref: navRef,
+    isDisabled: !navigating,
+    onInteractOutside: () => setNavigating(false),
+  });
+
+  const navigateChoice = (direction: 1 | -1) => {
     if (shuffledArray.length === 0) return;
 
-    const nextIndex = (shuffleIndex + 1) % shuffledArray.length;
+    const nextIndex =
+      (shuffleIndex + direction + shuffledArray.length) % shuffledArray.length;
     const choice = shuffledArray[nextIndex];
 
     setShuffleIndex(nextIndex);
@@ -142,6 +159,10 @@ const Item = ({ item, index }: ListItemProps) => {
       statusName: status,
       shuffleChoiceId: choice?.id,
     });
+  };
+
+  const handleShuffleClick = () => {
+    setNavigating(true);
   };
 
   const editMode = useAtomValue(editModeTransitionAtom);
@@ -194,10 +215,33 @@ const Item = ({ item, index }: ListItemProps) => {
             {shuffleMode && shuffleChoice ? shuffleChoice.title : title}
           </label>
           {shuffleMode && status === "PENDING" && (
-            <Button variant="icon" onPress={handleShuffleChoice}>
-              <ShuffleIcon />
-              <VisuallyHidden>Shuffle</VisuallyHidden>
-            </Button>
+            <>
+              {navigating ? (
+                <div ref={navRef} className="flex">
+                  <Button
+                    variant="icon"
+                    className="pr-0"
+                    onPress={() => navigateChoice(-1)}
+                  >
+                    <ChevronLeftIcon width={20} height={20} />
+                    <VisuallyHidden>Previous</VisuallyHidden>
+                  </Button>
+                  <Button
+                    variant="icon"
+                    className="pl-0"
+                    onPress={() => navigateChoice(1)}
+                  >
+                    <ChevronRightIcon width={20} height={20} />
+                    <VisuallyHidden>Next</VisuallyHidden>
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="icon" onPress={handleShuffleClick}>
+                  <ShuffleIcon />
+                  <VisuallyHidden>Shuffle</VisuallyHidden>
+                </Button>
+              )}
+            </>
           )}
           {currentStreak > 1 && (
             <div
