@@ -34,14 +34,37 @@ const Item = ({ item, index }: ListItemProps) => {
   const status = event?.status.name ?? "PENDING";
   const tzOffset = useContext(TzOffsetContext);
 
-  const [shuffleChoice, setShuffleChoice] = useState(
-    event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset),
+  const initialChoice =
+    event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset);
+
+  const [shuffleChoice, setShuffleChoice] = useState(initialChoice);
+
+  const [shuffledArray, setShuffledArray] = useState(() =>
+    shuffle([...shuffleChoices]),
   );
 
+  const [shuffleIndex, setShuffleIndex] = useState(() => {
+    if (initialChoice) {
+      const idx = shuffledArray.findIndex((c) => c.id === initialChoice.id);
+      if (idx >= 0) return idx;
+    }
+
+    return 0;
+  });
+
   useEffect(() => {
-    setShuffleChoice(
-      event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset),
-    );
+    const choice =
+      event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset);
+
+    setShuffleChoice(choice);
+
+    const newShuffled = shuffle([...shuffleChoices]);
+    setShuffledArray(newShuffled);
+
+    if (choice) {
+      const idx = newShuffled.findIndex((c) => c.id === choice.id);
+      setShuffleIndex(idx >= 0 ? idx : 0);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(item.shuffleChoices), tzOffset]);
 
@@ -106,11 +129,12 @@ const Item = ({ item, index }: ListItemProps) => {
     });
 
   const handleShuffleChoice = () => {
-    const choice =
-      shuffle(
-        shuffleChoices.filter((_) => _.title !== shuffleChoice?.title),
-      )[0] ?? shuffleChoice;
+    if (shuffledArray.length === 0) return;
 
+    const nextIndex = (shuffleIndex + 1) % shuffledArray.length;
+    const choice = shuffledArray[nextIndex];
+
+    setShuffleIndex(nextIndex);
     setShuffleChoice(choice);
 
     upsertEvent.mutate({
@@ -161,7 +185,7 @@ const Item = ({ item, index }: ListItemProps) => {
             onCheckedChange={handleCheckedChanged}
           />
           <label
-            className={clsx("flex-grow pl-1 select-none", {
+            className={clsx("grow pl-1 select-none", {
               "text-gray-400": checked,
               "line-through": checked === "indeterminate",
             })}
