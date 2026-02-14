@@ -9,6 +9,7 @@ await import("./src/env.js");
 const withPWA = nextPWA({
   dest: "public",
   disable: process.env.NODE_ENV !== "production",
+  customWorkerSrc: "worker",
 });
 
 const config = withPWA({

@@ -208,7 +208,11 @@ export const ResponsiveDialog = ({
             <DialogTitle>{title}</DialogTitle>
             {description ? (
               <DialogDescription>{description}</DialogDescription>
-            ) : null}
+            ) : (
+              <DialogPrimitive.Description className="sr-only">
+                {title}
+              </DialogPrimitive.Description>
+            )}
           </DialogHeader>
           {content}
         </DialogContent>
@@ -225,7 +229,11 @@ export const ResponsiveDialog = ({
           <DrawerTitle>{title}</DrawerTitle>
           {description ? (
             <DrawerDescription>{description}</DrawerDescription>
-          ) : null}
+          ) : (
+            <DrawerPrimitive.Description className="sr-only">
+              {title}
+            </DrawerPrimitive.Description>
+          )}
         </DrawerHeader>
         {content}
       </DrawerContent>

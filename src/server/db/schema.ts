@@ -71,6 +71,7 @@ export const items = createTable(
     title: text("title").notNull(),
     rank: text("rank").notNull(),
     shuffleMode: boolean("shuffle_mode").default(false).notNull(),
+    notifyEnabled: boolean("notify_enabled").default(false).notNull(),
 
     listId: varchar("list_id")
       .references(() => lists.id, { onDelete: "cascade" })
@@ -164,11 +165,16 @@ export const users = createTable("user", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
+  notificationEnabled: boolean("notification_enabled").default(false).notNull(),
+  notificationHour: integer("notification_hour").default(9).notNull(),
+  notificationMinute: integer("notification_minute").default(0).notNull(),
+  timeZone: varchar("time_zone", { length: 255 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   lists: many(lists),
+  pushSubscriptions: many(pushSubscriptions),
 }));
 
 export const accounts = createTable(
@@ -231,5 +237,34 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+);
+
+export const pushSubscriptions = createTable(
+  "push_subscription",
+  {
+    id: varchar("id").primaryKey(),
+    endpoint: text("endpoint").notNull(),
+    p256dhKey: text("p256dh_key").notNull(),
+    authKey: text("auth_key").notNull(),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date", precision: 3 })
+      .defaultNow()
+      .notNull(),
+  },
+  (sub) => ({
+    userIdx: index("push_subscription_user_idx").on(sub.userId),
+  }),
+);
+
+export const pushSubscriptionRelations = relations(
+  pushSubscriptions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [pushSubscriptions.userId],
+      references: [users.id],
+    }),
   }),
 );

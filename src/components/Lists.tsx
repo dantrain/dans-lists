@@ -2,7 +2,7 @@
 
 import { DragDropProvider } from "@dnd-kit/react";
 import { atom, useAtom } from "jotai";
-import { createContext, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { LogoIcon } from "~/components/Icons";
 import useRank from "~/hooks/useRank";
 import { type AppRouterOutputs } from "~/server/api/root";
@@ -28,19 +28,12 @@ export const editModeSetterAtom = atom(null, (_get, set, update: boolean) => {
   }
 });
 
-export const TzOffsetContext = createContext(0);
-
 type ListsProps = {
   initialData: AppRouterOutputs["list"]["getAll"];
-  tzOffset: number;
   collapsedLists?: Record<string, boolean>;
 };
 
-export default function Lists({
-  initialData,
-  tzOffset,
-  collapsedLists,
-}: ListsProps) {
+export default function Lists({ initialData, collapsedLists }: ListsProps) {
   const [editMode, setEditMode] = useAtom(editModeAtom);
   const [editModeTransition, setEditModeTransition] = useAtom(
     editModeTransitionAtom,
@@ -55,14 +48,15 @@ export default function Lists({
   const rankList = api.list.rank.useMutation();
 
   const filteredData = useMemo(() => {
-    const { today, minutes } = getNow(tzOffset);
+    const { today, minutes } = getNow();
+
     return data.filter(
       (list) =>
         list[`repeats${today}`] &&
         (list.startMinutes ? minutes >= list.startMinutes : true) &&
         (list.endMinutes ? minutes <= list.endMinutes : true),
     );
-  }, [data, tzOffset]);
+  }, [data]);
 
   const [lists, handleDragEnd] = useRank(
     editMode ? data : filteredData,
@@ -78,28 +72,26 @@ export default function Lists({
   }, [data.length, editMode, setEditMode, setEditModeTransition]);
 
   return (
-    <TzOffsetContext.Provider value={tzOffset}>
-      <div className="mx-auto mb-10 w-full max-w-sm">
-        {editModeTransition && <AddList />}
-        {lists.length ? (
-          <DragDropProvider onDragEnd={handleDragEnd}>
-            <ul>
-              {lists.map((list, index) => (
-                <List
-                  key={list.id}
-                  list={list}
-                  index={index}
-                  collapsedLists={collapsedLists}
-                />
-              ))}
-            </ul>
-          </DragDropProvider>
-        ) : (
-          <div className="flex justify-center pt-14 text-white/25">
-            <LogoIcon width="100" height="100" />
-          </div>
-        )}
-      </div>
-    </TzOffsetContext.Provider>
+    <div className="mx-auto mb-10 w-full max-w-sm">
+      {editModeTransition && <AddList />}
+      {lists.length ? (
+        <DragDropProvider onDragEnd={handleDragEnd}>
+          <ul>
+            {lists.map((list, index) => (
+              <List
+                key={list.id}
+                list={list}
+                index={index}
+                collapsedLists={collapsedLists}
+              />
+            ))}
+          </ul>
+        </DragDropProvider>
+      ) : (
+        <div className="flex justify-center pt-14 text-white/25">
+          <LogoIcon width="100" height="100" />
+        </div>
+      )}
+    </div>
   );
 }

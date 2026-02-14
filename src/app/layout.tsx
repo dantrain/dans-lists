@@ -79,8 +79,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <TRPCReactProvider>
           <JotaiProvider>{children}</JotaiProvider>
+          <SetTimezoneCookie />
         </TRPCReactProvider>
-        <SetTimezoneCookie />
       </body>
     </html>
   );

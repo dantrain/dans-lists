@@ -17,7 +17,7 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const range = getWeekDateRange(ctx.tzOffset);
+      const range = getWeekDateRange(ctx.timeZone);
 
       const [status, result] = await Promise.all([
         ctx.db.query.statuses.findFirst({
@@ -73,7 +73,7 @@ export const eventRouter = createTRPCRouter({
       const { todayEvent, lastValidDayEvent } = getRelevantEvents(
         result.list,
         result.events,
-        ctx.tzOffset,
+        ctx.timeZone,
       );
 
       let streak = 0;

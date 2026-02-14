@@ -12,11 +12,13 @@ import {
   InstallDesktopIcon,
   InstallMobileIcon,
   LogoutIcon,
+  NotificationsIcon,
   RefreshIcon,
   SettingsIcon,
 } from "./Icons";
 import { editModeAtom, editModeSetterAtom } from "./Lists";
 import MenuItem from "./MenuItem";
+import NotificationsDialog from "./NotificationsDialog";
 
 const SettingsMenu = () => {
   const editMode = useAtomValue(editModeAtom);
@@ -29,6 +31,8 @@ const SettingsMenu = () => {
 
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
+
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -54,87 +58,108 @@ const SettingsMenu = () => {
   }, [installPrompt]);
 
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <button
-          className="absolute top-0 right-0 p-3 text-gray-200 sm:fixed"
-          aria-label="Settings"
-        >
-          <SettingsIcon width="20" height="20" />
-        </button>
-      </DropdownMenu.Trigger>
+    <>
+      <DropdownMenu.Root
+        onOpenChange={(open) => {
+          if (open) void utils.notification.getSettings.prefetch();
+        }}
+      >
+        <DropdownMenu.Trigger asChild>
+          <button
+            className="absolute top-0 right-0 p-3 text-gray-200 sm:fixed"
+            aria-label="Settings"
+          >
+            <SettingsIcon width="20" height="20" />
+          </button>
+        </DropdownMenu.Trigger>
 
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className="min-w-[200px] cursor-default overflow-hidden rounded border
-            border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm text-white
-            shadow-xl"
-          sideOffset={-6}
-          collisionPadding={8}
-          onCloseAutoFocus={(e) => e.preventDefault()}
-        >
-          <DropdownMenu.CheckboxItem
-            className="group px-1 pt-1 focus:outline-none"
-            checked={editMode}
-            onCheckedChange={(checked) => {
-              if (!checked) void utils.list.invalidate();
-              setEditMode(checked);
-            }}
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            className="min-w-[200px] cursor-default overflow-hidden rounded
+              border border-[hsl(264,56%,40%)] bg-[hsl(264,56%,28%)] text-sm
+              text-white shadow-xl"
+            sideOffset={-6}
+            collisionPadding={8}
+            onCloseAutoFocus={(e) => e.preventDefault()}
           >
-            <MenuItem padLeft>
-              <DropdownMenu.ItemIndicator className="absolute left-2">
-                <CheckIcon />
-              </DropdownMenu.ItemIndicator>
-              Edit items
-              <EditIcon width="18" height="18" />
-            </MenuItem>
-          </DropdownMenu.CheckboxItem>
-          {!!installPrompt && (
-            <DropdownMenu.Item
-              className="group px-1 pb-1 focus:outline-none"
-              onClick={handleInstall}
+            <DropdownMenu.CheckboxItem
+              className="group px-1 pt-1 focus:outline-none"
+              checked={editMode}
+              onCheckedChange={(checked) => {
+                if (!checked) void utils.list.invalidate();
+                setEditMode(checked);
+              }}
             >
               <MenuItem padLeft>
-                Install app
-                <InstallMobileIcon
-                  className="mr-[1px] sm:hidden"
-                  width="18"
-                  height="18"
-                />
-                <InstallDesktopIcon
-                  className="mr-[1px] hidden sm:block"
-                  width="18"
-                  height="18"
-                />
+                <DropdownMenu.ItemIndicator className="absolute left-2">
+                  <CheckIcon />
+                </DropdownMenu.ItemIndicator>
+                Edit items
+                <EditIcon width="18" height="18" />
               </MenuItem>
-            </DropdownMenu.Item>
-          )}
-          {isStandalone && (
+            </DropdownMenu.CheckboxItem>
             <DropdownMenu.Item
-              className="group px-1 pb-1 focus:outline-none"
-              onClick={() => location.reload()}
+              className="group px-1 focus:outline-none"
+              onSelect={() => setNotificationsOpen(true)}
             >
               <MenuItem padLeft>
-                Reload
-                <RefreshIcon width="20" height="20" />
+                Notifications
+                <NotificationsIcon width="18" height="18" />
               </MenuItem>
             </DropdownMenu.Item>
-          )}
-          <DropdownMenu.Item
-            className="group px-1 pb-1 focus:outline-none"
-            onClick={async () => {
-              await signOut({ redirect: false });
-              router.push("/signin");
-            }}
-          >
-            <MenuItem padLeft>
-              Sign out
-              <LogoutIcon width="18" height="18" />
-            </MenuItem>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+            {!!installPrompt && (
+              <DropdownMenu.Item
+                className="group px-1 focus:outline-none"
+                onClick={handleInstall}
+              >
+                <MenuItem padLeft>
+                  Install app
+                  <InstallMobileIcon
+                    className="mr-[1px] sm:hidden"
+                    width="18"
+                    height="18"
+                  />
+                  <InstallDesktopIcon
+                    className="mr-[1px] hidden sm:block"
+                    width="18"
+                    height="18"
+                  />
+                </MenuItem>
+              </DropdownMenu.Item>
+            )}
+            {isStandalone && (
+              <DropdownMenu.Item
+                className="group px-1 focus:outline-none"
+                onClick={() => location.reload()}
+              >
+                <MenuItem padLeft>
+                  Reload
+                  <RefreshIcon width="20" height="20" />
+                </MenuItem>
+              </DropdownMenu.Item>
+            )}
+            <DropdownMenu.Item
+              className="group px-1 pb-1 focus:outline-none"
+              onClick={async () => {
+                await signOut({ redirect: false });
+                router.push("/signin");
+              }}
+            >
+              <MenuItem padLeft>
+                Sign out
+                <LogoutIcon width="18" height="18" />
+              </MenuItem>
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+
+      <NotificationsDialog
+        trigger={<span />}
+        open={notificationsOpen}
+        onOpenChange={setNotificationsOpen}
+      />
+    </>
   );
 };
 

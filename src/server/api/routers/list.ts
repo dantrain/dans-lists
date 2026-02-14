@@ -14,7 +14,7 @@ import { daysOfWeek } from "~/utils/date";
 
 export const listRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const range = getWeekDateRange(ctx.tzOffset);
+    const range = getWeekDateRange(ctx.timeZone);
 
     const result = await ctx.db.query.lists.findMany({
       where: eq(lists.ownerId, ctx.session.user.id),
@@ -74,7 +74,7 @@ export const listRouter = createTRPCRouter({
           const { todayEvent, lastValidDayEvent } = getRelevantEvents(
             list,
             item.events,
-            ctx.tzOffset,
+            ctx.timeZone,
           );
 
           return {

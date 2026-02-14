@@ -10,16 +10,17 @@ export const daysOfWeek = [
 
 export type Weekday = (typeof daysOfWeek)[number];
 
-export const getNow = (tzOffset: number) => {
+export const getNow = () => {
   const now = new Date();
-
-  now.setHours(now.getUTCHours() - tzOffset / 60);
 
   return {
     today: Intl.DateTimeFormat("en-US", {
       weekday: "short",
     }).format(now) as Weekday,
     minutes: now.getHours() * 60 + now.getMinutes(),
-    daysSince1970: Math.floor(now.getTime() / (1000 * 60 * 60 * 24)),
+    daysSince1970: Math.floor(
+      (now.getTime() - now.getTimezoneOffset() * 60 * 1000) /
+        (1000 * 60 * 60 * 24),
+    ),
   };
 };

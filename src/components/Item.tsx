@@ -15,8 +15,8 @@ import {
   ShuffleIcon,
 } from "./Icons";
 import ItemMenu from "./ItemMenu";
-import { TzOffsetContext, editModeTransitionAtom } from "./Lists";
-import { useContext, useEffect, useRef, useState } from "react";
+import { editModeTransitionAtom } from "./Lists";
+import { useEffect, useRef, useState } from "react";
 import { useInteractOutside } from "react-aria";
 import { getNow } from "~/utils/date";
 import { VisuallyHidden } from "react-aria";
@@ -29,20 +29,18 @@ type ListItemProps = {
 
 const getInitialShuffleChoice = (
   shuffleChoices: ListItemProps["item"]["shuffleChoices"],
-  tzOffset: number,
 ) => {
   return shuffleChoices.length
-    ? shuffleChoices[getNow(tzOffset).daysSince1970 % shuffleChoices.length]
+    ? shuffleChoices[getNow().daysSince1970 % shuffleChoices.length]
     : undefined;
 };
 
 const Item = ({ item, index }: ListItemProps) => {
   const { id, title, event, streak, shuffleMode, shuffleChoices } = item;
   const status = event?.status.name ?? "PENDING";
-  const tzOffset = useContext(TzOffsetContext);
 
   const initialChoice =
-    event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset);
+    event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices);
 
   const [shuffleChoice, setShuffleChoice] = useState(initialChoice);
 
@@ -61,7 +59,7 @@ const Item = ({ item, index }: ListItemProps) => {
 
   useEffect(() => {
     const choice =
-      event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices, tzOffset);
+      event?.shuffleChoice ?? getInitialShuffleChoice(shuffleChoices);
 
     setShuffleChoice(choice);
 
@@ -73,7 +71,7 @@ const Item = ({ item, index }: ListItemProps) => {
       setShuffleIndex(idx >= 0 ? idx : 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(item.shuffleChoices), tzOffset]);
+  }, [JSON.stringify(item.shuffleChoices)]);
 
   const currentStreak = status === "COMPLETE" ? streak + 1 : streak;
 

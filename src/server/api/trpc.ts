@@ -31,12 +31,12 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
   const cookies = new Cookies(opts.headers.get("cookie"), { path: "/" });
-  const tzOffset = +(cookies.get("tzOffset") ?? 0);
+  const timeZone = (cookies.get("timeZone") as string) ?? "UTC";
 
   return {
     db,
     session,
-    tzOffset,
+    timeZone,
     ...opts,
   };
 };

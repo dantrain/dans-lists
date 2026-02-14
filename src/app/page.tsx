@@ -6,7 +6,6 @@ import { api } from "~/trpc/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const tzOffsetSchema = z.coerce.number().default(0);
 const collapsedListsSchema = z.preprocess(
   (val) =>
     typeof val === "string"
@@ -27,7 +26,6 @@ export default async function Home() {
 
   const cookieStore = await cookies();
 
-  const tzOffset = tzOffsetSchema.parse(cookieStore.get("tzOffset")?.value);
   const collapsedLists = collapsedListsSchema.parse(
     cookieStore.get("collapsedLists")?.value,
   );
@@ -39,11 +37,7 @@ export default async function Home() {
     >
       <Progress />
       <SettingsMenu />
-      <Lists
-        initialData={data}
-        tzOffset={tzOffset}
-        collapsedLists={collapsedLists}
-      />
+      <Lists initialData={data} collapsedLists={collapsedLists} />
     </main>
   );
 }
