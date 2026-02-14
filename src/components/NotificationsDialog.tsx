@@ -41,6 +41,7 @@ export default function NotificationsDialog({
   const {
     pushNotificationsSupported,
     isSubscribed,
+    canSendPush,
     subscribeToPush,
     unsubscribeFromPush,
     requestPermission,
@@ -114,9 +115,13 @@ export default function NotificationsDialog({
 
       try {
         if (checked) {
-          const permission = await requestPermission();
+          let permissionGranted = canSendPush;
 
-          if (permission !== "granted") {
+          if (!permissionGranted) {
+            permissionGranted = (await requestPermission()) === "granted";
+          }
+
+          if (!permissionGranted) {
             setIsPending(false);
 
             return;
@@ -132,20 +137,19 @@ export default function NotificationsDialog({
                 p256dhKey: keys.p256dh!,
                 authKey: keys.auth!,
               });
-
-              updateSettings.mutate({
-                enabled: true,
-                hour: settings?.hour ?? 9,
-                minute: settings?.minute ?? 0,
-              });
-
-              setIsPending(false);
             },
             (error) => {
               console.error("Subscribe error:", error);
-              setIsPending(false);
             },
           );
+
+          updateSettings.mutate({
+            enabled: true,
+            hour: settings?.hour ?? 9,
+            minute: settings?.minute ?? 0,
+          });
+
+          setIsPending(false);
         } else {
           unsubscribeFromPush(
             () => {
@@ -168,6 +172,7 @@ export default function NotificationsDialog({
       }
     },
     [
+      canSendPush,
       requestPermission,
       subscribeToPush,
       unsubscribeFromPush,
