@@ -41,6 +41,7 @@ export default function NotificationsDialog({
   const {
     pushNotificationsSupported,
     isSubscribed,
+    pushSubscription,
     canSendPush,
     subscribeToPush,
     unsubscribeFromPush,
@@ -78,6 +79,9 @@ export default function NotificationsDialog({
 
   const createPushSubscription =
     api.notification.createPushSubscription.useMutation();
+
+  const deletePushSubscription =
+    api.notification.deletePushSubscription.useMutation();
 
   const setItemNotify = api.notification.setItemNotify.useMutation({
     onMutate: async (input) => {
@@ -151,8 +155,18 @@ export default function NotificationsDialog({
 
           setIsPending(false);
         } else {
+          const keys = pushSubscription?.toJSON().keys;
+
           unsubscribeFromPush(
             () => {
+              if (pushSubscription && keys) {
+                deletePushSubscription.mutate({
+                  endpoint: pushSubscription.endpoint,
+                  p256dhKey: keys.p256dh!,
+                  authKey: keys.auth!,
+                });
+              }
+
               updateSettings.mutate({
                 enabled: false,
                 hour: settings?.hour ?? 9,
@@ -173,10 +187,12 @@ export default function NotificationsDialog({
     },
     [
       canSendPush,
+      pushSubscription,
       requestPermission,
       subscribeToPush,
       unsubscribeFromPush,
       createPushSubscription,
+      deletePushSubscription,
       updateSettings,
       settings,
     ],
