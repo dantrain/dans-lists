@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
   // Build notification payload
   const payload = JSON.stringify({
-    title: "Items remaining",
+    title: "Things left to check off",
     options: {
       body: incompleteItems.join(", "),
     },
