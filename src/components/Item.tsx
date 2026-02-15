@@ -73,6 +73,29 @@ const Item = ({ item, index }: ListItemProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(item.shuffleChoices)]);
 
+  const initialDayRef = useRef(getNow().daysSince1970);
+
+  useEffect(() => {
+    if (!shuffleMode) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") return;
+      if (status !== "PENDING") return;
+
+      const currentDay = getNow().daysSince1970;
+      if (currentDay === initialDayRef.current) return;
+
+      initialDayRef.current = currentDay;
+      setShuffleChoice(getInitialShuffleChoice(shuffleChoices));
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [shuffleMode, status, shuffleChoices]);
+
   const currentStreak = status === "COMPLETE" ? streak + 1 : streak;
 
   const checked =
